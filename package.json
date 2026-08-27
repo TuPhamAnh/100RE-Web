@@ -1,14 +1,11 @@
 {
   "name": "100re-web",
   "version": "1.0.0",
-  "description": "100RE Laboratory Member Management Frontend & Cloudflare Pages Functions",
-  "bin": {
-    "wrangler": "./bin/wrangler.js"
-  },
+  "description": "100RE Laboratory Member Management Frontend & Cloudflare Worker API",
   "scripts": {
-    "dev": "wrangler pages dev ./Frontend",
-    "build": "echo Static build ready",
-    "deploy": "wrangler pages deploy ./Frontend --project-name=100re-web"
+    "dev": "wrangler dev",
+    "build": "echo Static assets ready",
+    "deploy": "wrangler deploy"
   },
   "devDependencies": {
     "wrangler": "^3.114.17"

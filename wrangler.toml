@@ -1,6 +1,11 @@
 name = "100re-web"
-compatibility_date = "2024-01-01"
-pages_build_output_dir = "./Frontend"
+main = "src/index.js"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+[assets]
+directory = "./Frontend"
+binding = "ASSETS"
 
 [vars]
 ADMIN_USERNAME = "100re"
