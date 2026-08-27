@@ -717,11 +717,26 @@ document.addEventListener('DOMContentLoaded', () => {
   navItems.forEach(item => {
     const link = item.querySelector('.nav-link');
     const dropdown = item.querySelector('.dropdown-menu');
-    if (dropdown && link && window.innerWidth <= 900) {
+    if (dropdown && link) {
       link.addEventListener('click', (e) => {
         if (window.innerWidth <= 900) {
           e.preventDefault();
+          e.stopPropagation();
           item.classList.toggle('dropdown-open');
+        }
+      });
+      const subLinks = dropdown.querySelectorAll('a');
+      subLinks.forEach(subLink => {
+        subLink.addEventListener('click', () => {
+          if (window.innerWidth <= 900) {
+            toggleMobileMenu(true);
+          }
+        });
+      });
+    } else if (link && !link.classList.contains('btn-nav-login')) {
+      link.addEventListener('click', () => {
+        if (window.innerWidth <= 900) {
+          toggleMobileMenu(true);
         }
       });
     }
