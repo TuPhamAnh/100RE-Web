@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Members | 100RE LABORATORY</title>
+  <meta name="description" content="Meet the researchers and students of 100RE Laboratory across 8 research teams and principal supervisors.">
+  <link rel="icon" type="image/jpeg" href="assets/images/logo.jpg">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Custom Stylesheets -->
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/pages.css">
+
+  <style>
+    /* Blurred Camera Bokeh / Transparent Frosted Glass Background */
+    body {
+      position: relative;
+      background-color: transparent !important;
+    }
+    
+    .page-bg-fixed {
+      position: fixed;
+      top: -25px;
+      left: -25px;
+      right: -25px;
+      bottom: -25px;
+      background: url('assets/images/bg_solar_member.jpg') center center / cover no-repeat;
+      filter: blur(6px);
+      -webkit-filter: blur(6px);
+      transform: scale(1.05);
+      z-index: -2;
+      pointer-events: none;
+    }
+
+    .page-bg-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.08); /* Transparent subtle ambient layer, not white */
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .hero-section {
+      background: transparent !important;
+      border-bottom: none !important;
+      padding: 55px 0 25px !important;
+    }
+
+    .hero-title {
+      color: #0f172a !important;
+      text-shadow: 0 2px 10px rgba(255, 255, 255, 0.85);
+    }
+
+    .hero-desc {
+      color: #1e293b !important;
+      font-weight: 500 !important;
+      text-shadow: 0 1px 6px rgba(255, 255, 255, 0.85);
+    }
+
+    .control-bar {
+      background: rgba(255, 255, 255, 0.88) !important;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.6) !important;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12) !important;
+    }
+
+    .team-block {
+      background: rgba(255, 255, 255, 0.86) !important;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.6) !important;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08) !important;
+    }
+
+    .supervisor-card {
+      background: rgba(255, 255, 255, 0.88) !important;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.7) !important;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08) !important;
+    }
+
+    .member-card {
+      background: rgba(255, 255, 255, 0.94) !important;
+      border: 1px solid rgba(255, 255, 255, 0.8) !important;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BLURRED OUT-OF-FOCUS SOLAR FIELD BACKGROUND -->
+  <div class="page-bg-fixed" aria-hidden="true"></div>
+  <div class="page-bg-overlay" aria-hidden="true"></div>
+
+  <!-- ADMIN STATUS TOOLBAR -->
+  <div class="admin-topbar" id="adminTopbar">
+    <div class="container">
+      <div class="admin-badge-info">
+        <i class="fa-solid fa-circle-check"></i>
+        <span>Admin Mode (Logged in as <strong id="adminUsername">100re</strong>)</span>
+      </div>
+      <div class="admin-actions">
+        <button class="btn-admin btn-admin-add" id="btnAdminAddMember"><i class="fa-solid fa-plus"></i> Add Member</button>
+        <button class="btn-admin btn-admin-logout" id="btnAdminLogout"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVIGATION BAR -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="logo-wrapper" title="100RE Laboratory - Toward 100% Renewable Energy">
+        <img src="assets/images/logo.jpg" alt="100RE Laboratory Logo" class="logo-img">
+      </a>
+      <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation"><i class="fa-solid fa-bars"></i></button>
+      <nav>
+        <ul class="nav-menu" id="navMenu">
+          <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
+          <li class="nav-item">
+            <a href="research-areas.html" class="nav-link">Research <i class="fa-solid fa-chevron-down dropdown-icon"></i></a>
+            <ul class="dropdown-menu">
+              <li class="dropdown-item"><a href="research-areas.html"><i class="fa-solid fa-atom"></i> Research Areas</a></li>
+              <li class="dropdown-item"><a href="research-experiences.html"><i class="fa-solid fa-flask"></i> Research Experiences</a></li>
+              <li class="dropdown-item"><a href="publications.html"><i class="fa-solid fa-book-bookmark"></i> Publications</a></li>
+              <li class="dropdown-item"><a href="collaborations.html"><i class="fa-solid fa-handshake"></i> Collaborations</a></li>
+            </ul>
+          </li>
+          <li class="nav-item"><a href="achievements.html" class="nav-link">Achievement</a></li>
+          <li class="nav-item"><a href="projects.html" class="nav-link">Project</a></li>
+          <li class="nav-item"><a href="news.html" class="nav-link">News</a></li>
+          <li class="nav-item"><a href="journey.html" class="nav-link">Journey</a></li>
+          <li class="nav-item">
+            <a href="members.html" class="nav-link active">Member <i class="fa-solid fa-chevron-down dropdown-icon"></i></a>
+            <ul class="dropdown-menu">
+              <li class="dropdown-item"><a href="members.html"><i class="fa-solid fa-users"></i> Our Team</a></li>
+              <li class="dropdown-item"><a href="alumni.html"><i class="fa-solid fa-user-graduate"></i> Alumni</a></li>
+            </ul>
+          </li>
+          <li class="nav-item"><a href="photos.html" class="nav-link">Photos</a></li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">Others <i class="fa-solid fa-chevron-down dropdown-icon"></i></a>
+            <ul class="dropdown-menu">
+              <li class="dropdown-item"><a href="mini-scada.html"><i class="fa-solid fa-network-wired"></i> Mini Scada</a></li>
+              <li class="dropdown-item"><a href="fund-raise.html"><i class="fa-solid fa-hand-holding-dollar"></i> Fund Raise</a></li>
+              <li class="dropdown-item"><a href="join-us.html"><i class="fa-solid fa-user-plus"></i> How to be one of us?</a></li>
+              <li class="dropdown-item"><a href="useful-links.html"><i class="fa-solid fa-link"></i> Useful Links</a></li>
+              <li class="dropdown-item"><a href="lab-equipment.html"><i class="fa-solid fa-microchip"></i> Lab Equipment</a></li>
+            </ul>
+          </li>
+          <li class="nav-item" id="loginNavItem">
+            <button class="nav-link btn-nav-login" id="navLoginBtn"><i class="fa-solid fa-lock"></i> Login</button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section class="hero-section">
+    <div class="container hero-content">
+      <h1 class="hero-title">Our Team</h1>
+      <p class="hero-desc">
+        The team members at 100RE lab are made up of experienced and dedicated researchers from a wide variety of disciplines and backgrounds. What unites them is an undying passion for learning and discovery. Meet them below.
+      </p>
+
+      <!-- CONTROL BAR -->
+      <div class="control-bar">
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="memberSearch" placeholder="Search members by name, affiliation, research area...">
+        </div>
+        <div class="filter-pills">
+          <button class="filter-btn active" data-filter="all">All Members</button>
+          <button class="filter-btn" data-filter="supervisors">Lab Supervisors</button>
+          <button class="filter-btn" data-filter="pv">PV Team</button>
+          <button class="filter-btn" data-filter="ai">AI Team</button>
+          <button class="filter-btn" data-filter="dr_uc">Demand Response &amp; UC</button>
+          <button class="filter-btn" data-filter="wind">Wind Team</button>
+          <button class="filter-btn" data-filter="smartgrid">Smart Grid</button>
+          <button class="filter-btn" data-filter="ev">Electric Vehicle</button>
+          <button class="filter-btn" data-filter="hydrogen">Hydrogen</button>
+          <button class="filter-btn" data-filter="bess">BESS Team</button>
+        </div>
+        
+        <div class="control-actions">
+          <button class="btn-action-add-member" id="btnMainAddMember">
+            <i class="fa-solid fa-user-plus"></i> + Thêm Thành Viên
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="container section">
+
+    <!-- 1. LAB SUPERVISORS -->
+    <section id="supervisors-section" class="team-group-wrap" style="margin-bottom: 50px;">
+      <div class="team-header-banner">
+        <h2 class="team-title">Lab Supervisors</h2>
+      </div>
+
+      <div class="supervisors-grid">
+        
+        <!-- Supervisor 1: Assoc.Prof. TUYEN Nguyen-Duc -->
+        <article class="supervisor-card">
+          <div class="supervisor-avatar-wrap">
+            <img src="assets/images/tuyen_nguyen_duc.jpg" alt="Assoc.Prof. TUYEN Nguyen-Duc" class="supervisor-avatar">
+            <div class="supervisor-badge-tag">Head of Laboratory</div>
+          </div>
+          <div class="supervisor-info">
+            <div>
+              <h3 class="supervisor-name">Assoc.Prof. TUYEN Nguyen-Duc</h3>
+              <p class="supervisor-affiliation">
+                <i class="fa-solid fa-building-columns"></i> Hanoi University of Science and Technology (HUST) &amp; Shibaura Institute of Technology (Japan)
+              </p>
+            </div>
+
+            <div class="info-grid">
+              <div class="info-item">
+                <i class="fa-solid fa-solar-panel"></i>
+                <div>
+                  <strong>Research Areas:</strong> Renewable Energy Systems (PV, Wind, FC, BESS); Smart Grid, Micro-Grid; Hydrogen Society, Hydrogen Supply and others
+                </div>
+              </div>
+              <div class="info-item">
+                <i class="fa-solid fa-door-open"></i>
+                <div>
+                  <strong>Office:</strong> C7 - 505, Hanoi University of Science and Technology, No.1 Dai Co Viet, Hai Ba Trung, Hanoi, Vietnam
+                </div>
+              </div>
+              <div class="info-item">
+                <i class="fa-solid fa-envelope"></i>
+                <div>
+                  <strong>Email:</strong> 
+                  <a href="mailto:tuyen.nguyenduc@hust.edu.vn">tuyen.nguyenduc@hust.edu.vn</a> / 
+                  <a href="mailto:i029999@shibaura-it.ac.jp">i029999@shibaura-it.ac.jp</a>
+                </div>
+              </div>
+              <div class="info-item">
+                <i class="fa-solid fa-phone"></i>
+                <div>
+                  <strong>Mobile:</strong> <a href="tel:+84986509059">(+84) - 986-509-059</a>
+                </div>
+              </div>
+            </div>
+
+            <p class="supervisor-bio">
+              <strong>Biography:</strong> Assoc.Prof. Nguyen Duc Tuyen is currently a Lecturer at Hanoi University of Science and Technology, Vietnam and an Adjunct Associate Professor at Shibaura Institute of Technology, Japan. He received his Master’s degree in 2009 and a PhD in 2012 at Shibaura Institute of Technology. Before working in Vietnam, he worked and taught at Chiba University, Tokyo University of Science and The National Institute of Industrial Science and Technology in Japan until 2018. In July 2018, Assoc.Prof. Tuyen established 100RE Lab in HUST, Vietnam with nearly 40 members specializing in renewable energy research, smart grid and providing energy consulting services. Assoc.Prof. Tuyen built a network of students doing research and organizing annual Student Forum. Assoc.Prof. Tuyen published more than 200 journal and conference papers. He is an active reviewer of IEEE, IET, MDPI, IEEJ, Springer, Elsevier, etc. reviewing hundreds of papers since 2009. His current research direction is on renewable energy, smart grid, energy storage, electric vehicle, and energy policy. Assoc.Prof.Tuyen is a Clean EDGE Asia Fellow.
+            </p>
+
+            <div class="supervisor-links">
+              <a href="https://orcid.org/0000-0001-7107-3897" target="_blank" rel="noopener noreferrer" class="btn-profile-link btn-orcid"><i class="fa-brands fa-orcid"></i> ORCID Profile</a>
+              <a href="https://scholar.google.com/citations?user=_Jwdw_4AAAAJ&hl=en" target="_blank" rel="noopener noreferrer" class="btn-profile-link btn-scholar"><i class="fa-brands fa-google-scholar"></i> Google Scholar</a>
+              <a href="mailto:tuyen.nguyenduc@hust.edu.vn" class="btn-profile-link btn-email"><i class="fa-solid fa-paper-plane"></i> Contact Email</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Supervisor 2: Dr. Son Tran-Thanh -->
+        <article class="supervisor-card">
+          <div class="supervisor-avatar-wrap">
+            <img src="assets/images/tran_thanh_son.png" alt="Dr. Son Tran-Thanh" class="supervisor-avatar">
+            <div class="supervisor-badge-tag">Supervisor</div>
+          </div>
+          <div class="supervisor-info">
+            <div>
+              <h3 class="supervisor-name">Dr. Son Tran-Thanh</h3>
+              <p class="supervisor-affiliation"><i class="fa-solid fa-building-columns"></i> Hanoi University of Science and Technology (HUST)</p>
+            </div>
+            <div class="info-grid">
+              <div class="info-item"><i class="fa-solid fa-bolt"></i><div><strong>Research Areas:</strong> Power System, Smart Grid, Renewable Energy Integration, Power System Stability</div></div>
+              <div class="info-item"><i class="fa-solid fa-door-open"></i><div><strong>Office:</strong> C7 - 503, HUST, Hanoi, Vietnam</div></div>
+              <div class="info-item"><i class="fa-solid fa-envelope"></i><div><strong>Email:</strong> <a href="mailto:son.tranthanh@hust.edu.vn">son.tranthanh@hust.edu.vn</a></div></div>
+            </div>
+            <p class="supervisor-bio">
+              <strong>Biography:</strong> Dr. Tran Thanh Son received the B.S. degree in Electrical Engineering in 2007, M.S. degree in 2011 at HUST; M.S. degree in Power System from Shibaura Institute of Technology in 2016; and the Ph.D. degree at Shibaura Institute of Technology in 2019. From 2020 to now, he is a lecturer of the Department of Power System, School of Electrical Engineering, HUST.
+            </p>
+            <div class="supervisor-links">
+              <a href="https://orcid.org/0000-0003-2401-4274" target="_blank" rel="noopener noreferrer" class="btn-profile-link btn-orcid"><i class="fa-brands fa-orcid"></i> ORCID Profile</a>
+              <a href="mailto:son.tranthanh@hust.edu.vn" class="btn-profile-link btn-email"><i class="fa-solid fa-paper-plane"></i> Contact Email</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Supervisor 3: Dr. HAI Pham-Manh -->
+        <article class="supervisor-card">
+          <div class="supervisor-avatar-wrap">
+            <img src="assets/images/pham_manh_hai.jpg" alt="Dr. HAI Pham-Manh" class="supervisor-avatar">
+            <div class="supervisor-badge-tag">Supervisor</div>
+          </div>
+          <div class="supervisor-info">
+            <div>
+              <h3 class="supervisor-name">Dr. HAI Pham-Manh</h3>
+              <p class="supervisor-affiliation"><i class="fa-solid fa-building-columns"></i> Electric Power University (EPU)</p>
+            </div>
+            <div class="info-grid">
+              <div class="info-item" style="grid-column: 1 / -1;">
+                <i class="fa-solid fa-atom"></i>
+                <div><strong>Research Interests:</strong> Non-thermal plasma discharge processes and applications, AI algorithm and ANN network, load forecasting, wind-solar power forecasting, reliability of Power System, Biomass-Biogas Production.</div>
+              </div>
+            </div>
+            <p class="supervisor-bio">
+              <strong>Biography:</strong> Dr. Hai received the B.S. degrees in Power System from HUST in 2006; M.S. degrees from University of Paul Sabatiers, Toulouse, France in 2008; and Ph.D. degree in Plasma Applications from University of Poitiers, France in 2011. From 2012 to now, he is a lecturer of Electrical Power University, Hanoi, Vietnam.
+            </p>
+            <div class="supervisor-links">
+              <a href="https://orcid.org/0000-0002-5106-3752" target="_blank" rel="noopener noreferrer" class="btn-profile-link btn-orcid"><i class="fa-brands fa-orcid"></i> ORCID Profile</a>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- 2. RESEARCH TEAMS (Dynamically Loaded & Rendered) -->
+
+    <!-- TEAM: PV TEAM -->
+    <div class="team-block" data-team="pv">
+      <div class="team-header-banner" style="background-image: url('assets/images/banner_pv.jpg');">
+        <div class="team-banner-content">
+          <div class="team-title-wrap">
+            <div class="team-icon-pill"><i class="fa-solid fa-solar-panel"></i></div>
+            <h3 class="team-name">PV Team</h3>
+          </div>
+          <div class="team-banner-right">
+            <button class="btn-team-add-member" data-team="pv" title="Thêm thành viên vào nhóm PV"><i class="fa-solid fa-plus"></i> Thêm thành viên</button>
+            <span class="team-member-count" id="count-pv">2 Members</span>
+          </div>
+        </div>
+      </div>
+      <div class="team-members-grid" id="grid-pv"></div>
+    </div>
+
+    <!-- TEAM: AI TEAM -->
+    <div class="team-block" data-team="ai">
+      <div class="team-header-banner" style="background-image: url('assets/images/banner_ai.jpg');">
+        <div class="team-banner-content">
+          <div class="team-title-wrap">
+            <div class="team-icon-pill"><i class="fa-solid fa-brain"></i></div>
+            <h3 class="team-name">AI Team</h3>
+          </div>
+          <div class="team-banner-right">
+            <button class="btn-team-add-member" data-team="ai" title="Thêm thành viên vào nhóm AI"><i class="fa-solid fa-plus"></i> Thêm thành viên</button>
+            <span class="team-member-count" id="count-ai">1 Member</span>
+          </div>
+        </div>
+      </div>
+      <div class="team-members-grid" id="grid-ai"></div>
+    </div>
+
+    <!-- TEAM: DEMAND RESPONSE & UNIT COMMITMENT TEAM -->
+    <div class="team-block" data-team="dr_uc">
+      <div class="team-header-banner" style="background-image: url('assets/images/banner_dr_uc.jpg');">
+        <div class="team-banner-content">
+          <div class="team-title-wrap">
+            <div class="team-icon-pill"><i class="fa-solid fa-sliders"></i></div>
+            <h3 class="team-name">Demand Response and Unit Commitment Team</h3>
+          </div>
+          <div class="team-banner-right">
+            <button class="btn-team-add-member" data-team="dr_uc" title="Thêm thành viên vào nhóm Demand Response & UC"><i class="fa-solid fa-plus"></i> Thêm thành viên</button>
+            <span class="team-member-count" id="count-dr_uc">2 Members</span>
+          </div>
+        </div>
+      </div>
+      <div class="team-members-grid" id="grid-dr_uc"></div>
+    </div>
+
+    <!-- TEAM: WIND TEAM -->
+    <div class="team-block" data-team="wind">
+      <div class="team-header-banner" style="background-image: url('assets/images/banner_wind.jpg');">
+        <div class="team-banner-content">
+          <div class="team-title-wrap">
+            <div class="team-icon-pill"><i class="fa-solid fa-wind"></i></div>
+            <h3 class="team-name">Wind Team</h3>
+          </div>
+          <div class="team-banner-right">
+            <button class="btn-team-add-member" data-team="wind" title="Thêm thành viên vào nhóm Wind"><i class="fa-solid fa-plus"></i> Thêm thành viên</button>
+            <span class="team-member-count" id="count-wind">2 Members</span>
+          </div>
+        </div>
+      </div>
+      <div class="team-members-grid" id="grid-wind"></div>
+    </div>
+
+    <!-- TEAM: SMART GRID TEAM -->
+    <div class="team-block" data-team="smartgrid">
+      <div class="team-header-banner" style="background-image: url('assets/images/banner_smartgrid.jpg');">
+        <div class="team-banner-content">
+          <div class="team-title-wrap">
+            <div class="team-icon-pill"><i class="fa-solid fa-tower-broadcast"></i></div>
+            <h3 class="team-name">Smart Grid Team</h3>
+          </div>
+          <div class="team-banner-right">
+            <button class="btn-team-add-member" data-team="smartgrid" title="Thêm thành viên vào nhóm Smart Grid"><i class="fa-solid fa-plus"></i> Thêm thành viên</button>
+            <span class="team-member-count" id="count-smartgrid">3 Members</span>
+          </div>
+        </div>
+      </div>
+      <div class="team-members-grid" id="grid-smartgrid"></div>
+    </div>
+
+    <!-- TEAM: ELECTRIC VEHICLE -->
+    <div class="team-block" data-team="ev">
+      <div class="team-header-banner" style="background-image: url('assets/images/banner_ev.jpg');">
+        <div class="team-banner-content">
+          <div class="team-title-wrap">
+            <div class="team-icon-pill"><i class="fa-solid fa-car-battery"></i></div>
+            <h3 class="team-name">Electric Vehicle</h3>
+          </div>
+          <div class="team-banner-right">
+            <button class="btn-team-add-member" data-team="ev" title="Thêm thành viên vào nhóm EV"><i class="fa-solid fa-plus"></i> Thêm thành viên</button>
+            <span class="team-member-count" id="count-ev">2 Members</span>
+          </div>
+        </div>
+      </div>
+      <div class="team-members-grid" id="grid-ev"></div>
+    </div>
+
+    <!-- TEAM: HYDROGEN TEAM -->
+    <div class="team-block" data-team="hydrogen">
+      <div class="team-header-banner" style="background-image: url('assets/images/banner_hydrogen.jpg');">
+        <div class="team-banner-content">
+          <div class="team-title-wrap">
+            <div class="team-icon-pill"><i class="fa-solid fa-atom"></i></div>
+            <h3 class="team-name">Hydrogen Team</h3>
+          </div>
+          <div class="team-banner-right">
+            <button class="btn-team-add-member" data-team="hydrogen" title="Thêm thành viên vào nhóm Hydrogen"><i class="fa-solid fa-plus"></i> Thêm thành viên</button>
+            <span class="team-member-count" id="count-hydrogen">1 Member</span>
+          </div>
+        </div>
+      </div>
+      <div class="team-members-grid" id="grid-hydrogen"></div>
+    </div>
+
+    <!-- TEAM: BESS TEAM -->
+    <div class="team-block" data-team="bess">
+      <div class="team-header-banner" style="background-image: url('assets/images/banner_bess.jpg');">
+        <div class="team-banner-content">
+          <div class="team-title-wrap">
+            <div class="team-icon-pill"><i class="fa-solid fa-battery-three-quarters"></i></div>
+            <h3 class="team-name">BESS Team (Battery Energy Storage Systems)</h3>
+          </div>
+          <div class="team-banner-right">
+            <button class="btn-team-add-member" data-team="bess" title="Thêm thành viên vào nhóm BESS"><i class="fa-solid fa-plus"></i> Thêm thành viên</button>
+            <span class="team-member-count" id="count-bess">3 Members</span>
+          </div>
+        </div>
+      </div>
+      <div class="team-members-grid" id="grid-bess"></div>
+    </div>
+
+  </main>
+
+  <!-- MODAL FOR MEMBER DETAILS -->
+  <div class="modal-backdrop" id="memberModal">
+    <div class="modal-card">
+      <button class="modal-close-btn" id="modalCloseBtn" aria-label="Close modal"><i class="fa-solid fa-xmark"></i></button>
+      <div class="modal-header-info">
+        <img src="assets/images/logo.jpg" alt="Member Avatar" id="modalAvatar" class="modal-avatar">
+        <div class="modal-title-wrap">
+          <h3 id="modalName">Member Name</h3>
+          <p id="modalRole">Team Member</p>
+        </div>
+      </div>
+      <div class="modal-body" id="modalBio">Member biography and details.</div>
+    </div>
+  </div>
+
+  <!-- LOGIN MODAL -->
+  <div class="modal-backdrop" id="loginModal">
+    <div class="modal-card" style="max-width: 420px;">
+      <button class="modal-close-btn" id="loginModalCloseBtn" aria-label="Close modal"><i class="fa-solid fa-xmark"></i></button>
+      <div class="modal-header-info" style="margin-bottom: 16px;">
+        <div class="modal-title-wrap">
+          <h3 style="font-size: 1.6rem;"><i class="fa-solid fa-shield-halved" style="color: #16a34a; margin-right: 8px;"></i> Admin Login</h3>
+          <p style="color: #64748b; font-size: 0.85rem; font-weight: 500;">Enter credentials (100re / 100re) to manage members</p>
+        </div>
+      </div>
+      <div class="form-alert-error" id="loginErrorAlert"></div>
+      <form id="loginForm">
+        <div class="form-group">
+          <label class="form-label" for="loginUsername">Username</label>
+          <input type="text" id="loginUsername" class="form-input" placeholder="Username (e.g. 100re)" required autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" class="form-input" placeholder="Password (e.g. 100re)" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn-form-submit"><i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ADD / EDIT MEMBER MODAL -->
+  <div class="modal-backdrop" id="memberFormModal">
+    <div class="modal-card" style="max-width: 580px;">
+      <button class="modal-close-btn" id="memberFormCloseBtn" aria-label="Close modal"><i class="fa-solid fa-xmark"></i></button>
+      <div class="modal-header-info" style="margin-bottom: 16px;">
+        <div class="modal-title-wrap">
+          <h3 id="memberFormTitle">Add New Member</h3>
+          <p style="color: #64748b; font-size: 0.85rem; font-weight: 500;">Fill in the information and upload photo</p>
+        </div>
+      </div>
+      <div class="form-alert-error" id="memberFormErrorAlert"></div>
+      <form id="memberForm">
+        <input type="hidden" id="editMemberId" value="">
+        <div class="form-group">
+          <label class="form-label" for="formMemberName">Full Name *</label>
+          <input type="text" id="formMemberName" class="form-input" placeholder="e.g. Nguyễn Văn A" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="formMemberTeam">Research Team *</label>
+          <select id="formMemberTeam" class="form-select" required>
+            <option value="pv">PV Team</option>
+            <option value="ai">AI Team</option>
+            <option value="dr_uc">Demand Response and Unit Commitment Team</option>
+            <option value="wind">Wind Team</option>
+            <option value="smartgrid">Smart Grid Team</option>
+            <option value="ev">Electric Vehicle</option>
+            <option value="hydrogen">Hydrogen Team</option>
+            <option value="bess">BESS Team</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="formMemberRole">Role / Position</label>
+          <input type="text" id="formMemberRole" class="form-input" placeholder="e.g. PV Team Researcher">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="formMemberBio">Biography / Research Focus</label>
+          <textarea id="formMemberBio" class="form-textarea" placeholder="Describe member's research focus..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Profile Photo (Upload file or keep current)</label>
+          <input type="file" id="formPhotoFile" class="form-input" accept="image/*">
+          <input type="hidden" id="formPhotoUrl" value="">
+          <div class="image-preview-box" id="imagePreviewBox">
+            <span style="color: #94a3b8; font-size: 0.85rem;" id="imagePreviewPlaceholder">No image selected</span>
+            <img src="" alt="Preview" id="imagePreviewImg" class="image-preview-img" style="display: none;">
+          </div>
+        </div>
+        <button type="submit" class="btn-form-submit" id="btnSaveMember"><i class="fa-solid fa-floppy-disk"></i> Save Member</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4 class="footer-col-title">Supervisor</h4>
+          <ul class="footer-info-list">
+            <li class="footer-info-item"><i class="fa-solid fa-user-tie"></i><div><strong>Nguyen Duc Tuyen</strong>, Assoc. Prof</div></li>
+            <li class="footer-info-item"><i class="fa-solid fa-phone"></i><div>Tel: <a href="tel:+84986509059">+84 986 509 059</a></div></li>
+            <li class="footer-info-item"><i class="fa-solid fa-envelope"></i><div>Mail 1: <a href="mailto:tuyen.nguyenduc@hust.edu.vn">tuyen.nguyenduc@hust.edu.vn</a></div></li>
+            <li class="footer-info-item"><i class="fa-solid fa-envelope-open-text"></i><div>Mail 2: <a href="mailto:i029999@shibaura-it.ac.jp">i029999@shibaura-it.ac.jp</a></div></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-col-title">Contact for Information</h4>
+          <ul class="footer-info-list">
+            <li class="footer-info-item"><i class="fa-solid fa-user-graduate"></i><div><strong>Nguyen Tuan Anh</strong>, B.Eng</div></li>
+            <li class="footer-info-item"><i class="fa-solid fa-phone"></i><div>Tel: <a href="tel:+84974812546">+84 974 812 546</a></div></li>
+            <li class="footer-info-item"><i class="fa-solid fa-envelope"></i><div>Mail: <a href="mailto:anh.nt196322@sis.hust.edu.vn">anh.nt196322@sis.hust.edu.vn</a></div></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-col-title">Laboratory Offices</h4>
+          <ul class="footer-info-list">
+            <li class="footer-info-item"><i class="fa-solid fa-location-dot"></i><div><strong>D9-300 &amp; C7-503</strong><br>Hanoi University of Science and Technology (HUST)<br>No. 1 Dai Co Viet, Hai Ba Trung, Hanoi, Vietnam</div></li>
+            <li class="footer-info-item"><i class="fa-solid fa-globe"></i><div>Website: <a href="https://www.100relab.com" target="_blank" rel="noopener noreferrer">www.100relab.com</a></div></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 100RE LABORATORY. All rights reserved. Toward 100% Renewable Energy.</p>
+        <div class="footer-social-links">
+          <a href="https://www.100relab.com" class="social-link" title="Website"><i class="fa-solid fa-globe"></i></a>
+          <a href="https://scholar.google.com/citations?user=_Jwdw_4AAAAJ&hl=en" class="social-link" title="Google Scholar"><i class="fa-brands fa-google-scholar"></i></a>
+          <a href="https://orcid.org/0000-0001-7107-3897" class="social-link" title="ORCID"><i class="fa-brands fa-orcid"></i></a>
+          <a href="mailto:tuyen.nguyenduc@hust.edu.vn" class="social-link" title="Email"><i class="fa-solid fa-envelope"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <button class="back-to-top" id="backToTop" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

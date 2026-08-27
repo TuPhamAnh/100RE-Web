@@ -1,0 +1,12 @@
+{
+  "name": "100re-web",
+  "version": "1.0.0",
+  "description": "100RE Laboratory Member Management Frontend & Cloudflare Pages Functions",
+  "scripts": {
+    "dev": "wrangler pages dev ./Frontend",
+    "deploy": "wrangler pages deploy ./Frontend --project-name=100re-laboratory"
+  },
+  "devDependencies": {
+    "wrangler": "^3.109.0"
+  }
+}

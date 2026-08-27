@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>100RE LABORATORY | Toward 100% Renewable Energy</title>
+  <meta name="description" content="Welcome to 100% Renewable Energy Laboratory (100RE Lab) at Hanoi University of Science and Technology (HUST). Conducting research toward 100% renewable power grids.">
+  <link rel="icon" type="image/jpeg" href="assets/images/logo.jpg">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Custom Stylesheets -->
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/pages.css">
+</head>
+<body>
+
+  <!-- ADMIN STATUS TOOLBAR -->
+  <div class="admin-topbar" id="adminTopbar">
+    <div class="container">
+      <div class="admin-badge-info">
+        <i class="fa-solid fa-circle-check"></i>
+        <span>Admin Mode (Logged in as <strong id="adminUsername">100re</strong>)</span>
+      </div>
+      <div class="admin-actions">
+        <button class="btn-admin btn-admin-add" id="btnAdminAddMember"><i class="fa-solid fa-plus"></i> Add Member</button>
+        <button class="btn-admin btn-admin-logout" id="btnAdminLogout"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVIGATION BAR -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="logo-wrapper" title="100RE Laboratory - Toward 100% Renewable Energy">
+        <img src="assets/images/logo.jpg" alt="100RE Laboratory Logo" class="logo-img">
+      </a>
+      <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation"><i class="fa-solid fa-bars"></i></button>
+      <nav>
+        <ul class="nav-menu" id="navMenu">
+          <li class="nav-item"><a href="index.html" class="nav-link active">About</a></li>
+          <li class="nav-item">
+            <a href="research-areas.html" class="nav-link">Research <i class="fa-solid fa-chevron-down dropdown-icon"></i></a>
+            <ul class="dropdown-menu">
+              <li class="dropdown-item"><a href="research-areas.html"><i class="fa-solid fa-atom"></i> Research Areas</a></li>
+              <li class="dropdown-item"><a href="research-experiences.html"><i class="fa-solid fa-flask"></i> Research Experiences</a></li>
+              <li class="dropdown-item"><a href="publications.html"><i class="fa-solid fa-book-bookmark"></i> Publications</a></li>
+              <li class="dropdown-item"><a href="collaborations.html"><i class="fa-solid fa-handshake"></i> Collaborations</a></li>
+            </ul>
+          </li>
+          <li class="nav-item"><a href="achievements.html" class="nav-link">Achievement</a></li>
+          <li class="nav-item"><a href="projects.html" class="nav-link">Project</a></li>
+          <li class="nav-item"><a href="news.html" class="nav-link">News</a></li>
+          <li class="nav-item"><a href="journey.html" class="nav-link">Journey</a></li>
+          <li class="nav-item">
+            <a href="members.html" class="nav-link">Member <i class="fa-solid fa-chevron-down dropdown-icon"></i></a>
+            <ul class="dropdown-menu">
+              <li class="dropdown-item"><a href="members.html"><i class="fa-solid fa-users"></i> Our Team</a></li>
+              <li class="dropdown-item"><a href="alumni.html"><i class="fa-solid fa-user-graduate"></i> Alumni</a></li>
+            </ul>
+          </li>
+          <li class="nav-item"><a href="photos.html" class="nav-link">Photos</a></li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">Others <i class="fa-solid fa-chevron-down dropdown-icon"></i></a>
+            <ul class="dropdown-menu">
+              <li class="dropdown-item"><a href="mini-scada.html"><i class="fa-solid fa-network-wired"></i> Mini Scada</a></li>
+              <li class="dropdown-item"><a href="fund-raise.html"><i class="fa-solid fa-hand-holding-dollar"></i> Fund Raise</a></li>
+              <li class="dropdown-item"><a href="join-us.html"><i class="fa-solid fa-user-plus"></i> How to be one of us?</a></li>
+              <li class="dropdown-item"><a href="useful-links.html"><i class="fa-solid fa-link"></i> Useful Links</a></li>
+              <li class="dropdown-item"><a href="lab-equipment.html"><i class="fa-solid fa-microchip"></i> Lab Equipment</a></li>
+            </ul>
+          </li>
+          <li class="nav-item" id="loginNavItem">
+            <button class="nav-link btn-nav-login" id="navLoginBtn"><i class="fa-solid fa-lock"></i> Login</button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- MASTER HERO -->
+  <section class="page-hero" style="padding: 90px 0 70px; background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.9)), url('assets/images/banner_pv.jpg') center/cover no-repeat;">
+    <div class="container" style="text-align: center; max-width: 900px;">
+      <div style="display: inline-block; background: rgba(74, 222, 128, 0.15); border: 1px solid #4ade80; color: #4ade80; font-size: 0.85rem; font-weight: 700; padding: 4px 14px; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px;">
+        <i class="fa-solid fa-bolt"></i> Toward 100% Renewable Energy
+      </div>
+      <h1 class="page-hero-title" style="font-size: 3.2rem; line-height: 1.15; margin-bottom: 20px;">
+        Welcome to <span>100% Renewable Energy Lab</span>
+      </h1>
+      <p class="page-hero-desc" style="margin: 0 auto 30px; font-size: 1.15rem; color: #cbd5e1;">
+        Established in July 2018 at Hanoi University of Science and Technology (HUST), conducting world-class research on smart grids, renewable integration, energy storage, green hydrogen, and electricity markets.
+      </p>
+      <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+        <a href="join-us.html" class="btn-primary" style="padding: 14px 28px; font-size: 1rem; font-weight: 700;">
+          <i class="fa-solid fa-user-plus"></i> JOIN US
+        </a>
+        <a href="research-areas.html" class="btn-primary" style="background: rgba(255,255,255,0.15); border: 1px solid #ffffff; color: #ffffff; padding: 14px 28px; font-size: 1rem;">
+          <i class="fa-solid fa-atom"></i> EXPLORE RESEARCH
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS SECTION -->
+  <section class="stats-section">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-number">200+</div>
+          <div class="stat-label">Publications</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">40+</div>
+          <div class="stat-label">Researchers &amp; Members</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">9</div>
+          <div class="stat-label">Research Areas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">10:1</div>
+          <div class="stat-label">Student Supervisor Ratio</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN HOMEPAGE CONTENT -->
+  <main class="container section">
+
+    <!-- 1. What are our Goals? -->
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-left: 5px solid #16a34a; padding: 36px; margin-bottom: 50px;">
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+        <div class="section-icon"><i class="fa-solid fa-bullseye"></i></div>
+        <h2 style="font-family: 'Oswald', sans-serif; font-size: 2rem; color: #0f172a; text-transform: uppercase;">What are our Goals?</h2>
+      </div>
+
+      <div style="font-size: 1.02rem; color: #334155; line-height: 1.8; display: flex; flex-direction: column; gap: 16px;">
+        <p>
+          The power grid is undergoing a profound structural transformation fueled by the rapid growth of renewable energy sources such as solar photovoltaics, wind power, and battery storage. The traditional centralized, one-directional grid architecture is evolving into a deregulated, multi-dimensional ecosystem characterized by multi-layered data streams, intelligent edge controllers, and flexible demand response mechanisms.
+        </p>
+        <p>
+          While smart cities, microgrids, and electric transportation present tremendous opportunities for decarbonization, they introduce critical challenges regarding frequency stability, voltage regulation, power quality, and cybersecurity. Many countries and international organizations are ambitiously advancing toward 100% renewable energy penetration.
+        </p>
+        <p>
+          <strong>100RE Laboratory</strong> was founded to directly address these complex technical and economic questions through rigorous mathematical modeling, real-time hardware-in-the-loop (HIL) simulations, artificial intelligence forecasting, and field experimental validations in Vietnam and internationally.
+        </p>
+
+        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px dashed #cbd5e1; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; color: #64748b; font-size: 0.9rem;">
+          <div><i class="fa-solid fa-quote-left" style="color: #16a34a; margin-right: 8px;"></i> <strong>Assoc. Prof. Nguyen Duc Tuyen</strong>, Head of 100RE Laboratory</div>
+          <div><i class="fa-regular fa-calendar" style="margin-right: 6px;"></i> July 05, 2018</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Nine Research Teams Preview -->
+    <div style="margin-bottom: 50px;">
+      <div class="section-header">
+        <div class="section-title-group">
+          <div class="section-icon"><i class="fa-solid fa-atom"></i></div>
+          <h2 class="section-title">Our 9 Research Teams</h2>
+        </div>
+        <a href="research-areas.html" style="font-size: 0.9rem; font-weight: 700; color: #16a34a; text-decoration: none;">
+          View All Details <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-top: 3px solid #16a34a; padding: 20px;">
+          <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.25rem; color: #0f172a; margin-bottom: 4px;">1. PV Team</h3>
+          <div style="font-size: 0.85rem; color: #16a34a; font-weight: 600; margin-bottom: 8px;">Leader: Bui Quang Minh</div>
+          <p style="font-size: 0.88rem; color: #64748b;">PV modeling, array reconfiguration, SCADA monitoring &amp; hosting capacity.</p>
+        </div>
+
+        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-top: 3px solid #16a34a; padding: 20px;">
+          <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.25rem; color: #0f172a; margin-bottom: 4px;">2. Wind Team</h3>
+          <div style="font-size: 0.85rem; color: #16a34a; font-weight: 600; margin-bottom: 8px;">Leader: Nguyen Hoang Nam</div>
+          <p style="font-size: 0.88rem; color: #64748b;">Low Voltage Ride Through (LVRT), output smoothing &amp; wind-BESS integration.</p>
+        </div>
+
+        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-top: 3px solid #16a34a; padding: 20px;">
+          <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.25rem; color: #0f172a; margin-bottom: 4px;">3. Hydrogen Team</h3>
+          <div style="font-size: 0.85rem; color: #16a34a; font-weight: 600; margin-bottom: 8px;">Leader: Nguyen Hoang Anh</div>
+          <p style="font-size: 0.88rem; color: #64748b;">Water electrolyzers, green hydrogen supply chains &amp; seasonal energy storage.</p>
+        </div>
+
+        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-top: 3px solid #16a34a; padding: 20px;">
+          <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.25rem; color: #0f172a; margin-bottom: 4px;">4. Smart Grid Team</h3>
+          <div style="font-size: 0.85rem; color: #16a34a; font-weight: 600; margin-bottom: 8px;">Leader: Le Ngoc Dung</div>
+          <p style="font-size: 0.88rem; color: #64748b;">Intelligent control, microgrid automation, cybersecurity &amp; ICT integration.</p>
+        </div>
+
+        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-top: 3px solid #16a34a; padding: 20px;">
+          <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.25rem; color: #0f172a; margin-bottom: 4px;">5. Electric Vehicle Team</h3>
+          <div style="font-size: 0.85rem; color: #16a34a; font-weight: 600; margin-bottom: 8px;">Leader: Dao Quoc Khanh</div>
+          <p style="font-size: 0.88rem; color: #64748b;">EV charging optimization, Vehicle-to-Grid (V2G) &amp; distribution power quality.</p>
+        </div>
+
+        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-top: 3px solid #16a34a; padding: 20px;">
+          <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.25rem; color: #0f172a; margin-bottom: 4px;">6. Artificial Intelligence Team</h3>
+          <div style="font-size: 0.85rem; color: #16a34a; font-weight: 600; margin-bottom: 8px;">Leader: Nguyen Trong Thanh</div>
+          <p style="font-size: 0.88rem; color: #64748b;">Deep Learning SAM-LSTM, renewable forecasting &amp; blockchain energy trading.</p>
+        </div>
+
+        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-top: 3px solid #16a34a; padding: 20px;">
+          <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.25rem; color: #0f172a; margin-bottom: 4px;">7. Unit Commitment Team</h3>
+          <div style="font-size: 0.85rem; color: #16a34a; font-weight: 600; margin-bottom: 8px;">Leader: Nguyen Tuan Anh</div>
+          <p style="font-size: 0.88rem; color: #64748b;">Microgrid Unit Commitment, MILP vs GA algorithms &amp; stochastic uncertainty.</p>
+        </div>
+
+        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-top: 3px solid #16a34a; padding: 20px;">
+          <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.25rem; color: #0f172a; margin-bottom: 4px;">8. Battery Storage System (BESS)</h3>
+          <div style="font-size: 0.85rem; color: #16a34a; font-weight: 600; margin-bottom: 8px;">Leader: Nguyen Quang Anh</div>
+          <p style="font-size: 0.88rem; color: #64748b;">Grid-scale frequency &amp; voltage regulation, battery degradation modeling.</p>
+        </div>
+
+        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-top: 3px solid #16a34a; padding: 20px;">
+          <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.25rem; color: #0f172a; margin-bottom: 4px;">9. Demand Response Team</h3>
+          <div style="font-size: 0.85rem; color: #16a34a; font-weight: 600; margin-bottom: 8px;">Leader: Ta Xuan Hung</div>
+          <p style="font-size: 0.88rem; color: #64748b;">Incentive DR programs, dynamic pricing &amp; social welfare optimization.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Photo Gallery Preview -->
+    <div style="margin-bottom: 50px;">
+      <div class="section-header">
+        <div class="section-title-group">
+          <div class="section-icon"><i class="fa-solid fa-camera"></i></div>
+          <h2 class="section-title">Life &amp; Research at 100RE Lab</h2>
+        </div>
+        <a href="photos.html" style="font-size: 0.9rem; font-weight: 700; color: #16a34a; text-decoration: none;">
+          View Full Gallery <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px;">
+        <div class="gallery-item">
+          <img src="assets/images/banner_pv.jpg" alt="PV Research" class="gallery-img">
+          <div class="gallery-caption-overlay">Rooftop Solar PV SCADA</div>
+        </div>
+        <div class="gallery-item">
+          <img src="assets/images/banner_ai.jpg" alt="AI Neural Networks" class="gallery-img">
+          <div class="gallery-caption-overlay">AI &amp; Deep Learning Forecasting</div>
+        </div>
+        <div class="gallery-item">
+          <img src="assets/images/banner_smartgrid.jpg" alt="Smart Grid" class="gallery-img">
+          <div class="gallery-caption-overlay">Smart Grid Automation Testbed</div>
+        </div>
+        <div class="gallery-item">
+          <img src="assets/images/banner_hydrogen.jpg" alt="Green Hydrogen" class="gallery-img">
+          <div class="gallery-caption-overlay">Green Hydrogen Electrolyzer System</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Location & Map Section -->
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-top: 4px solid #16a34a; padding: 30px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div class="section-icon"><i class="fa-solid fa-location-dot"></i></div>
+          <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.6rem; color: #0f172a;">100RE Lab Location</h3>
+        </div>
+        <a href="https://maps.google.com/?q=Hanoi+University+of+Science+and+Technology" target="_blank" rel="noopener noreferrer" class="btn-primary" style="font-size: 0.85rem; padding: 8px 16px;">
+          <i class="fa-solid fa-map-location-dot"></i> Open in Google Maps
+        </a>
+      </div>
+      <p style="font-size: 0.95rem; color: #475569; line-height: 1.6;">
+        <strong>Hanoi University of Science and Technology (HUST)</strong><br>
+        Offices: <strong>D9-300 &amp; C7-503</strong><br>
+        Address: No. 1 Dai Co Viet Road, Hai Ba Trung District, Hanoi 100000, Vietnam
+      </p>
+    </div>
+
+  </main>
+
+  <!-- LOGIN MODAL -->
+  <div class="modal-backdrop" id="loginModal">
+    <div class="modal-card" style="max-width: 420px;">
+      <button class="modal-close-btn" id="loginModalCloseBtn" aria-label="Close modal"><i class="fa-solid fa-xmark"></i></button>
+      <div class="modal-header-info" style="margin-bottom: 16px;">
+        <div class="modal-title-wrap">
+          <h3 style="font-size: 1.6rem;"><i class="fa-solid fa-shield-halved" style="color: #16a34a; margin-right: 8px;"></i> Admin Login</h3>
+          <p style="color: #64748b; font-size: 0.85rem; font-weight: 500;">Enter credentials (100re / 100re) to manage laboratory</p>
+        </div>
+      </div>
+      <div class="form-alert-error" id="loginErrorAlert"></div>
+      <form id="loginForm">
+        <div class="form-group">
+          <label class="form-label" for="loginUsername">Username</label>
+          <input type="text" id="loginUsername" class="form-input" placeholder="Username (e.g. 100re)" required autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" class="form-input" placeholder="Password (e.g. 100re)" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn-form-submit"><i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4 class="footer-col-title">Supervisor</h4>
+          <ul class="footer-info-list">
+            <li class="footer-info-item"><i class="fa-solid fa-user-tie"></i><div><strong>Nguyen Duc Tuyen</strong>, Assoc. Prof</div></li>
+            <li class="footer-info-item"><i class="fa-solid fa-phone"></i><div>Tel: <a href="tel:+84986509059">+84 986 509 059</a></div></li>
+            <li class="footer-info-item"><i class="fa-solid fa-envelope"></i><div>Mail 1: <a href="mailto:tuyen.nguyenduc@hust.edu.vn">tuyen.nguyenduc@hust.edu.vn</a></div></li>
+            <li class="footer-info-item"><i class="fa-solid fa-envelope-open-text"></i><div>Mail 2: <a href="mailto:i029999@shibaura-it.ac.jp">i029999@shibaura-it.ac.jp</a></div></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-col-title">Contact for Information</h4>
+          <ul class="footer-info-list">
+            <li class="footer-info-item"><i class="fa-solid fa-user-graduate"></i><div><strong>Nguyen Tuan Anh</strong>, B.Eng</div></li>
+            <li class="footer-info-item"><i class="fa-solid fa-phone"></i><div>Tel: <a href="tel:+84974812546">+84 974 812 546</a></div></li>
+            <li class="footer-info-item"><i class="fa-solid fa-envelope"></i><div>Mail: <a href="mailto:anh.nt196322@sis.hust.edu.vn">anh.nt196322@sis.hust.edu.vn</a></div></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-col-title">Laboratory Offices</h4>
+          <ul class="footer-info-list">
+            <li class="footer-info-item"><i class="fa-solid fa-location-dot"></i><div><strong>D9-300 &amp; C7-503</strong><br>Hanoi University of Science and Technology (HUST)<br>No. 1 Dai Co Viet, Hai Ba Trung, Hanoi, Vietnam</div></li>
+            <li class="footer-info-item"><i class="fa-solid fa-globe"></i><div>Website: <a href="https://www.100relab.com" target="_blank" rel="noopener noreferrer">www.100relab.com</a></div></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 100RE LABORATORY. All rights reserved. Toward 100% Renewable Energy.</p>
+        <div class="footer-social-links">
+          <a href="https://www.100relab.com" class="social-link" title="Website"><i class="fa-solid fa-globe"></i></a>
+          <a href="https://scholar.google.com/citations?user=_Jwdw_4AAAAJ&hl=en" class="social-link" title="Google Scholar"><i class="fa-brands fa-google-scholar"></i></a>
+          <a href="https://orcid.org/0000-0001-7107-3897" class="social-link" title="ORCID"><i class="fa-brands fa-orcid"></i></a>
+          <a href="mailto:tuyen.nguyenduc@hust.edu.vn" class="social-link" title="Email"><i class="fa-solid fa-envelope"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <button class="back-to-top" id="backToTop" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

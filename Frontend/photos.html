@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Photos &amp; Gallery | 100RE LABORATORY</title>
+  <meta name="description" content="Photo collections of 100RE Laboratory: Team members, power plant site visits, international conferences, and lab activities.">
+  <link rel="icon" type="image/jpeg" href="assets/images/logo.jpg">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Custom Stylesheets -->
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/pages.css">
+</head>
+<body>
+
+  <!-- ADMIN STATUS TOOLBAR -->
+  <div class="admin-topbar" id="adminTopbar">
+    <div class="container">
+      <div class="admin-badge-info"><i class="fa-solid fa-circle-check"></i> <span>Admin Mode (Logged in as <strong id="adminUsername">100re</strong>)</span></div>
+      <div class="admin-actions">
+        <button class="btn-admin btn-admin-add" id="btnAdminAddMember"><i class="fa-solid fa-plus"></i> Add Member</button>
+        <button class="btn-admin btn-admin-logout" id="btnAdminLogout"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVIGATION BAR -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="logo-wrapper" title="100RE Laboratory - Toward 100% Renewable Energy">
+        <img src="assets/images/logo.jpg" alt="100RE Laboratory Logo" class="logo-img">
+      </a>
+      <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation"><i class="fa-solid fa-bars"></i></button>
+      <nav>
+        <ul class="nav-menu" id="navMenu">
+          <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
+          <li class="nav-item">
+            <a href="research-areas.html" class="nav-link">Research <i class="fa-solid fa-chevron-down dropdown-icon"></i></a>
+            <ul class="dropdown-menu">
+              <li class="dropdown-item"><a href="research-areas.html"><i class="fa-solid fa-atom"></i> Research Areas</a></li>
+              <li class="dropdown-item"><a href="research-experiences.html"><i class="fa-solid fa-flask"></i> Research Experiences</a></li>
+              <li class="dropdown-item"><a href="publications.html"><i class="fa-solid fa-book-bookmark"></i> Publications</a></li>
+              <li class="dropdown-item"><a href="collaborations.html"><i class="fa-solid fa-handshake"></i> Collaborations</a></li>
+            </ul>
+          </li>
+          <li class="nav-item"><a href="achievements.html" class="nav-link">Achievement</a></li>
+          <li class="nav-item"><a href="projects.html" class="nav-link">Project</a></li>
+          <li class="nav-item"><a href="news.html" class="nav-link">News</a></li>
+          <li class="nav-item"><a href="journey.html" class="nav-link">Journey</a></li>
+          <li class="nav-item">
+            <a href="members.html" class="nav-link">Member <i class="fa-solid fa-chevron-down dropdown-icon"></i></a>
+            <ul class="dropdown-menu">
+              <li class="dropdown-item"><a href="members.html"><i class="fa-solid fa-users"></i> Our Team</a></li>
+              <li class="dropdown-item"><a href="alumni.html"><i class="fa-solid fa-user-graduate"></i> Alumni</a></li>
+            </ul>
+          </li>
+          <li class="nav-item"><a href="photos.html" class="nav-link active">Photos</a></li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">Others <i class="fa-solid fa-chevron-down dropdown-icon"></i></a>
+            <ul class="dropdown-menu">
+              <li class="dropdown-item"><a href="mini-scada.html"><i class="fa-solid fa-network-wired"></i> Mini Scada</a></li>
+              <li class="dropdown-item"><a href="fund-raise.html"><i class="fa-solid fa-hand-holding-dollar"></i> Fund Raise</a></li>
+              <li class="dropdown-item"><a href="join-us.html"><i class="fa-solid fa-user-plus"></i> How to be one of us?</a></li>
+              <li class="dropdown-item"><a href="useful-links.html"><i class="fa-solid fa-link"></i> Useful Links</a></li>
+              <li class="dropdown-item"><a href="lab-equipment.html"><i class="fa-solid fa-microchip"></i> Lab Equipment</a></li>
+            </ul>
+          </li>
+          <li class="nav-item" id="loginNavItem">
+            <button class="nav-link btn-nav-login" id="navLoginBtn"><i class="fa-solid fa-lock"></i> Login</button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- PAGE HERO -->
+  <section class="page-hero">
+    <div class="container">
+      <div class="breadcrumb-nav">
+        <a href="index.html">Home</a> <i class="fa-solid fa-chevron-right" style="font-size: 0.7rem;"></i> <span>Photo Gallery</span>
+      </div>
+      <h1 class="page-hero-title">Photo <span>Gallery</span></h1>
+      <p class="page-hero-desc">
+        Visual highlights of 100RE Laboratory: Research teams, visits to 500kV substations &amp; biomass plants, international symposiums, and team gatherings.
+      </p>
+    </div>
+  </section>
+
+  <!-- MAIN GALLERY CONTENT -->
+  <main class="container section">
+    
+    <!-- Filter Pills -->
+    <div class="filter-pills" style="margin-bottom: 30px;">
+      <button class="filter-btn active" data-gallery-filter="all">All Photos</button>
+      <button class="filter-btn" data-gallery-filter="teams">Team Banners</button>
+      <button class="filter-btn" data-gallery-filter="visits">Power Plants &amp; Substations</button>
+      <button class="filter-btn" data-gallery-filter="conferences">Conferences &amp; Events</button>
+    </div>
+
+    <!-- Gallery Grid -->
+    <div class="gallery-grid" id="galleryGrid">
+      <div class="gallery-item" data-category="teams" onclick="openLightbox('assets/images/banner_pv.jpg', 'PV Team Banner &amp; Solar Research')">
+        <img src="assets/images/banner_pv.jpg" alt="PV Team" class="gallery-img">
+        <div class="gallery-caption-overlay">PV Team Banner &amp; Solar Research</div>
+      </div>
+      <div class="gallery-item" data-category="teams" onclick="openLightbox('assets/images/banner_ai.jpg', 'AI Team Deep Learning Platform')">
+        <img src="assets/images/banner_ai.jpg" alt="AI Team" class="gallery-img">
+        <div class="gallery-caption-overlay">AI Team Deep Learning Platform</div>
+      </div>
+      <div class="gallery-item" data-category="teams" onclick="openLightbox('assets/images/banner_dr_uc.jpg', 'Demand Response &amp; Unit Commitment Team')">
+        <img src="assets/images/banner_dr_uc.jpg" alt="Demand Response Team" class="gallery-img">
+        <div class="gallery-caption-overlay">Demand Response &amp; Unit Commitment Team</div>
+      </div>
+      <div class="gallery-item" data-category="teams" onclick="openLightbox('assets/images/banner_wind.jpg', 'Wind Energy Research Cluster')">
+        <img src="assets/images/banner_wind.jpg" alt="Wind Team" class="gallery-img">
+        <div class="gallery-caption-overlay">Wind Energy Research Cluster</div>
+      </div>
+      <div class="gallery-item" data-category="teams" onclick="openLightbox('assets/images/banner_smartgrid.jpg', 'Smart Grid &amp; SCADA Automation')">
+        <img src="assets/images/banner_smartgrid.jpg" alt="Smart Grid Team" class="gallery-img">
+        <div class="gallery-caption-overlay">Smart Grid &amp; SCADA Automation</div>
+      </div>
+      <div class="gallery-item" data-category="teams" onclick="openLightbox('assets/images/banner_ev.jpg', 'Electric Vehicle &amp; V2G Infrastructure')">
+        <img src="assets/images/banner_ev.jpg" alt="EV Team" class="gallery-img">
+        <div class="gallery-caption-overlay">Electric Vehicle &amp; V2G Infrastructure</div>
+      </div>
+      <div class="gallery-item" data-category="teams" onclick="openLightbox('assets/images/banner_hydrogen.jpg', 'Green Hydrogen Production &amp; Fuel Cell')">
+        <img src="assets/images/banner_hydrogen.jpg" alt="Hydrogen Team" class="gallery-img">
+        <div class="gallery-caption-overlay">Green Hydrogen Production &amp; Fuel Cell</div>
+      </div>
+      <div class="gallery-item" data-category="teams" onclick="openLightbox('assets/images/banner_bess.jpg', 'Battery Energy Storage Systems (BESS)')">
+        <img src="assets/images/banner_bess.jpg" alt="BESS Team" class="gallery-img">
+        <div class="gallery-caption-overlay">Battery Energy Storage Systems (BESS)</div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- LIGHTBOX MODAL -->
+  <div class="lightbox-modal" id="lightboxModal" onclick="closeLightbox()">
+    <button class="lightbox-nav-btn prev" onclick="prevLightbox(event)" aria-label="Previous photo"><i class="fa-solid fa-chevron-left"></i></button>
+    <div class="lightbox-content" onclick="event.stopPropagation()">
+      <button class="lightbox-close" onclick="closeLightbox()" aria-label="Close photo viewer"><i class="fa-solid fa-xmark"></i></button>
+      <img src="" alt="Enlarged view" class="lightbox-image" id="lightboxImg">
+      <div class="lightbox-caption-wrap">
+        <div class="lightbox-caption" id="lightboxCaption"></div>
+        <div class="lightbox-counter" id="lightboxCounter">Photo 1 of 8</div>
+      </div>
+    </div>
+    <button class="lightbox-nav-btn next" onclick="nextLightbox(event)" aria-label="Next photo"><i class="fa-solid fa-chevron-right"></i></button>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4 class="footer-col-title">Supervisor</h4>
+          <ul class="footer-info-list">
+            <li class="footer-info-item"><i class="fa-solid fa-user-tie"></i><div><strong>Nguyen Duc Tuyen</strong>, Assoc. Prof</div></li>
+            <li class="footer-info-item"><i class="fa-solid fa-phone"></i><div>Tel: <a href="tel:+84986509059">+84 986 509 059</a></div></li>
+            <li class="footer-info-item"><i class="fa-solid fa-envelope"></i><div>Mail 1: <a href="mailto:tuyen.nguyenduc@hust.edu.vn">tuyen.nguyenduc@hust.edu.vn</a></div></li>
+            <li class="footer-info-item"><i class="fa-solid fa-envelope-open-text"></i><div>Mail 2: <a href="mailto:i029999@shibaura-it.ac.jp">i029999@shibaura-it.ac.jp</a></div></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-col-title">Contact for Information</h4>
+          <ul class="footer-info-list">
+            <li class="footer-info-item"><i class="fa-solid fa-user-graduate"></i><div><strong>Nguyen Tuan Anh</strong>, B.Eng</div></li>
+            <li class="footer-info-item"><i class="fa-solid fa-phone"></i><div>Tel: <a href="tel:+84974812546">+84 974 812 546</a></div></li>
+            <li class="footer-info-item"><i class="fa-solid fa-envelope"></i><div>Mail: <a href="mailto:anh.nt196322@sis.hust.edu.vn">anh.nt196322@sis.hust.edu.vn</a></div></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-col-title">Laboratory Offices</h4>
+          <ul class="footer-info-list">
+            <li class="footer-info-item"><i class="fa-solid fa-location-dot"></i><div><strong>D9-300 &amp; C7-503</strong><br>Hanoi University of Science and Technology (HUST)<br>No. 1 Dai Co Viet, Hai Ba Trung, Hanoi, Vietnam</div></li>
+            <li class="footer-info-item"><i class="fa-solid fa-globe"></i><div>Website: <a href="https://www.100relab.com" target="_blank" rel="noopener noreferrer">www.100relab.com</a></div></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 100RE LABORATORY. All rights reserved. Toward 100% Renewable Energy.</p>
+        <div class="footer-social-links">
+          <a href="https://www.100relab.com" class="social-link" title="Website"><i class="fa-solid fa-globe"></i></a>
+          <a href="https://scholar.google.com/citations?user=_Jwdw_4AAAAJ&hl=en" class="social-link" title="Google Scholar"><i class="fa-brands fa-google-scholar"></i></a>
+          <a href="https://orcid.org/0000-0001-7107-3897" class="social-link" title="ORCID"><i class="fa-brands fa-orcid"></i></a>
+          <a href="mailto:tuyen.nguyenduc@hust.edu.vn" class="social-link" title="Email"><i class="fa-solid fa-envelope"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <button class="back-to-top" id="backToTop" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const filterBtns = document.querySelectorAll('[data-gallery-filter]');
+      const items = document.querySelectorAll('.gallery-item');
+
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          filterBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const filter = btn.getAttribute('data-gallery-filter');
+
+          items.forEach(item => {
+            if (filter === 'all' || item.getAttribute('data-category') === filter) {
+              item.style.display = 'block';
+            } else {
+              item.style.display = 'none';
+            }
+          });
+        });
+      });
+    });
+  </script>
+</body>
+</html>
+

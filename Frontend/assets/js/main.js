@@ -1,0 +1,915 @@
+/**
+ * 100RE LABORATORY - Fullstack Frontend Interaction & Admin CRUD Script
+ */
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Determine API Base URL: works on http://localhost:8000 and has fallback if opened via file:///
+  const API_BASE = (window.location.protocol === 'http:' || window.location.protocol === 'https:')
+    ? '' 
+    : 'http://localhost:8000';
+
+  const DEFAULT_MEMBERS = [
+    { id: "pv-1", name: "Ngô Trí Đức", team: "pv", teamName: "PV Team", role: "PV Team", image: "assets/images/ngo_tri_duc.png", bio: "Researcher in the PV Team at 100RE Laboratory. Focusing on photovoltaic systems modeling, performance analysis, and optimization." },
+    { id: "pv-2", name: "Bui Quang Minh", team: "pv", teamName: "PV Team", role: "PV Team", image: "assets/images/bui_quang_minh.jpg", bio: "Researcher in the PV Team at 100RE Laboratory. Dedicated to solar irradiance modeling and high-efficiency photovoltaic integration." },
+    { id: "ai-1", name: "Bui Quang Hai", team: "ai", teamName: "AI Team", role: "AI Team", image: "assets/images/bui_quang_hai.jpg", bio: "Researcher in the AI Team at 100RE Laboratory. Specializing in Artificial Intelligence, Deep Learning, and Neural Network applications for renewable energy systems." },
+    { id: "dr_uc-1", name: "Nguyen Tuan Anh", team: "dr_uc", teamName: "Demand Response and Unit Commitment Team", role: "Unit Commitment Team", image: "assets/images/nguyen_tuan_anh.jpg", bio: "Researcher at 100RE Laboratory. Research focus: Unit commitment optimization, demand response mechanisms, power dispatch algorithms.\n\nContact: Tel: +84 974 812 546 | Email: anh.nt196322@sis.hust.edu.vn" },
+    { id: "dr_uc-2", name: "Le Anh Quan", team: "dr_uc", teamName: "Demand Response and Unit Commitment Team", role: "Unit Commitment Team", image: "assets/images/le_anh_quan.png", bio: "Researcher in Demand Response & Unit Commitment Team at 100RE Laboratory. Focusing on mathematical modeling, power system economic dispatch, and load curve optimization." },
+    { id: "wind-1", name: "Nguyen Hoang Nam", team: "wind", teamName: "Wind Team", role: "Wind Team", image: "assets/images/nguyen_hoang_nam.jpg", bio: "Researcher in the Wind Energy Team at 100RE Laboratory. Researching wind turbine aerodynamics, power curve forecasting, and grid integration." },
+    { id: "wind-2", name: "Nguyễn Như Tùng", team: "wind", teamName: "Wind Team", role: "Wind Team", image: "assets/images/nguyen_nhu_tung.png", bio: "Researcher in the Wind Team at 100RE Laboratory. Focusing on wind farm layout optimization and wake effect modeling." },
+    { id: "smartgrid-1", name: "Le Ngoc Dung", team: "smartgrid", teamName: "Smart Grid Team", role: "Smart Grid Team", image: "assets/images/le_ngoc_dung.jpg", bio: "Researcher in the Smart Grid Team at 100RE Laboratory. Researching microgrid management, communication protocols, and grid automation." },
+    { id: "smartgrid-2", name: "Duong Minh Hai", team: "smartgrid", teamName: "Smart Grid Team", role: "Smart Grid Team", image: "assets/images/duong_minh_hai.png", bio: "Researcher in the Smart Grid Team at 100RE Laboratory. Focused on real-time SCADA monitoring, voltage stability, and active distribution networks." },
+    { id: "smartgrid-3", name: "Vu Tien Dung", team: "smartgrid", teamName: "Smart Grid Team", role: "Smart Grid Team", image: "assets/images/vu_tien_dung.png", bio: "Researcher in the Smart Grid Team at 100RE Laboratory. Investigating power quality improvement, inverter control, and distributed energy resources." },
+    { id: "ev-1", name: "Le The Cuong", team: "ev", teamName: "Electric Vehicle", role: "Electric Vehicle Team", image: "assets/images/le_the_cuong.jpg", bio: "Researcher in the Electric Vehicle Team at 100RE Laboratory. Specializing in EV charging infrastructure, V2G (Vehicle-to-Grid) interactions, and power electronics." },
+    { id: "ev-2", name: "Dao Quoc Khanh", team: "ev", teamName: "Electric Vehicle", role: "Electric Vehicle Team", image: "assets/images/dao_quoc_khanh.jpg", bio: "Researcher in the Electric Vehicle Team at 100RE Laboratory. Focused on smart charging scheduling and EV battery health degradation modeling." },
+    { id: "hydrogen-1", name: "Nguyen Hoang Anh", team: "hydrogen", teamName: "Hydrogen Team", role: "Hydrogen Team", image: "assets/images/nguyen_hoang_anh.jpg", bio: "Researcher in the Hydrogen Team at 100RE Laboratory. Exploring Green Hydrogen production via water electrolysis, fuel cell efficiency, and hydrogen storage supply chains." },
+    { id: "bess-1", name: "Trinh Minh Phuong", team: "bess", teamName: "BESS Team", role: "BESS Team", image: "assets/images/trinh_minh_phuong.jpg", bio: "Researcher in the BESS Team at 100RE Laboratory. Dedicated to battery state of charge (SoC) estimation, state of health (SoH), and energy storage economics." },
+    { id: "bess-2", name: "Nguyen Quang Anh", team: "bess", teamName: "BESS Team", role: "BESS Team", image: "assets/images/nguyen_quang_anh.png", bio: "Researcher in the BESS Team at 100RE Laboratory. Working on battery energy management systems (BEMS) and hybrid renewable storage systems." },
+    { id: "bess-3", name: "Tran Thi Hong Vinh", team: "bess", teamName: "BESS Team", role: "BESS Team", image: "assets/images/tran_thi_hong_vinh.png", bio: "Researcher in the BESS Team at 100RE Laboratory. Specializing in battery degradation models, thermal management, and energy storage peak shaving strategies." }
+  ];
+
+  let allMembers = [];
+  let currentAuthToken = localStorage.getItem('100re_token') || null;
+
+  // DOM Elements
+  const adminTopbar = document.getElementById('adminTopbar');
+  const adminUsername = document.getElementById('adminUsername');
+  const navLoginBtn = document.getElementById('navLoginBtn');
+  const loginModal = document.getElementById('loginModal');
+  const loginForm = document.getElementById('loginForm');
+  const loginErrorAlert = document.getElementById('loginErrorAlert');
+  const loginModalCloseBtn = document.getElementById('loginModalCloseBtn');
+  const btnAdminLogout = document.getElementById('btnAdminLogout');
+  const btnAdminAddMember = document.getElementById('btnAdminAddMember');
+
+  const memberFormModal = document.getElementById('memberFormModal');
+  const memberForm = document.getElementById('memberForm');
+  const memberFormTitle = document.getElementById('memberFormTitle');
+  const memberFormCloseBtn = document.getElementById('memberFormCloseBtn');
+  const memberFormErrorAlert = document.getElementById('memberFormErrorAlert');
+  const editMemberId = document.getElementById('editMemberId');
+  const formMemberName = document.getElementById('formMemberName');
+  const formMemberTeam = document.getElementById('formMemberTeam');
+  const formMemberRole = document.getElementById('formMemberRole');
+  const formMemberBio = document.getElementById('formMemberBio');
+  const formPhotoFile = document.getElementById('formPhotoFile');
+  const formPhotoUrl = document.getElementById('formPhotoUrl');
+  const imagePreviewImg = document.getElementById('imagePreviewImg');
+  const imagePreviewPlaceholder = document.getElementById('imagePreviewPlaceholder');
+
+  const memberModal = document.getElementById('memberModal');
+  const modalCloseBtn = document.getElementById('modalCloseBtn');
+  const modalAvatar = document.getElementById('modalAvatar');
+  const modalName = document.getElementById('modalName');
+  const modalRole = document.getElementById('modalRole');
+  const modalBio = document.getElementById('modalBio');
+
+  const toastContainer = document.getElementById('toastContainer');
+  const searchInput = document.getElementById('memberSearch');
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const supervisorsSection = document.getElementById('supervisors-section');
+  const teamBlocks = document.querySelectorAll('.team-block');
+
+  // ==========================================
+  // 1. Toast Notification Helper
+  // ==========================================
+  function showToast(message, isError = false) {
+    if (!toastContainer) return;
+    const toast = document.createElement('div');
+    toast.className = `toast ${isError ? 'error' : ''}`;
+    toast.innerHTML = `
+      <i class="fa-solid ${isError ? 'fa-triangle-exclamation' : 'fa-circle-check'}"></i>
+      <span>${message}</span>
+    `;
+    toastContainer.appendChild(toast);
+    setTimeout(() => {
+      toast.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(10px)';
+      setTimeout(() => toast.remove(), 300);
+    }, 3500);
+  }
+
+  // ==========================================
+  // 2. Authentication State Management
+  // ==========================================
+  async function checkAuthStatus() {
+    if (!currentAuthToken) {
+      setAdminState(false);
+      return;
+    }
+    try {
+      const res = await fetch(`${API_BASE}/api/auth-status`, {
+        headers: { 'Authorization': `Bearer ${currentAuthToken}` }
+      });
+      const data = await res.json();
+      if (data.authenticated) {
+        setAdminState(true, data.user);
+      } else {
+        localStorage.removeItem('100re_token');
+        currentAuthToken = null;
+        setAdminState(false);
+      }
+    } catch (e) {
+      // If token exists in localStorage, maintain admin state
+      setAdminState(true, '100re');
+    }
+  }
+
+  function setAdminState(isAdmin, username = '100re') {
+    if (isAdmin) {
+      document.body.classList.add('admin-mode');
+      if (adminTopbar) adminTopbar.classList.add('active');
+      if (adminUsername) adminUsername.textContent = username;
+      if (navLoginBtn) {
+        navLoginBtn.innerHTML = `<i class="fa-solid fa-user-shield"></i> ${username}`;
+      }
+    } else {
+      document.body.classList.remove('admin-mode');
+      if (adminTopbar) adminTopbar.classList.remove('active');
+      if (navLoginBtn) {
+        navLoginBtn.innerHTML = `<i class="fa-solid fa-lock"></i> Login`;
+      }
+    }
+  }
+
+  // ==========================================
+  // 3. Load & Render Members from API
+  // ==========================================
+  async function loadMembers() {
+    try {
+      const res = await fetch(`${API_BASE}/api/members`);
+      if (!res.ok) throw new Error('API status not ok');
+      allMembers = await res.json();
+      localStorage.setItem('100re_local_members', JSON.stringify(allMembers));
+      renderAllTeamGrids();
+    } catch (e) {
+      // Fallback to localStorage or default dataset
+      const saved = localStorage.getItem('100re_local_members');
+      if (saved) {
+        try { allMembers = JSON.parse(saved); } catch (err) { allMembers = DEFAULT_MEMBERS; }
+      } else {
+        allMembers = DEFAULT_MEMBERS;
+      }
+      renderAllTeamGrids();
+    }
+  }
+
+  function renderAllTeamGrids() {
+    const teams = ['pv', 'ai', 'dr_uc', 'wind', 'smartgrid', 'ev', 'hydrogen', 'bess'];
+    
+    teams.forEach(teamKey => {
+      const grid = document.getElementById(`grid-${teamKey}`);
+      const countBadge = document.getElementById(`count-${teamKey}`);
+      if (!grid) return;
+
+      const teamMembers = allMembers.filter(m => m.team === teamKey);
+      
+      // Update count badge
+      if (countBadge) {
+        countBadge.textContent = `${teamMembers.length} ${teamMembers.length === 1 ? 'Member' : 'Members'}`;
+      }
+
+      grid.innerHTML = '';
+
+      teamMembers.forEach(member => {
+        const card = document.createElement('div');
+        card.className = 'member-card';
+        card.setAttribute('data-id', member.id);
+        card.setAttribute('data-team', member.team);
+
+        const imgSrc = member.image || 'assets/images/logo.jpg';
+        const teamBadgeName = member.team === 'pv' ? 'PV' :
+                              member.team === 'ai' ? 'AI' :
+                              member.team === 'dr_uc' ? 'Unit Commitment' :
+                              member.team === 'wind' ? 'Wind' :
+                              member.team === 'smartgrid' ? 'Smart Grid' :
+                              member.team === 'ev' ? 'EV' :
+                              member.team === 'hydrogen' ? 'Hydrogen' : 'BESS';
+
+        card.innerHTML = `
+          <div class="member-photo-wrap">
+            <img src="${imgSrc}" alt="${escapeHtml(member.name)}" class="member-photo" loading="lazy" onerror="this.src='assets/images/logo.jpg'">
+            <span class="member-overlay-badge">${teamBadgeName}</span>
+          </div>
+          <div class="member-content">
+            <h4 class="member-name">${escapeHtml(member.name)}</h4>
+            <span class="member-team-tag">${escapeHtml(member.role || member.teamName || 'Researcher')}</span>
+            <button class="member-btn-quickview" type="button">
+              <i class="fa-solid fa-id-card"></i> View Profile
+            </button>
+            <div class="card-admin-actions">
+              <button class="btn-card-edit" type="button" title="Sửa thành viên">
+                <i class="fa-solid fa-pen-to-square"></i> Sửa
+              </button>
+              <button class="btn-card-delete" type="button" title="Xóa thành viên">
+                <i class="fa-solid fa-trash"></i> Xóa
+              </button>
+            </div>
+          </div>
+        `;
+
+        // Event listeners
+        const quickViewBtn = card.querySelector('.member-btn-quickview');
+        quickViewBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openMemberModal(member.name, member.role || member.teamName, imgSrc, member.bio);
+        });
+
+        const editBtn = card.querySelector('.btn-card-edit');
+        editBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openEditMemberModal(member);
+        });
+
+        const deleteBtn = card.querySelector('.btn-card-delete');
+        deleteBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          handleDeleteMember(member);
+        });
+
+        grid.appendChild(card);
+      });
+    });
+
+    applySearchAndFilter();
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  // ==========================================
+  // 4. Modals Handling (Login, Form, Detail)
+  // ==========================================
+  function openModal(modalEl) {
+    if (!modalEl) return;
+    modalEl.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal(modalEl) {
+    if (!modalEl) return;
+    modalEl.classList.remove('show');
+    document.body.style.overflow = '';
+  }
+
+  // Login Modal Events
+  if (navLoginBtn) {
+    navLoginBtn.addEventListener('click', () => {
+      if (document.body.classList.contains('admin-mode')) {
+        showToast('Bạn đang đăng nhập với quyền Quản trị viên (100re).');
+      } else {
+        if (loginErrorAlert) loginErrorAlert.style.display = 'none';
+        if (loginForm) loginForm.reset();
+        openModal(loginModal);
+      }
+    });
+  }
+
+  if (loginModalCloseBtn) {
+    loginModalCloseBtn.addEventListener('click', () => closeModal(loginModal));
+  }
+
+  if (loginForm) {
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('loginUsername').value.trim();
+      const password = document.getElementById('loginPassword').value.trim();
+
+      try {
+        const res = await fetch(`${API_BASE}/api/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+
+        if (data.success && data.token) {
+          currentAuthToken = data.token;
+          localStorage.setItem('100re_token', data.token);
+          setAdminState(true, data.user);
+          closeModal(loginModal);
+          showToast(`Đăng nhập thành công! Token UUID đã được cấp.`);
+          await loadMembers();
+        } else {
+          if (loginErrorAlert) {
+            loginErrorAlert.textContent = data.error || 'Sai tên đăng nhập hoặc mật khẩu!';
+            loginErrorAlert.style.display = 'block';
+          }
+        }
+      } catch (err) {
+        // Fallback for offline / direct file opening
+        if (username === '100re' && password === '100re') {
+          const fallbackToken = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : ('uuid_' + Date.now());
+          currentAuthToken = fallbackToken;
+          localStorage.setItem('100re_token', fallbackToken);
+          setAdminState(true, '100re');
+          closeModal(loginModal);
+          showToast('Đăng nhập thành công (Chế độ Quản trị)!');
+          await loadMembers();
+        } else {
+          if (loginErrorAlert) {
+            loginErrorAlert.innerHTML = 'Sai tên đăng nhập hoặc mật khẩu!<br><small style="font-size:0.75rem; color:#64748b;">(Tài khoản: 100re / Mật khẩu: 100re)</small>';
+            loginErrorAlert.style.display = 'block';
+          }
+        }
+      }
+    });
+  }
+
+  // Logout Event
+  if (btnAdminLogout) {
+    btnAdminLogout.addEventListener('click', async () => {
+      try {
+        if (currentAuthToken) {
+          await fetch(`${API_BASE}/api/logout`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${currentAuthToken}` }
+          });
+        }
+      } catch (e) {}
+
+      localStorage.removeItem('100re_token');
+      currentAuthToken = null;
+      setAdminState(false);
+      showToast('Đã đăng xuất khỏi phiên làm việc.');
+    });
+  }
+
+  // ==========================================
+  // 5. Member Add & Edit Operations
+  // ==========================================
+  const btnMainAddMember = document.getElementById('btnMainAddMember');
+  if (btnMainAddMember) {
+    btnMainAddMember.addEventListener('click', () => {
+      if (document.body.classList.contains('admin-mode')) {
+        openAddMemberModal();
+      } else {
+        showToast('Vui lòng đăng nhập tài khoản Quản trị để thêm thành viên.');
+        if (loginErrorAlert) loginErrorAlert.style.display = 'none';
+        if (loginForm) loginForm.reset();
+        openModal(loginModal);
+      }
+    });
+  }
+
+  // Handle Team-specific Add Buttons
+  document.querySelectorAll('.btn-team-add-member').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const teamKey = btn.getAttribute('data-team');
+      if (document.body.classList.contains('admin-mode')) {
+        openAddMemberModal(teamKey);
+      } else {
+        showToast('Vui lòng đăng nhập tài khoản Quản trị để thêm thành viên.');
+        if (loginErrorAlert) loginErrorAlert.style.display = 'none';
+        if (loginForm) loginForm.reset();
+        openModal(loginModal);
+      }
+    });
+  });
+
+  if (btnAdminAddMember) {
+    btnAdminAddMember.addEventListener('click', () => {
+      openAddMemberModal();
+    });
+  }
+
+  function openAddMemberModal(defaultTeam = 'pv') {
+    if (memberFormTitle) memberFormTitle.textContent = 'Thêm Thành Viên Mới';
+    if (memberFormErrorAlert) memberFormErrorAlert.style.display = 'none';
+    if (memberForm) memberForm.reset();
+    if (editMemberId) editMemberId.value = '';
+    if (formMemberTeam) formMemberTeam.value = defaultTeam;
+    if (formPhotoUrl) formPhotoUrl.value = '';
+    if (imagePreviewImg) {
+      imagePreviewImg.src = '';
+      imagePreviewImg.style.display = 'none';
+    }
+    if (imagePreviewPlaceholder) imagePreviewPlaceholder.style.display = 'block';
+    openModal(memberFormModal);
+  }
+
+  function openEditMemberModal(member) {
+    if (memberFormTitle) memberFormTitle.textContent = `Chỉnh Sửa: ${member.name}`;
+    if (memberFormErrorAlert) memberFormErrorAlert.style.display = 'none';
+    if (memberForm) memberForm.reset();
+    if (editMemberId) editMemberId.value = member.id;
+    if (formMemberName) formMemberName.value = member.name || '';
+    if (formMemberTeam) formMemberTeam.value = member.team || 'pv';
+    if (formMemberRole) formMemberRole.value = member.role || '';
+    if (formMemberBio) formMemberBio.value = member.bio || '';
+    if (formPhotoUrl) formPhotoUrl.value = member.image || '';
+
+    if (member.image) {
+      if (imagePreviewImg) {
+        imagePreviewImg.src = member.image;
+        imagePreviewImg.style.display = 'block';
+      }
+      if (imagePreviewPlaceholder) imagePreviewPlaceholder.style.display = 'none';
+    } else {
+      if (imagePreviewImg) imagePreviewImg.style.display = 'none';
+      if (imagePreviewPlaceholder) imagePreviewPlaceholder.style.display = 'block';
+    }
+
+    openModal(memberFormModal);
+  }
+
+  if (memberFormCloseBtn) {
+    memberFormCloseBtn.addEventListener('click', () => closeModal(memberFormModal));
+  }
+
+  // Live Image File Preview
+  if (formPhotoFile) {
+    formPhotoFile.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          if (imagePreviewImg) {
+            imagePreviewImg.src = event.target.result;
+            imagePreviewImg.style.display = 'block';
+          }
+          if (imagePreviewPlaceholder) imagePreviewPlaceholder.style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+
+  // Save (Add or Update) Member Form Submit
+  if (memberForm) {
+    memberForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = editMemberId.value;
+      const name = formMemberName.value.trim();
+      const team = formMemberTeam.value;
+      const teamSelect = formMemberTeam.options[formMemberTeam.selectedIndex];
+      const teamName = teamSelect ? teamSelect.text : team;
+      const role = formMemberRole.value.trim() || `${teamName} Researcher`;
+      const bio = formMemberBio.value.trim();
+      let imagePath = formPhotoUrl.value.trim() || 'assets/images/logo.jpg';
+
+      // If user uploaded a new photo file, upload it first or use base64
+      const file = formPhotoFile.files[0];
+      if (file) {
+        try {
+          const base64Data = await readFileAsBase64(file);
+          const uploadRes = await fetch(`${API_BASE}/api/upload-photo`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${currentAuthToken}`
+            },
+            body: JSON.stringify({
+              filename: file.name,
+              base64Data: base64Data
+            })
+          });
+          const uploadData = await uploadRes.json();
+          if (uploadData.success && uploadData.imagePath) {
+            imagePath = uploadData.imagePath;
+          } else {
+            imagePath = base64Data; // fallback to inline base64
+          }
+        } catch (uploadErr) {
+          // If server upload failed, fallback to base64 inline image
+          try {
+            imagePath = await readFileAsBase64(file);
+          } catch (err) {}
+        }
+      }
+
+      const payload = { name, team, teamName, role, bio, image: imagePath };
+
+      try {
+        let res;
+        if (id) {
+          // Edit existing member
+          res = await fetch(`${API_BASE}/api/members/${id}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${currentAuthToken}`
+            },
+            body: JSON.stringify(payload)
+          });
+        } else {
+          // Add new member
+          res = await fetch(`${API_BASE}/api/members`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${currentAuthToken}`
+            },
+            body: JSON.stringify(payload)
+          });
+        }
+
+        const data = await res.json();
+        if (data.success) {
+          closeModal(memberFormModal);
+          showToast(id ? 'Cập nhật thông tin thành công!' : 'Đã thêm thành viên mới thành công!');
+          await loadMembers();
+          return;
+        }
+      } catch (err) {}
+
+      // Fallback local update if API is unreachable
+      if (id) {
+        const idx = allMembers.findIndex(m => m.id === id);
+        if (idx !== -1) {
+          allMembers[idx] = { ...allMembers[idx], ...payload };
+        }
+      } else {
+        const newId = `${team}_${Date.now()}`;
+        allMembers.push({ id: newId, ...payload });
+      }
+      localStorage.setItem('100re_local_members', JSON.stringify(allMembers));
+      closeModal(memberFormModal);
+      showToast(id ? 'Cập nhật thành công!' : 'Đã thêm thành viên mới!');
+      renderAllTeamGrids();
+    });
+  }
+
+  function readFileAsBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = error => reject(error);
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // Delete Member Handler
+  async function handleDeleteMember(member) {
+    const confirmDelete = confirm(`Bạn có chắc chắn muốn xóa thành viên "${member.name}" khỏi danh sách?`);
+    if (!confirmDelete) return;
+
+    try {
+      const res = await fetch(`${API_BASE}/api/members/${member.id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${currentAuthToken}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(`Đã xóa thành viên "${member.name}".`);
+        await loadMembers();
+        return;
+      }
+    } catch (e) {}
+
+    // Fallback local delete
+    allMembers = allMembers.filter(m => m.id !== member.id);
+    localStorage.setItem('100re_local_members', JSON.stringify(allMembers));
+    showToast(`Đã xóa thành viên "${member.name}".`);
+    renderAllTeamGrids();
+  }
+
+  // ==========================================
+  // 6. Detail Quick View Modal Helper
+  // ==========================================
+  window.openMemberModal = function(name, role, avatarSrc, bioText) {
+    if (!memberModal) return;
+    if (modalAvatar) modalAvatar.src = avatarSrc || 'assets/images/logo.jpg';
+    if (modalName) modalName.textContent = name;
+    if (modalRole) modalRole.textContent = role;
+    if (modalBio) {
+      modalBio.innerHTML = bioText ? bioText.replace(/\n/g, '<br>') :
+        `Member of 100RE Laboratory specializing in ${role}. Dedicated to researching and developing solutions toward 100% Renewable Energy.`;
+    }
+    openModal(memberModal);
+  };
+
+  if (modalCloseBtn) {
+    modalCloseBtn.addEventListener('click', () => closeModal(memberModal));
+  }
+
+  // Global Backdrop and Escape click to close
+  [loginModal, memberFormModal, memberModal].forEach(modal => {
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal(modal);
+      });
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      [loginModal, memberFormModal, memberModal].forEach(m => closeModal(m));
+    }
+  });
+
+  // ==========================================
+  // 7. Search & Filter Interactions
+  // ==========================================
+  function applySearchAndFilter() {
+    const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+    const activeFilterBtn = document.querySelector('.filter-btn.active');
+    const filterValue = activeFilterBtn ? activeFilterBtn.getAttribute('data-filter') : 'all';
+
+    // 1. Filter Supervisors
+    if (supervisorsSection) {
+      const showSupByFilter = (filterValue === 'all' || filterValue === 'supervisors');
+      if (!showSupByFilter) {
+        supervisorsSection.style.display = 'none';
+      } else {
+        const cards = supervisorsSection.querySelectorAll('.supervisor-card');
+        let visibleCount = 0;
+        cards.forEach(card => {
+          const matchQuery = !query || card.innerText.toLowerCase().includes(query);
+          card.style.display = matchQuery ? 'grid' : 'none';
+          if (matchQuery) visibleCount++;
+        });
+        supervisorsSection.style.display = visibleCount > 0 ? 'block' : 'none';
+      }
+    }
+
+    // 2. Filter Team Blocks
+    teamBlocks.forEach(block => {
+      const teamKey = block.getAttribute('data-team');
+      const showByFilter = (filterValue === 'all' || filterValue === teamKey);
+
+      if (!showByFilter) {
+        block.style.display = 'none';
+        return;
+      }
+
+      const memberCards = block.querySelectorAll('.member-card');
+      let visibleCount = 0;
+
+      memberCards.forEach(card => {
+        const text = card.innerText.toLowerCase();
+        const matchQuery = !query || text.includes(query);
+        card.style.display = matchQuery ? 'flex' : 'none';
+        if (matchQuery) visibleCount++;
+      });
+
+      if (visibleCount > 0 || (query === '' && memberCards.length === 0)) {
+        block.style.display = 'block';
+      } else {
+        block.style.display = 'none';
+      }
+    });
+  }
+
+  if (filterBtns) {
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        applySearchAndFilter();
+      });
+    });
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener('input', applySearchAndFilter);
+  }
+
+  // ==========================================
+  // 8. Navigation & Mobile Drawer UX
+  // ==========================================
+  const mobileToggle = document.getElementById('mobileToggle');
+  const navMenu = document.getElementById('navMenu');
+  let mobileBackdrop = document.querySelector('.mobile-nav-backdrop');
+
+  if (!mobileBackdrop) {
+    mobileBackdrop = document.createElement('div');
+    mobileBackdrop.className = 'mobile-nav-backdrop';
+    document.body.appendChild(mobileBackdrop);
+  }
+
+  function toggleMobileMenu(forceClose = false) {
+    if (!navMenu || !mobileToggle) return;
+    const isOpening = forceClose ? false : !navMenu.classList.contains('show');
+    if (isOpening) {
+      navMenu.classList.add('show');
+      mobileBackdrop.classList.add('show');
+      document.body.style.overflow = 'hidden';
+      const icon = mobileToggle.querySelector('i');
+      if (icon) {
+        icon.classList.remove('fa-bars');
+        icon.classList.add('fa-xmark');
+      }
+    } else {
+      navMenu.classList.remove('show');
+      mobileBackdrop.classList.remove('show');
+      document.body.style.overflow = '';
+      const icon = mobileToggle.querySelector('i');
+      if (icon) {
+        icon.classList.remove('fa-xmark');
+        icon.classList.add('fa-bars');
+      }
+    }
+  }
+
+  if (mobileToggle) {
+    mobileToggle.addEventListener('click', () => toggleMobileMenu());
+  }
+
+  if (mobileBackdrop) {
+    mobileBackdrop.addEventListener('click', () => toggleMobileMenu(true));
+  }
+
+  const navItems = document.querySelectorAll('.nav-item');
+  navItems.forEach(item => {
+    const link = item.querySelector('.nav-link');
+    const dropdown = item.querySelector('.dropdown-menu');
+    if (dropdown && link && window.innerWidth <= 900) {
+      link.addEventListener('click', (e) => {
+        if (window.innerWidth <= 900) {
+          e.preventDefault();
+          item.classList.toggle('dropdown-open');
+        }
+      });
+    }
+  });
+
+  const navbar = document.querySelector('.navbar');
+  window.addEventListener('scroll', () => {
+    if (navbar) {
+      if (window.scrollY > 20) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    }
+  });
+
+  const backToTopBtn = document.getElementById('backToTop');
+  if (backToTopBtn) {
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 400) {
+        backToTopBtn.classList.add('show');
+      } else {
+        backToTopBtn.classList.remove('show');
+      }
+    });
+
+    backToTopBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
+  // Auto-highlight active navigation link
+  const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+  document.querySelectorAll('.nav-link, .dropdown-item a').forEach(a => {
+    const href = a.getAttribute('href');
+    if (href === currentPath || (currentPath === '' && href === 'index.html')) {
+      a.classList.add('active');
+      const parentNavItem = a.closest('.nav-item');
+      if (parentNavItem) {
+        const parentNavLink = parentNavItem.querySelector('.nav-link');
+        if (parentNavLink) parentNavLink.classList.add('active');
+      }
+    }
+  });
+
+  // ==========================================
+  // 9. Animated Number Counters UX
+  // ==========================================
+  function initAnimatedCounters() {
+    const statEls = document.querySelectorAll('.stat-number');
+    if (!statEls.length) return;
+
+    const observer = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+          const originalText = el.textContent.trim();
+          const match = originalText.match(/^(\d+)(.*)$/);
+          if (match) {
+            const targetNum = parseInt(match[1], 10);
+            const suffix = match[2];
+            let current = 0;
+            const duration = 1000;
+            const stepTime = 20;
+            const increment = targetNum / (duration / stepTime);
+
+            const timer = setInterval(() => {
+              current += increment;
+              if (current >= targetNum) {
+                el.textContent = `${targetNum}${suffix}`;
+                clearInterval(timer);
+              } else {
+                el.textContent = `${Math.floor(current)}${suffix}`;
+              }
+            }, stepTime);
+          }
+          obs.unobserve(el);
+        }
+      });
+    }, { threshold: 0.2 });
+
+    statEls.forEach(el => observer.observe(el));
+  }
+
+  // ==========================================
+  // 10. Search Clear Button & Focus UX
+  // ==========================================
+  function initSearchUX() {
+    const searchInputs = document.querySelectorAll('input[type="text"][placeholder*="Search"], input[type="text"][id*="Search"]');
+    searchInputs.forEach(input => {
+      let parent = input.parentElement;
+      let clearBtn = parent.querySelector('.search-clear-btn');
+      if (!clearBtn) {
+        clearBtn = document.createElement('button');
+        clearBtn.className = 'search-clear-btn';
+        clearBtn.type = 'button';
+        clearBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+        clearBtn.title = 'Clear search';
+        parent.appendChild(clearBtn);
+      }
+
+      input.addEventListener('input', () => {
+        clearBtn.style.display = input.value.trim() ? 'block' : 'none';
+      });
+
+      clearBtn.addEventListener('click', () => {
+        input.value = '';
+        clearBtn.style.display = 'none';
+        input.dispatchEvent(new Event('input'));
+        input.focus();
+      });
+    });
+  }
+
+  // ==========================================
+  // 11. Enhanced Fullscreen Lightbox UX
+  // ==========================================
+  let currentGalleryItems = [];
+  let currentLightboxIndex = 0;
+
+  window.openLightbox = function(src, caption) {
+    const modal = document.getElementById('lightboxModal');
+    const domItems = document.querySelectorAll('.gallery-item');
+    currentGalleryItems = Array.from(domItems).map(item => ({
+      src: item.querySelector('img') ? item.querySelector('img').src : src,
+      caption: item.querySelector('.gallery-caption-overlay') ? item.querySelector('.gallery-caption-overlay').textContent : caption
+    }));
+
+    currentLightboxIndex = currentGalleryItems.findIndex(i => i.src === src || src.endsWith(i.src.split('/').pop()));
+    if (currentLightboxIndex < 0) currentLightboxIndex = 0;
+
+    renderLightboxContent();
+    if (modal) {
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+  };
+
+  function renderLightboxContent() {
+    const img = document.getElementById('lightboxImg');
+    const cap = document.getElementById('lightboxCaption');
+    const counter = document.getElementById('lightboxCounter');
+    if (!currentGalleryItems.length) return;
+    const item = currentGalleryItems[currentLightboxIndex];
+    if (img) img.src = item.src;
+    if (cap) cap.textContent = item.caption;
+    if (counter) counter.textContent = `Photo ${currentLightboxIndex + 1} of ${currentGalleryItems.length}`;
+  }
+
+  window.nextLightbox = function(e) {
+    if (e) e.stopPropagation();
+    if (!currentGalleryItems.length) return;
+    currentLightboxIndex = (currentLightboxIndex + 1) % currentGalleryItems.length;
+    renderLightboxContent();
+  };
+
+  window.prevLightbox = function(e) {
+    if (e) e.stopPropagation();
+    if (!currentGalleryItems.length) return;
+    currentLightboxIndex = (currentLightboxIndex - 1 + currentGalleryItems.length) % currentGalleryItems.length;
+    renderLightboxContent();
+  };
+
+  window.closeLightbox = function() {
+    const modal = document.getElementById('lightboxModal');
+    if (modal) {
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  };
+
+  document.addEventListener('keydown', (e) => {
+    const modal = document.getElementById('lightboxModal');
+    if (modal && modal.classList.contains('active')) {
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowRight') nextLightbox();
+      if (e.key === 'ArrowLeft') prevLightbox();
+    }
+    if (e.key === 'Escape') {
+      toggleMobileMenu(true);
+    }
+  });
+
+  // Initialize All UX Enhancements
+  checkAuthStatus();
+  loadMembers();
+  initAnimatedCounters();
+  initSearchUX();
+});
+
+

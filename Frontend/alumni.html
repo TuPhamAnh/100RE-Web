@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alumni | 100RE LABORATORY</title>
+  <meta name="description" content="Former members and distinguished alumni of 100RE Laboratory advancing clean energy technologies across international graduate universities and global tech corporations.">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpeg" href="assets/images/logo.jpg">
+  
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/pages.css">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    .alumni-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-top: 4px solid #16a34a;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+      overflow: hidden;
+    }
+    .alumni-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+      border-top-color: #15803d;
+    }
+    .alumni-card-top {
+      display: flex;
+      gap: 18px;
+      padding: 24px 24px 16px;
+      border-bottom: 1px solid #f1f5f9;
+      background: #fafbfc;
+    }
+    .alumni-avatar-wrap {
+      width: 110px;
+      height: 140px;
+      flex-shrink: 0;
+      background: #e2e8f0;
+      overflow: hidden;
+      border: 1px solid #cbd5e1;
+    }
+    .alumni-avatar {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      transition: transform 0.3s ease;
+    }
+    .alumni-card:hover .alumni-avatar {
+      transform: scale(1.05);
+    }
+    .alumni-info-header {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 4px;
+      flex-grow: 1;
+    }
+    .alumni-name {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: #0f172a;
+      line-height: 1.2;
+    }
+    .alumni-period {
+      display: inline-block;
+      align-self: flex-start;
+      background: #f0fdf4;
+      color: #16a34a;
+      border: 1px solid #bbf7d0;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      margin-top: 2px;
+    }
+    .alumni-role {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #475569;
+    }
+    .alumni-pos {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #15803d;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 2px;
+    }
+    .alumni-card-body {
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      flex-grow: 1;
+    }
+    .alumni-achievements-title {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .alumni-achievements-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.86rem;
+      color: #334155;
+      line-height: 1.45;
+    }
+    .alumni-achievements-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .alumni-achievements-list li i {
+      color: #16a34a;
+      margin-top: 3px;
+      font-size: 0.75rem;
+      flex-shrink: 0;
+    }
+    .alumni-contacts {
+      margin-top: auto;
+      padding-top: 14px;
+      border-top: 1px dashed #e2e8f0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.84rem;
+    }
+    .alumni-contact-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #475569;
+    }
+    .alumni-contact-item a {
+      color: #16a34a;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .alumni-contact-item a:hover {
+      text-decoration: underline;
+    }
+
+    /* Team Alumni Member Cards */
+    .team-alumni-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+    }
+    .team-alumnus-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-top: 3px solid #16a34a;
+      padding: 16px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .team-alumnus-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+    }
+    .team-alumnus-avatar-wrap {
+      width: 100px;
+      height: 125px;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      overflow: hidden;
+      margin-bottom: 4px;
+    }
+    .team-alumnus-avatar {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+    }
+    .team-alumnus-name {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #0f172a;
+      line-height: 1.2;
+    }
+    .team-alumnus-team {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #16a34a;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      padding: 2px 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP ADMIN BAR -->
+  <div class="admin-topbar" id="adminTopbar">
+    <div class="container">
+      <div class="admin-badge-info">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>Logged in as: <strong id="adminUsername">100re</strong></span>
+      </div>
+      <div class="admin-actions">
+        <button class="btn-admin btn-admin-logout" id="btnAdminLogout">
+          <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEADER / NAVBAR -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="logo-wrapper">
+        <img src="assets/images/logo.jpg" alt="100RE Laboratory Logo" class="logo-img">
+      </a>
+      
+      <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+
+      <ul class="nav-menu" id="navMenu">
+        <li class="nav-item">
+          <a href="index.html" class="nav-link">Home</a>
+        </li>
+        <li class="nav-item">
+          <a href="about.html" class="nav-link">About</a>
+        </li>
+        
+        <!-- Research Dropdown -->
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            Research <i class="fa-solid fa-chevron-down dropdown-icon"></i>
+          </a>
+          <ul class="dropdown-menu">
+            <li class="dropdown-item"><a href="research-areas.html"><i class="fa-solid fa-microchip"></i> Research Areas</a></li>
+            <li class="dropdown-item"><a href="research-experiences.html"><i class="fa-solid fa-timeline"></i> Research Experiences</a></li>
+            <li class="dropdown-item"><a href="publications.html"><i class="fa-solid fa-book-open"></i> Publications</a></li>
+            <li class="dropdown-item"><a href="projects.html"><i class="fa-solid fa-diagram-project"></i> Projects</a></li>
+            <li class="dropdown-item"><a href="mini-scada.html"><i class="fa-solid fa-tower-broadcast"></i> Mini SCADA</a></li>
+            <li class="dropdown-item"><a href="collaborations.html"><i class="fa-solid fa-handshake"></i> Collaborations</a></li>
+            <li class="dropdown-item"><a href="achievements.html"><i class="fa-solid fa-trophy"></i> Achievements</a></li>
+          </ul>
+        </li>
+
+        <!-- Member Dropdown -->
+        <li class="nav-item">
+          <a href="#" class="nav-link active">
+            Member <i class="fa-solid fa-chevron-down dropdown-icon"></i>
+          </a>
+          <ul class="dropdown-menu">
+            <li class="dropdown-item"><a href="members.html"><i class="fa-solid fa-users"></i> Lab Members</a></li>
+            <li class="dropdown-item"><a href="alumni.html" class="active"><i class="fa-solid fa-user-graduate"></i> Alumni</a></li>
+            <li class="dropdown-item"><a href="journey.html"><i class="fa-solid fa-route"></i> Journey</a></li>
+            <li class="dropdown-item"><a href="photos.html"><i class="fa-solid fa-camera"></i> Photos</a></li>
+          </ul>
+        </li>
+
+        <!-- Others Dropdown -->
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            Others <i class="fa-solid fa-chevron-down dropdown-icon"></i>
+          </a>
+          <ul class="dropdown-menu">
+            <li class="dropdown-item"><a href="news.html"><i class="fa-solid fa-newspaper"></i> News &amp; Events</a></li>
+            <li class="dropdown-item"><a href="fund-raise.html"><i class="fa-solid fa-hand-holding-dollar"></i> Support &amp; Fund Raise</a></li>
+            <li class="dropdown-item"><a href="join-us.html"><i class="fa-solid fa-user-plus"></i> Join Us</a></li>
+            <li class="dropdown-item"><a href="useful-links.html"><i class="fa-solid fa-link"></i> Useful Links</a></li>
+            <li class="dropdown-item"><a href="lab-equipment.html"><i class="fa-solid fa-toolbox"></i> Lab Equipment</a></li>
+          </ul>
+        </li>
+
+        <!-- Login / User Auth Button -->
+        <li class="nav-item">
+          <a href="members.html" class="nav-link btn-nav-login" id="navLoginBtn">
+            <i class="fa-solid fa-lock"></i> Login
+          </a>
+        </li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- PAGE HERO BANNER -->
+  <section class="page-hero">
+    <div class="container">
+      <div class="breadcrumb-nav">
+        <a href="index.html">Home</a> <i class="fa-solid fa-chevron-right" style="font-size: 0.7rem;"></i> <span>Alumni</span>
+      </div>
+      <h1 class="page-hero-title">100RE Lab <span>Alumni</span></h1>
+      <p class="page-hero-desc">
+        The former members of 100RE LAB have all demonstrated exceptional accomplishments, along with many publications in prestigious journals. Here is the directory of esteemed individuals, their achievements, and contact information.
+      </p>
+    </div>
+  </section>
+
+  <!-- MAIN ALUMNI CONTENT -->
+  <main class="container section">
+    
+    <!-- Search & Filter Bar -->
+    <div class="pub-control-bar" style="margin-bottom: 35px;">
+      <div class="search-input-wrapper">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" class="search-input-field" id="alumniSearch" placeholder="Search alumni by name, former role, current position, achievements, or contact email...">
+      </div>
+      <div class="filter-pills" style="margin-bottom: 0;">
+        <button class="filter-btn active" data-alumni-filter="all">All Alumni</button>
+        <button class="filter-btn" data-alumni-filter="featured">Featured Profiles (9)</button>
+        <button class="filter-btn" data-alumni-filter="pv">PV Team</button>
+        <button class="filter-btn" data-alumni-filter="dr_uc">Unit Commitment</button>
+        <button class="filter-btn" data-alumni-filter="wind">Wind Team</button>
+        <button class="filter-btn" data-alumni-filter="smartgrid">Smart Grid</button>
+        <button class="filter-btn" data-alumni-filter="ev">Electric Vehicle</button>
+        <button class="filter-btn" data-alumni-filter="hydrogen">Hydrogen Team</button>
+        <button class="filter-btn" data-alumni-filter="bess">BESS Team</button>
+        <button class="filter-btn" data-alumni-filter="ai">AI Team</button>
+      </div>
+    </div>
+
+    <!-- 1. FEATURED ALUMNI PROFILES SECTION -->
+    <div id="featuredAlumniSection" style="margin-bottom: 60px;">
+      <div class="section-header">
+        <div class="section-title-group">
+          <div class="section-icon"><i class="fa-solid fa-user-graduate"></i></div>
+          <h2 class="section-title">Featured Alumni Profiles</h2>
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 26px;" id="featuredAlumniContainer">
+        <!-- Populated dynamically from LAB_DATA.featuredAlumni -->
+      </div>
+    </div>
+
+    <!-- 2. TEAM ALUMNI DIRECTORY SECTION -->
+    <div id="teamAlumniSection">
+      <div class="section-header">
+        <div class="section-title-group">
+          <div class="section-icon"><i class="fa-solid fa-users-rectangle"></i></div>
+          <h2 class="section-title">Team Alumni Directory</h2>
+        </div>
+      </div>
+      <div class="team-alumni-grid" id="teamAlumniContainer">
+        <!-- Populated dynamically from LAB_DATA.teamAlumni -->
+      </div>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4 class="footer-col-title">Supervisor</h4>
+          <ul class="footer-info-list">
+            <li class="footer-info-item"><i class="fa-solid fa-user-tie"></i><div><strong>Nguyen Duc Tuyen</strong>, Assoc. Prof</div></li>
+            <li class="footer-info-item"><i class="fa-solid fa-phone"></i><div>Tel: <a href="tel:+84986509059">+84 986 509 059</a></div></li>
+            <li class="footer-info-item"><i class="fa-solid fa-envelope"></i><div>Mail 1: <a href="mailto:tuyen.nguyenduc@hust.edu.vn">tuyen.nguyenduc@hust.edu.vn</a></div></li>
+            <li class="footer-info-item"><i class="fa-solid fa-envelope-open-text"></i><div>Mail 2: <a href="mailto:i029999@shibaura-it.ac.jp">i029999@shibaura-it.ac.jp</a></div></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-col-title">Contact for Information</h4>
+          <ul class="footer-info-list">
+            <li class="footer-info-item"><i class="fa-solid fa-user-graduate"></i><div><strong>Nguyen Tuan Anh</strong>, B.Eng</div></li>
+            <li class="footer-info-item"><i class="fa-solid fa-phone"></i><div>Tel: <a href="tel:+84974812546">+84 974 812 546</a></div></li>
+            <li class="footer-info-item"><i class="fa-solid fa-envelope"></i><div>Mail: <a href="mailto:anh.nt196322@sis.hust.edu.vn">anh.nt196322@sis.hust.edu.vn</a></div></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-col-title">Laboratory Offices</h4>
+          <ul class="footer-info-list">
+            <li class="footer-info-item"><i class="fa-solid fa-location-dot"></i><div><strong>D9-300 &amp; C7-503</strong><br>Hanoi University of Science and Technology (HUST)<br>No. 1 Dai Co Viet, Hai Ba Trung, Hanoi, Vietnam</div></li>
+            <li class="footer-info-item"><i class="fa-solid fa-globe"></i><div>Website: <a href="https://www.100relab.com" target="_blank" rel="noopener noreferrer">www.100relab.com</a></div></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 100RE LABORATORY. All rights reserved. Toward 100% Renewable Energy.</p>
+        <div class="footer-social-links">
+          <a href="https://www.100relab.com" class="social-link" title="Website"><i class="fa-solid fa-globe"></i></a>
+          <a href="https://scholar.google.com/citations?user=_Jwdw_4AAAAJ&hl=en" class="social-link" title="Google Scholar"><i class="fa-brands fa-google-scholar"></i></a>
+          <a href="https://orcid.org/0000-0001-7107-3897" class="social-link" title="ORCID"><i class="fa-brands fa-orcid"></i></a>
+          <a href="mailto:tuyen.nguyenduc@hust.edu.vn" class="social-link" title="Email"><i class="fa-solid fa-envelope"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <button class="back-to-top" id="backToTop" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const featContainer = document.getElementById('featuredAlumniContainer');
+      const teamContainer = document.getElementById('teamAlumniContainer');
+      const searchInput = document.getElementById('alumniSearch');
+      const filterBtns = document.querySelectorAll('[data-alumni-filter]');
+
+      function renderAllAlumni() {
+        if (!window.LAB_DATA) return;
+        const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+        const activeBtn = document.querySelector('[data-alumni-filter].active');
+        const filter = activeBtn ? activeBtn.getAttribute('data-alumni-filter') : 'all';
+
+        // 1. Featured Alumni Filtering
+        const featuredData = window.LAB_DATA.featuredAlumni || [];
+        const featFiltered = featuredData.filter(a => {
+          const matchFilter = (filter === 'all' || filter === 'featured');
+          const fullText = `${a.name} ${a.formerRole} ${a.currentPos} ${a.labPeriod} ${a.bio} ${a.email || ''} ${a.phone || ''} ${(a.achievements || []).join(' ')}`.toLowerCase();
+          const matchQuery = !query || fullText.includes(query);
+          return matchFilter && matchQuery;
+        });
+
+        const featSection = document.getElementById('featuredAlumniSection');
+        if (featFiltered.length === 0 && (filter !== 'all' && filter !== 'featured')) {
+          if (featSection) featSection.style.display = 'none';
+        } else {
+          if (featSection) featSection.style.display = 'block';
+          featContainer.innerHTML = featFiltered.map(a => `
+            <article class="alumni-card">
+              <div class="alumni-card-top">
+                <div class="alumni-avatar-wrap">
+                  <img src="${a.image}" alt="${a.name}" class="alumni-avatar" onerror="this.src='assets/images/logo.jpg'">
+                </div>
+                <div class="alumni-info-header">
+                  <span class="alumni-period"><i class="fa-regular fa-calendar"></i> ${a.labPeriod}</span>
+                  <h3 class="alumni-name">${a.name}</h3>
+                  <div class="alumni-role">${a.formerRole}</div>
+                  <div class="alumni-pos"><i class="fa-solid fa-briefcase"></i> ${a.currentPos}</div>
+                </div>
+              </div>
+              <div class="alumni-card-body">
+                ${a.achievements && a.achievements.length ? `
+                  <div>
+                    <h4 class="alumni-achievements-title"><i class="fa-solid fa-award"></i> Achievements</h4>
+                    <ul class="alumni-achievements-list">
+                      ${a.achievements.map(ach => `<li><i class="fa-solid fa-check"></i><span>${ach}</span></li>`).join('')}
+                    </ul>
+                  </div>
+                ` : ''}
+                <p style="font-size: 0.88rem; color: #475569; line-height: 1.55; margin-top: 4px;">${a.bio}</p>
+                <div class="alumni-contacts">
+                  ${a.email ? `<div class="alumni-contact-item"><i class="fa-solid fa-envelope" style="color:#16a34a;"></i> <span>Email: <a href="mailto:${a.email}">${a.email}</a></span></div>` : ''}
+                  ${a.phone ? `<div class="alumni-contact-item"><i class="fa-solid fa-phone" style="color:#16a34a;"></i> <span>Phone: <a href="tel:${a.phone.replace(/[^0-9+]/g, '')}">${a.phone}</a></span></div>` : ''}
+                </div>
+              </div>
+            </article>
+          `).join('');
+        }
+
+        // 2. Team Alumni Directory Filtering
+        const teamData = window.LAB_DATA.teamAlumni || [];
+        const teamFiltered = teamData.filter(m => {
+          const matchFilter = (filter === 'all' || filter === m.teamCode);
+          const fullText = `${m.name} ${m.team}`.toLowerCase();
+          const matchQuery = !query || fullText.includes(query);
+          return matchFilter && matchQuery;
+        });
+
+        const teamSection = document.getElementById('teamAlumniSection');
+        if (teamFiltered.length === 0 && filter === 'featured') {
+          if (teamSection) teamSection.style.display = 'none';
+        } else {
+          if (teamSection) teamSection.style.display = 'block';
+          teamContainer.innerHTML = teamFiltered.map(m => `
+            <div class="team-alumnus-card">
+              <div class="team-alumnus-avatar-wrap">
+                <img src="${m.image}" alt="${m.name}" class="team-alumnus-avatar" onerror="this.src='assets/images/logo.jpg'">
+              </div>
+              <h4 class="team-alumnus-name">${m.name}</h4>
+              <span class="team-alumnus-team">${m.team}</span>
+            </div>
+          `).join('');
+        }
+
+        // 3. Global Empty State
+        if (featFiltered.length === 0 && teamFiltered.length === 0) {
+          featSection.style.display = 'block';
+          teamSection.style.display = 'none';
+          featContainer.innerHTML = `
+            <div class="empty-state" style="grid-column: 1 / -1;">
+              <i class="fa-solid fa-user-xmark empty-state-icon"></i>
+              <h4 class="empty-state-title">No Alumni Found</h4>
+              <p class="empty-state-desc">No alumni match your query <em>"${query}"</em> under the selected filter.</p>
+              <button class="btn-reset-filters" onclick="document.getElementById('alumniSearch').value = ''; filterBtns.forEach(b => b.classList.remove('active')); document.querySelector('[data-alumni-filter=all]').classList.add('active'); renderAllAlumni();"><i class="fa-solid fa-rotate-left"></i> Reset All Filters</button>
+            </div>
+          `;
+        }
+      }
+
+      if (searchInput) searchInput.addEventListener('input', renderAllAlumni);
+      if (filterBtns) {
+        filterBtns.forEach(btn => {
+          btn.addEventListener('click', () => {
+            filterBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderAllAlumni();
+          });
+        });
+      }
+
+      renderAllAlumni();
+    });
+  </script>
+</body>
+</html>

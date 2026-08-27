@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fund Raise | 100RE LABORATORY</title>
+  <meta name="description" content="Support and fund raise opportunities for 100RE Laboratory - building a world-class renewable energy research center in Vietnam.">
+  <link rel="icon" type="image/jpeg" href="assets/images/logo.jpg">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Custom Stylesheets -->
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/pages.css">
+</head>
+<body>
+
+  <!-- ADMIN STATUS TOOLBAR -->
+  <div class="admin-topbar" id="adminTopbar">
+    <div class="container">
+      <div class="admin-badge-info"><i class="fa-solid fa-circle-check"></i> <span>Admin Mode (Logged in as <strong id="adminUsername">100re</strong>)</span></div>
+      <div class="admin-actions">
+        <button class="btn-admin btn-admin-add" id="btnAdminAddMember"><i class="fa-solid fa-plus"></i> Add Member</button>
+        <button class="btn-admin btn-admin-logout" id="btnAdminLogout"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVIGATION BAR -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="logo-wrapper" title="100RE Laboratory - Toward 100% Renewable Energy">
+        <img src="assets/images/logo.jpg" alt="100RE Laboratory Logo" class="logo-img">
+      </a>
+      <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation"><i class="fa-solid fa-bars"></i></button>
+      <nav>
+        <ul class="nav-menu" id="navMenu">
+          <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
+          <li class="nav-item">
+            <a href="research-areas.html" class="nav-link">Research <i class="fa-solid fa-chevron-down dropdown-icon"></i></a>
+            <ul class="dropdown-menu">
+              <li class="dropdown-item"><a href="research-areas.html"><i class="fa-solid fa-atom"></i> Research Areas</a></li>
+              <li class="dropdown-item"><a href="research-experiences.html"><i class="fa-solid fa-flask"></i> Research Experiences</a></li>
+              <li class="dropdown-item"><a href="publications.html"><i class="fa-solid fa-book-bookmark"></i> Publications</a></li>
+              <li class="dropdown-item"><a href="collaborations.html"><i class="fa-solid fa-handshake"></i> Collaborations</a></li>
+            </ul>
+          </li>
+          <li class="nav-item"><a href="achievements.html" class="nav-link">Achievement</a></li>
+          <li class="nav-item"><a href="projects.html" class="nav-link">Project</a></li>
+          <li class="nav-item"><a href="news.html" class="nav-link">News</a></li>
+          <li class="nav-item"><a href="journey.html" class="nav-link">Journey</a></li>
+          <li class="nav-item">
+            <a href="members.html" class="nav-link">Member <i class="fa-solid fa-chevron-down dropdown-icon"></i></a>
+            <ul class="dropdown-menu">
+              <li class="dropdown-item"><a href="members.html"><i class="fa-solid fa-users"></i> Our Team</a></li>
+              <li class="dropdown-item"><a href="alumni.html"><i class="fa-solid fa-user-graduate"></i> Alumni</a></li>
+            </ul>
+          </li>
+          <li class="nav-item"><a href="photos.html" class="nav-link">Photos</a></li>
+          <li class="nav-item">
+            <a href="#" class="nav-link active">Others <i class="fa-solid fa-chevron-down dropdown-icon"></i></a>
+            <ul class="dropdown-menu">
+              <li class="dropdown-item"><a href="mini-scada.html"><i class="fa-solid fa-network-wired"></i> Mini Scada</a></li>
+              <li class="dropdown-item"><a href="fund-raise.html"><i class="fa-solid fa-hand-holding-dollar"></i> Fund Raise</a></li>
+              <li class="dropdown-item"><a href="join-us.html"><i class="fa-solid fa-user-plus"></i> How to be one of us?</a></li>
+              <li class="dropdown-item"><a href="useful-links.html"><i class="fa-solid fa-link"></i> Useful Links</a></li>
+              <li class="dropdown-item"><a href="lab-equipment.html"><i class="fa-solid fa-microchip"></i> Lab Equipment</a></li>
+            </ul>
+          </li>
+          <li class="nav-item" id="loginNavItem">
+            <button class="nav-link btn-nav-login" id="navLoginBtn"><i class="fa-solid fa-lock"></i> Login</button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- PAGE HERO -->
+  <section class="page-hero">
+    <div class="container">
+      <div class="breadcrumb-nav">
+        <a href="index.html">Home</a> <i class="fa-solid fa-chevron-right" style="font-size: 0.7rem;"></i> <span>Fund Raise</span>
+      </div>
+      <h1 class="page-hero-title">Support <span>&amp; Fund Raise</span></h1>
+      <p class="page-hero-desc">
+        Join hands with 100RE Laboratory in our 20-year vision to build a world-class clean energy research laboratory, fostering top-tier engineering talent in Vietnam.
+      </p>
+    </div>
+  </section>
+
+  <!-- MAIN FUND RAISE CONTENT -->
+  <main class="container section">
+    
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-left: 5px solid #16a34a; padding: 32px; margin-bottom: 40px;">
+      <h2 style="font-family: 'Oswald', sans-serif; font-size: 1.8rem; color: #0f172a; margin-bottom: 12px;">Our 20-Year Vision &amp; Funding Priorities</h2>
+      <p style="font-size: 0.98rem; color: #475569; line-height: 1.7;">
+        Founded in July 2018 at Hanoi University of Science and Technology, 100RE Lab aims to become a leading international research hub for smart grid technologies, hydrogen integration, and power system decarbonization. To achieve this ambitious vision, we actively welcome collaboration and support in the following areas:
+      </p>
+    </div>
+
+    <!-- 7 Support Areas Grid -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; margin-bottom: 50px;">
+      <div style="background: #ffffff; border: 1px solid #e2e8f0; padding: 24px; border-top: 3px solid #16a34a;">
+        <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.25rem; color: #0f172a; margin-bottom: 8px;">
+          <i class="fa-solid fa-microchip" style="color: #16a34a; margin-right: 8px;"></i> 1. Experimental Apparatus &amp; Licenses
+        </h3>
+        <p style="font-size: 0.9rem; color: #475569; line-height: 1.6;">
+          Donation of power system measurement instruments, oscilloscopes, fuel cell test kits, or professional simulation licenses (PSCAD, DigSILENT, HOMER Pro).
+        </p>
+      </div>
+
+      <div style="background: #ffffff; border: 1px solid #e2e8f0; padding: 24px; border-top: 3px solid #16a34a;">
+        <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.25rem; color: #0f172a; margin-bottom: 8px;">
+          <i class="fa-solid fa-user-tie" style="color: #16a34a; margin-right: 8px;"></i> 2. Academic Mentors &amp; Consultants
+        </h3>
+        <p style="font-size: 0.9rem; color: #475569; line-height: 1.6;">
+          Experienced researchers and industry experts willing to advise students, co-author publications, and give guest lectures.
+        </p>
+      </div>
+
+      <div style="background: #ffffff; border: 1px solid #e2e8f0; padding: 24px; border-top: 3px solid #16a34a;">
+        <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.25rem; color: #0f172a; margin-bottom: 8px;">
+          <i class="fa-solid fa-plane-departure" style="color: #16a34a; margin-right: 8px;"></i> 3. Overseas Graduate Admissions
+        </h3>
+        <p style="font-size: 0.9rem; color: #475569; line-height: 1.6;">
+          Connecting outstanding 100RE Lab graduates with Master/PhD scholarship opportunities at top international research universities.
+        </p>
+      </div>
+
+      <div style="background: #ffffff; border: 1px solid #e2e8f0; padding: 24px; border-top: 3px solid #16a34a;">
+        <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.25rem; color: #0f172a; margin-bottom: 8px;">
+          <i class="fa-solid fa-briefcase" style="color: #16a34a; margin-right: 8px;"></i> 4. Student Recruitment
+        </h3>
+        <p style="font-size: 0.9rem; color: #475569; line-height: 1.6;">
+          Corporate partnerships offering internships and fast-track recruitment for our trained power system and renewable energy engineers.
+        </p>
+      </div>
+
+      <div style="background: #ffffff; border: 1px solid #e2e8f0; padding: 24px; border-top: 3px solid #16a34a;">
+        <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.25rem; color: #0f172a; margin-bottom: 8px;">
+          <i class="fa-solid fa-desktop" style="color: #16a34a; margin-right: 8px;"></i> 5. Computing &amp; Office Hardware
+        </h3>
+        <p style="font-size: 0.9rem; color: #475569; line-height: 1.6;">
+          High-performance GPU workstations for AI model training, monitors, and laboratory office infrastructure.
+        </p>
+      </div>
+
+      <div style="background: #ffffff; border: 1px solid #e2e8f0; padding: 24px; border-top: 3px solid #16a34a;">
+        <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.25rem; color: #0f172a; margin-bottom: 8px;">
+          <i class="fa-solid fa-chalkboard-user" style="color: #16a34a; margin-right: 8px;"></i> 6. Specialized Training Programs
+        </h3>
+        <p style="font-size: 0.9rem; color: #475569; line-height: 1.6;">
+          Sponsoring training workshops on renewable energy standards, power market dispatching, and hydrogen safety.
+        </p>
+      </div>
+
+      <div style="background: #ffffff; border: 1px solid #e2e8f0; padding: 24px; border-top: 3px solid #16a34a;">
+        <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.25rem; color: #0f172a; margin-bottom: 8px;">
+          <i class="fa-solid fa-hand-holding-heart" style="color: #16a34a; margin-right: 8px;"></i> 7. Financial &amp; Publication Grants
+        </h3>
+        <p style="font-size: 0.9rem; color: #475569; line-height: 1.6;">
+          Financial aid covering open-access journal publication fees (IEEE, Elsevier), international conference travel, and student stipends.
+        </p>
+      </div>
+    </div>
+
+    <!-- Contact CTA -->
+    <div style="background: #0f172a; color: #ffffff; padding: 36px; text-align: center;">
+      <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.8rem; margin-bottom: 10px;">Discuss Partnership &amp; Sponsorship</h3>
+      <p style="color: #94a3b8; font-size: 0.95rem; max-width: 600px; margin: 0 auto 20px;">
+        For sponsorship inquiries, corporate collaborations, or equipment donations, please contact our laboratory supervisor directly.
+      </p>
+      <a href="mailto:tuyen.nguyenduc@hust.edu.vn?subject=100RE%20Laboratory%20Sponsorship%20Inquiry" class="btn-primary" style="display: inline-block;">
+        <i class="fa-solid fa-envelope"></i> Contact Assoc. Prof. Nguyen Duc Tuyen
+      </a>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4 class="footer-col-title">Supervisor</h4>
+          <ul class="footer-info-list">
+            <li class="footer-info-item"><i class="fa-solid fa-user-tie"></i><div><strong>Nguyen Duc Tuyen</strong>, Assoc. Prof</div></li>
+            <li class="footer-info-item"><i class="fa-solid fa-phone"></i><div>Tel: <a href="tel:+84986509059">+84 986 509 059</a></div></li>
+            <li class="footer-info-item"><i class="fa-solid fa-envelope"></i><div>Mail 1: <a href="mailto:tuyen.nguyenduc@hust.edu.vn">tuyen.nguyenduc@hust.edu.vn</a></div></li>
+            <li class="footer-info-item"><i class="fa-solid fa-envelope-open-text"></i><div>Mail 2: <a href="mailto:i029999@shibaura-it.ac.jp">i029999@shibaura-it.ac.jp</a></div></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-col-title">Contact for Information</h4>
+          <ul class="footer-info-list">
+            <li class="footer-info-item"><i class="fa-solid fa-user-graduate"></i><div><strong>Nguyen Tuan Anh</strong>, B.Eng</div></li>
+            <li class="footer-info-item"><i class="fa-solid fa-phone"></i><div>Tel: <a href="tel:+84974812546">+84 974 812 546</a></div></li>
+            <li class="footer-info-item"><i class="fa-solid fa-envelope"></i><div>Mail: <a href="mailto:anh.nt196322@sis.hust.edu.vn">anh.nt196322@sis.hust.edu.vn</a></div></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-col-title">Laboratory Offices</h4>
+          <ul class="footer-info-list">
+            <li class="footer-info-item"><i class="fa-solid fa-location-dot"></i><div><strong>D9-300 &amp; C7-503</strong><br>Hanoi University of Science and Technology (HUST)<br>No. 1 Dai Co Viet, Hai Ba Trung, Hanoi, Vietnam</div></li>
+            <li class="footer-info-item"><i class="fa-solid fa-globe"></i><div>Website: <a href="https://www.100relab.com" target="_blank" rel="noopener noreferrer">www.100relab.com</a></div></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 100RE LABORATORY. All rights reserved. Toward 100% Renewable Energy.</p>
+        <div class="footer-social-links">
+          <a href="https://www.100relab.com" class="social-link" title="Website"><i class="fa-solid fa-globe"></i></a>
+          <a href="https://scholar.google.com/citations?user=_Jwdw_4AAAAJ&hl=en" class="social-link" title="Google Scholar"><i class="fa-brands fa-google-scholar"></i></a>
+          <a href="https://orcid.org/0000-0001-7107-3897" class="social-link" title="ORCID"><i class="fa-brands fa-orcid"></i></a>
+          <a href="mailto:tuyen.nguyenduc@hust.edu.vn" class="social-link" title="Email"><i class="fa-solid fa-envelope"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <button class="back-to-top" id="backToTop" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
