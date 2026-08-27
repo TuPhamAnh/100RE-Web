@@ -2,6 +2,9 @@
   "name": "100re-web",
   "version": "1.0.0",
   "description": "100RE Laboratory Member Management Frontend & Cloudflare Pages Functions",
+  "bin": {
+    "wrangler": "./bin/wrangler.js"
+  },
   "scripts": {
     "dev": "wrangler pages dev ./Frontend",
     "build": "echo Static build ready",
