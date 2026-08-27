@@ -452,6 +452,62 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // Automatic Client-side Image Compressor (Resizes to max 500x650 and compresses to lightweight JPEG)
+  function compressImage(file, maxWidth = 500, maxHeight = 650, quality = 0.80) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          let width = img.width;
+          let height = img.height;
+
+          if (width > maxWidth || height > maxHeight) {
+            const ratio = Math.min(maxWidth / width, maxHeight / height);
+            width = Math.round(width * ratio);
+            height = Math.round(height * ratio);
+          }
+
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          const compressedBase64 = canvas.toDataURL('image/jpeg', quality);
+          resolve(compressedBase64);
+        };
+        img.onerror = () => resolve(e.target.result);
+        img.src = e.target.result;
+      };
+      reader.onerror = error => reject(error);
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function safeSaveLocalStorage(key, value) {
+    try {
+      localStorage.setItem(key, value);
+    } catch (e) {
+      console.warn('LocalStorage quota warning:', e);
+      try {
+        let items = JSON.parse(value);
+        if (Array.isArray(items)) {
+          // If quota reached, keep only the latest 10 full base64 images
+          items = items.map((item, idx) => {
+            if (idx > 10 && item.image && item.image.startsWith('data:image')) {
+              return { ...item, image: 'assets/images/logo.jpg' };
+            }
+            return item;
+          });
+          localStorage.setItem(key, JSON.stringify(items));
+        }
+      } catch (err) {
+        console.error('LocalStorage critical error:', err);
+      }
+    }
+  }
+
   // Save (Add or Update) Member Form Submit
   if (memberForm) {
     memberForm.addEventListener('submit', async (e) => {
@@ -472,12 +528,12 @@ document.addEventListener('DOMContentLoaded', () => {
       let imagePath = formPhotoUrl.value.trim() || 'assets/images/logo.jpg';
 
       try {
-        // If user uploaded a new photo file, read as base64 immediately
+        // If user uploaded a new photo file, compress it on client side immediately
         const file = formPhotoFile && formPhotoFile.files ? formPhotoFile.files[0] : null;
         if (file) {
           try {
-            const base64Data = await readFileAsBase64(file);
-            imagePath = base64Data; // default guaranteed image
+            const compressedBase64 = await compressImage(file, 500, 650, 0.80);
+            imagePath = compressedBase64; // lightweight 30KB - 60KB JPEG
 
             // Try uploading to server if authenticated
             if (currentAuthToken) {
@@ -490,7 +546,7 @@ document.addEventListener('DOMContentLoaded', () => {
                   },
                   body: JSON.stringify({
                     filename: file.name,
-                    base64Data: base64Data
+                    base64Data: compressedBase64
                   })
                 }, 2500);
 
@@ -501,11 +557,11 @@ document.addEventListener('DOMContentLoaded', () => {
                   }
                 }
               } catch (uErr) {
-                console.warn('Server photo upload skipped, using base64:', uErr);
+                console.warn('Server photo upload skipped, using compressed base64:', uErr);
               }
             }
           } catch (fileErr) {
-            console.error('Error reading photo file:', fileErr);
+            console.error('Error compressing photo file:', fileErr);
           }
         }
 
@@ -542,7 +598,7 @@ document.addEventListener('DOMContentLoaded', () => {
           allMembers.unshift({ id: newId, ...payload });
         }
 
-        localStorage.setItem('100re_local_members', JSON.stringify(allMembers));
+        safeSaveLocalStorage('100re_local_members', JSON.stringify(allMembers));
         closeModal(memberFormModal);
         showToast(id ? 'Cập nhật thành viên thành công!' : 'Đã thêm thành viên mới thành công!');
         renderAllTeamGrids();
@@ -555,15 +611,6 @@ document.addEventListener('DOMContentLoaded', () => {
           btnSave.disabled = false;
         }
       }
-    });
-  }
-
-  function readFileAsBase64(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = error => reject(error);
-      reader.readAsDataURL(file);
     });
   }
 
