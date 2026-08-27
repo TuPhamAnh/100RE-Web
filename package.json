@@ -5,9 +5,9 @@
   "scripts": {
     "dev": "wrangler pages dev ./Frontend",
     "build": "echo Static build ready",
-    "deploy": "wrangler pages deploy ./Frontend --project-name=100re-laboratory"
+    "deploy": "wrangler pages deploy ./Frontend --project-name=100re-web"
   },
   "devDependencies": {
-    "wrangler": "^3.109.0"
+    "wrangler": "^3.114.17"
   }
 }
