@@ -4,6 +4,7 @@
   "description": "100RE Laboratory Member Management Frontend & Cloudflare Pages Functions",
   "scripts": {
     "dev": "wrangler pages dev ./Frontend",
+    "build": "echo Static build ready",
     "deploy": "wrangler pages deploy ./Frontend --project-name=100re-laboratory"
   },
   "devDependencies": {
