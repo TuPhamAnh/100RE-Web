@@ -438,11 +438,31 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Helper for quick fetch with timeout
+  async function fetchTimeout(url, options = {}, timeoutMs = 2500) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const response = await fetch(url, { ...options, signal: controller.signal });
+      clearTimeout(timer);
+      return response;
+    } catch (err) {
+      clearTimeout(timer);
+      throw err;
+    }
+  }
+
   // Save (Add or Update) Member Form Submit
   if (memberForm) {
     memberForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const id = editMemberId.value;
+      const btnSave = document.getElementById('btnSaveMember');
+      if (btnSave) {
+        btnSave.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang lưu...';
+        btnSave.disabled = true;
+      }
+
+      const id = editMemberId ? editMemberId.value.trim() : '';
       const name = formMemberName.value.trim();
       const team = formMemberTeam.value;
       const teamSelect = formMemberTeam.options[formMemberTeam.selectedIndex];
@@ -451,85 +471,90 @@ document.addEventListener('DOMContentLoaded', () => {
       const bio = formMemberBio.value.trim();
       let imagePath = formPhotoUrl.value.trim() || 'assets/images/logo.jpg';
 
-      // If user uploaded a new photo file, upload it first or use base64
-      const file = formPhotoFile.files[0];
-      if (file) {
-        try {
-          const base64Data = await readFileAsBase64(file);
-          const uploadRes = await fetch(`${API_BASE}/api/upload-photo`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${currentAuthToken}`
-            },
-            body: JSON.stringify({
-              filename: file.name,
-              base64Data: base64Data
-            })
-          });
-          const uploadData = await uploadRes.json();
-          if (uploadData.success && uploadData.imagePath) {
-            imagePath = uploadData.imagePath;
-          } else {
-            imagePath = base64Data; // fallback to inline base64
-          }
-        } catch (uploadErr) {
-          // If server upload failed, fallback to base64 inline image
-          try {
-            imagePath = await readFileAsBase64(file);
-          } catch (err) {}
-        }
-      }
-
-      const payload = { name, team, teamName, role, bio, image: imagePath };
-
       try {
-        let res;
+        // If user uploaded a new photo file, read as base64 immediately
+        const file = formPhotoFile && formPhotoFile.files ? formPhotoFile.files[0] : null;
+        if (file) {
+          try {
+            const base64Data = await readFileAsBase64(file);
+            imagePath = base64Data; // default guaranteed image
+
+            // Try uploading to server if authenticated
+            if (currentAuthToken) {
+              try {
+                const uploadRes = await fetchTimeout(`${API_BASE}/api/upload-photo`, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${currentAuthToken}`
+                  },
+                  body: JSON.stringify({
+                    filename: file.name,
+                    base64Data: base64Data
+                  })
+                }, 2500);
+
+                if (uploadRes.ok) {
+                  const uploadData = await uploadRes.json();
+                  if (uploadData.success && uploadData.imagePath) {
+                    imagePath = uploadData.imagePath;
+                  }
+                }
+              } catch (uErr) {
+                console.warn('Server photo upload skipped, using base64:', uErr);
+              }
+            }
+          } catch (fileErr) {
+            console.error('Error reading photo file:', fileErr);
+          }
+        }
+
+        const payload = { name, team, teamName, role, bio, image: imagePath };
+
+        // Try syncing with Server API if token exists
+        if (currentAuthToken) {
+          try {
+            const url = id ? `${API_BASE}/api/members/${encodeURIComponent(id)}` : `${API_BASE}/api/members`;
+            const method = id ? 'PUT' : 'POST';
+            await fetchTimeout(url, {
+              method: method,
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${currentAuthToken}`
+              },
+              body: JSON.stringify(payload)
+            }, 2500);
+          } catch (apiErr) {
+            console.warn('API sync timed out/failed, saved to LocalStorage:', apiErr);
+          }
+        }
+
+        // Always update local memory and LocalStorage
         if (id) {
-          // Edit existing member
-          res = await fetch(`${API_BASE}/api/members/${id}`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${currentAuthToken}`
-            },
-            body: JSON.stringify(payload)
-          });
+          const idx = allMembers.findIndex(m => String(m.id) === String(id));
+          if (idx !== -1) {
+            allMembers[idx] = { ...allMembers[idx], ...payload, id };
+          } else {
+            allMembers.unshift({ id, ...payload });
+          }
         } else {
-          // Add new member
-          res = await fetch(`${API_BASE}/api/members`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${currentAuthToken}`
-            },
-            body: JSON.stringify(payload)
-          });
+          const newId = `${team}_${Date.now()}`;
+          allMembers.unshift({ id: newId, ...payload });
         }
 
-        const data = await res.json();
-        if (data.success) {
-          closeModal(memberFormModal);
-          showToast(id ? 'Cập nhật thông tin thành công!' : 'Đã thêm thành viên mới thành công!');
-          await loadMembers();
-          return;
+        localStorage.setItem('100re_local_members', JSON.stringify(allMembers));
+        closeModal(memberFormModal);
+        showToast(id ? 'Cập nhật thành viên thành công!' : 'Đã thêm thành viên mới thành công!');
+        renderAllTeamGrids();
+      } catch (saveError) {
+        console.error('Error saving member:', saveError);
+        showToast('Có lỗi xảy ra: ' + saveError.message, true);
+      } finally {
+        if (btnSave) {
+          btnSave.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Member';
+          btnSave.disabled = false;
         }
-      } catch (err) {}
-
-      // Fallback local update if API is unreachable
-      if (id) {
-        const idx = allMembers.findIndex(m => m.id === id);
-        if (idx !== -1) {
-          allMembers[idx] = { ...allMembers[idx], ...payload };
-        }
-      } else {
-        const newId = `${team}_${Date.now()}`;
-        allMembers.push({ id: newId, ...payload });
       }
-      localStorage.setItem('100re_local_members', JSON.stringify(allMembers));
-      closeModal(memberFormModal);
-      showToast(id ? 'Cập nhật thành công!' : 'Đã thêm thành viên mới!');
-      renderAllTeamGrids();
     });
   }
 
