@@ -1,17 +1,12 @@
-name = "100re-laboratory"
-compatibility_date = "2024-01-01"
-pages_build_output_dir = "./Frontend"
+name = "100re-web"
+main = "src/index.js"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+[assets]
+directory = "./Frontend"
+binding = "ASSETS"
 
 [vars]
 ADMIN_USERNAME = "100re"
 ADMIN_PASSWORD = "100re"
-
-# Optional: Cloudflare KV for persistent cloud storage
-# [[kv_namespaces]]
-# binding = "MEMBERS_KV"
-# id = "<YOUR_KV_NAMESPACE_ID>"
-
-# Optional: Cloudflare R2 for photo storage
-# [[r2_buckets]]
-# binding = "PHOTOS_BUCKET"
-# bucket_name = "100re-photos"
