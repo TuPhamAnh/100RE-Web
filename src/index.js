@@ -80,7 +80,7 @@ export default {
     if (path === '/api/members') {
       if (request.method === 'GET') {
         if (env.MEMBERS_KV) {
-          const custom = await env.MEMBERS_KV.get('members_data');
+          const custom = (await env.MEMBERS_KV.get('members_list')) || (await env.MEMBERS_KV.get('members_data'));
           if (custom) {
             return new Response(custom, {
               headers: { 'Content-Type': 'application/json', ...corsHeaders }
@@ -96,7 +96,7 @@ export default {
           const newMember = await request.json();
           let list = [];
           if (env.MEMBERS_KV) {
-            const saved = await env.MEMBERS_KV.get('members_data');
+            const saved = (await env.MEMBERS_KV.get('members_list')) || (await env.MEMBERS_KV.get('members_data'));
             list = saved ? JSON.parse(saved) : getDefaultMembers();
           } else {
             list = getDefaultMembers();
@@ -106,6 +106,7 @@ export default {
           list.unshift(newMember);
 
           if (env.MEMBERS_KV) {
+            await env.MEMBERS_KV.put('members_list', JSON.stringify(list));
             await env.MEMBERS_KV.put('members_data', JSON.stringify(list));
           }
 
@@ -123,7 +124,7 @@ export default {
       const id = decodeURIComponent(path.split('/')[3] || '');
       let list = [];
       if (env.MEMBERS_KV) {
-        const saved = await env.MEMBERS_KV.get('members_data');
+        const saved = (await env.MEMBERS_KV.get('members_list')) || (await env.MEMBERS_KV.get('members_data'));
         list = saved ? JSON.parse(saved) : getDefaultMembers();
       } else {
         list = getDefaultMembers();
@@ -138,6 +139,7 @@ export default {
           list.unshift({ id, ...payload });
         }
         if (env.MEMBERS_KV) {
+          await env.MEMBERS_KV.put('members_list', JSON.stringify(list));
           await env.MEMBERS_KV.put('members_data', JSON.stringify(list));
         }
         return jsonResponse({ success: true, member: list[idx] || payload }, 200, corsHeaders);
@@ -146,6 +148,7 @@ export default {
       if (request.method === 'DELETE') {
         list = list.filter(m => String(m.id) !== String(id));
         if (env.MEMBERS_KV) {
+          await env.MEMBERS_KV.put('members_list', JSON.stringify(list));
           await env.MEMBERS_KV.put('members_data', JSON.stringify(list));
         }
         return jsonResponse({ success: true, id }, 200, corsHeaders);
