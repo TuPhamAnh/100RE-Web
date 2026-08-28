@@ -139,19 +139,29 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const res = await fetch(`${API_BASE}/api/members`);
       if (!res.ok) throw new Error('API status not ok');
-      allMembers = await res.json();
-      localStorage.setItem('100re_local_members', JSON.stringify(allMembers));
-      renderAllTeamGrids();
-    } catch (e) {
-      // Fallback to localStorage or default dataset
-      const saved = localStorage.getItem('100re_local_members');
-      if (saved) {
-        try { allMembers = JSON.parse(saved); } catch (err) { allMembers = DEFAULT_MEMBERS; }
-      } else {
-        allMembers = DEFAULT_MEMBERS;
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        allMembers = data;
+        safeSaveLocalStorage('100re_local_members', JSON.stringify(allMembers));
+        renderAllTeamGrids();
+        return;
       }
-      renderAllTeamGrids();
+    } catch (e) {
+      console.warn('Could not load from API, using cached/default members:', e);
     }
+
+    // Fallback to localStorage or default dataset
+    const saved = localStorage.getItem('100re_local_members');
+    if (saved) {
+      try { 
+        allMembers = JSON.parse(saved); 
+      } catch (err) { 
+        allMembers = DEFAULT_MEMBERS; 
+      }
+    } else {
+      allMembers = DEFAULT_MEMBERS;
+    }
+    renderAllTeamGrids();
   }
 
   function renderAllTeamGrids() {
