@@ -137,7 +137,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // ==========================================
   async function loadMembers() {
     try {
-      const res = await fetch(`${API_BASE}/api/members`);
+      // Add timestamp to prevent browser & proxy cache on other devices
+      const res = await fetch(`${API_BASE}/api/members?_t=${Date.now()}`, {
+        headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
+      });
       if (!res.ok) throw new Error('API status not ok');
       const data = await res.json();
       if (Array.isArray(data) && data.length > 0) {
