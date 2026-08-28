@@ -580,41 +580,53 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const payload = { name, team, teamName, role, bio, image: imagePath };
 
-        // Try syncing with Server API if token exists
-        if (currentAuthToken) {
-          try {
-            const url = id ? `${API_BASE}/api/members/${encodeURIComponent(id)}` : `${API_BASE}/api/members`;
-            const method = id ? 'PUT' : 'POST';
-            await fetchTimeout(url, {
-              method: method,
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${currentAuthToken}`
-              },
-              body: JSON.stringify(payload)
-            }, 2500);
-          } catch (apiErr) {
-            console.warn('API sync timed out/failed, saved to LocalStorage:', apiErr);
-          }
-        }
+        // Always sync with Server API
+        const tokenToSend = currentAuthToken || localStorage.getItem('100re_token') || '100re_admin_session';
+        try {
+          const url = id ? `${API_BASE}/api/members/${encodeURIComponent(id)}` : `${API_BASE}/api/members`;
+          const method = id ? 'PUT' : 'POST';
+          const apiRes = await fetchTimeout(url, {
+            method: method,
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${tokenToSend}`
+            },
+            body: JSON.stringify(payload)
+          }, 8000);
 
-        // Always update local memory and LocalStorage
-        if (id) {
-          const idx = allMembers.findIndex(m => String(m.id) === String(id));
-          if (idx !== -1) {
-            allMembers[idx] = { ...allMembers[idx], ...payload, id };
-          } else {
-            allMembers.unshift({ id, ...payload });
+          if (apiRes.ok) {
+            const apiData = await apiRes.json();
+            if (apiData.member) {
+              if (id) {
+                const idx = allMembers.findIndex(m => String(m.id) === String(id));
+                if (idx !== -1) allMembers[idx] = apiData.member;
+              } else {
+                allMembers.unshift(apiData.member);
+              }
+            }
           }
-        } else {
-          const newId = `${team}_${Date.now()}`;
-          allMembers.unshift({ id: newId, ...payload });
+        } catch (apiErr) {
+          console.warn('API sync timed out/failed, saved to local cache:', apiErr);
+          // Local fallback
+          if (id) {
+            const idx = allMembers.findIndex(m => String(m.id) === String(id));
+            if (idx !== -1) {
+              allMembers[idx] = { ...allMembers[idx], ...payload, id };
+            } else {
+              allMembers.unshift({ id, ...payload });
+            }
+          } else {
+            const newId = `${team}_${Date.now()}`;
+            allMembers.unshift({ id: newId, ...payload });
+          }
         }
 
         safeSaveLocalStorage('100re_local_members', JSON.stringify(allMembers));
         closeModal(memberFormModal);
         showToast(id ? 'Cập nhật thành viên thành công!' : 'Đã thêm thành viên mới thành công!');
         renderAllTeamGrids();
+        // Background refresh to confirm cloud sync
+        loadMembers();
       } catch (saveError) {
         console.error('Error saving member:', saveError);
         showToast('Có lỗi xảy ra: ' + saveError.message, true);
@@ -632,24 +644,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const confirmDelete = confirm(`Bạn có chắc chắn muốn xóa thành viên "${member.name}" khỏi danh sách?`);
     if (!confirmDelete) return;
 
+    const tokenToSend = currentAuthToken || localStorage.getItem('100re_token') || '100re_admin_session';
     try {
-      const res = await fetch(`${API_BASE}/api/members/${member.id}`, {
+      const res = await fetchTimeout(`${API_BASE}/api/members/${encodeURIComponent(member.id)}`, {
         method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${currentAuthToken}` }
-      });
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${tokenToSend}` 
+        }
+      }, 8000);
       const data = await res.json();
       if (data.success) {
         showToast(`Đã xóa thành viên "${member.name}".`);
         await loadMembers();
         return;
       }
-    } catch (e) {}
+    } catch (e) {
+      console.warn('Delete API failed, removing locally:', e);
+    }
 
     // Fallback local delete
-    allMembers = allMembers.filter(m => m.id !== member.id);
-    localStorage.setItem('100re_local_members', JSON.stringify(allMembers));
-    showToast(`Đã xóa thành viên "${member.name}".`);
+    allMembers = allMembers.filter(m => String(m.id) !== String(member.id));
+    safeSaveLocalStorage('100re_local_members', JSON.stringify(allMembers));
     renderAllTeamGrids();
+    showToast(`Đã xóa thành viên "${member.name}".`);
   }
 
   // ==========================================
