@@ -371,6 +371,14 @@ async function runTests() {
     if (!chatDataEn.success || !chatDataEn.answer || !chatDataEn.answer.includes('PV Team')) {
       throw new Error(`Expected AI Chat response with PV Team in EN, got ${JSON.stringify(chatDataEn)}`);
     }
+
+    // 3. Join Lab prompt
+    const chatReqJoin = makeReq('/api/chat', 'POST', { message: 'làm thế nào để có thể xin được vào lab' });
+    const chatResJoin = await worker.fetch(chatReqJoin, mockEnv);
+    const chatDataJoin = await chatResJoin.json();
+    if (!chatDataJoin.success || !chatDataJoin.answer || !chatDataJoin.answer.includes('Đăng ký') && !chatDataJoin.answer.includes('tuyen.nguyenduc@hust.edu.vn')) {
+      throw new Error(`Expected AI Chat response with join instructions, got ${JSON.stringify(chatDataJoin)}`);
+    }
   });
 
   console.log(`\n==============================================`);
