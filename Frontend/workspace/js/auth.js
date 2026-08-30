@@ -88,21 +88,47 @@ export const Auth = {
         projects: ['proj-pv-01']
       };
     } else {
-      this.currentUser = {
-        id: 'usr-sup-01',
-        name: 'Assoc. Prof. Nguyen Duc Tuyen',
-        display_name: 'Assoc. Prof. Nguyen Duc Tuyen (Supervisor)',
-        username: 'supervisor',
-        role: 'supervisor',
-        isSystemAdmin: false,
-        status: 'active',
-        avatar_url: 'assets/images/logo.jpg',
-        isSupervisor: true,
-        isLeader: true,
-        teams: [],
-        teamRoles: {},
-        projects: []
-      };
+      // Check if custom dynamic user in localStorage
+      let customFound = null;
+      try {
+        const customList = JSON.parse(localStorage.getItem('100re_custom_users') || '[]');
+        customFound = customList.find(u => u.id === userId || u.username === userId || u.email === userId);
+      } catch (e) {}
+
+      if (customFound) {
+        this.currentUser = {
+          id: customFound.id,
+          name: customFound.display_name || customFound.name || customFound.username,
+          display_name: customFound.display_name || customFound.name,
+          username: customFound.username,
+          role: customFound.role || 'researcher',
+          isSystemAdmin: false,
+          status: customFound.status || 'active',
+          avatar_url: customFound.avatar_url || 'assets/images/logo.jpg',
+          isSupervisor: customFound.role === 'supervisor',
+          isLeader: customFound.role === 'team_leader' || customFound.role === 'supervisor',
+          teams: customFound.teams || [],
+          teamRoles: {},
+          projects: [],
+          permissions: customFound.permissions || []
+        };
+      } else {
+        this.currentUser = {
+          id: 'usr-sup-01',
+          name: 'Assoc. Prof. Nguyen Duc Tuyen',
+          display_name: 'Assoc. Prof. Nguyen Duc Tuyen (Supervisor)',
+          username: 'supervisor',
+          role: 'supervisor',
+          isSystemAdmin: false,
+          status: 'active',
+          avatar_url: 'assets/images/logo.jpg',
+          isSupervisor: true,
+          isLeader: true,
+          teams: [],
+          teamRoles: {},
+          projects: []
+        };
+      }
     }
     this.updateUI();
     return this.currentUser;

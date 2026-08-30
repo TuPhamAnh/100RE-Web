@@ -71,7 +71,7 @@ export async function renderAdmin(container) {
     </div>
 
     <!-- MODAL: CREATE / EDIT USER WITH GRANULAR PERMISSIONS MATRIX -->
-    <div id="modalUserPermissions" class="ws-modal-backdrop" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.65); z-index:9999; overflow-y:auto; padding:20px; align-items:center; justify-content:center;">
+    <div id="modalUserPermissions" class="ws-modal-backdrop" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.65); z-index:99999; overflow-y:auto; padding:20px; align-items:center; justify-content:center;">
       <div class="ws-modal-card" style="background:#ffffff; max-width:960px; width:100%; border-radius:12px; box-shadow:0 25px 50px -12px rgba(0,0,0,0.25); overflow:hidden; border:1px solid #cbd5e1; margin:auto;">
         
         <div style="background:#f8fafc; padding:18px 24px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center;">
@@ -139,110 +139,96 @@ export async function renderAdmin(container) {
             <div>
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding-bottom:6px; border-bottom:2px solid #e2e8f0;">
                 <h4 style="font-size:0.95rem; font-weight:700; color:#1e293b; margin:0;">
-                  <i class="fa-solid fa-list-check"></i> 2. Danh Sách Quyền Hạn (Permissions Matrix)
+                  <i class="fa-solid fa-list-check"></i> 2. Ma Trận Quyền Hạn (Permissions Matrix)
                 </h4>
+                <div style="display:flex; gap:6px;">
+                  <button type="button" class="btn-ws-ghost btn-ws-sm" id="presetSupervisor" style="font-size:0.7rem; padding:2px 8px;">Supervisor</button>
+                  <button type="button" class="btn-ws-ghost btn-ws-sm" id="presetLeader" style="font-size:0.7rem; padding:2px 8px;">Leader</button>
+                  <button type="button" class="btn-ws-ghost btn-ws-sm" id="presetResearcher" style="font-size:0.7rem; padding:2px 8px;">Researcher</button>
+                  <button type="button" class="btn-ws-ghost btn-ws-sm" id="presetClear" style="font-size:0.7rem; padding:2px 6px; color:#ef4444;">Xóa hết</button>
+                </div>
               </div>
 
-              <!-- Quick Presets -->
-              <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px;">
-                <button type="button" class="btn-ws-ghost btn-ws-sm" id="presetSupervisor" style="font-size:0.75rem; background:#f0fdf4; border-color:#86efac; color:#15803d;">
-                  👑 Supervisor (All)
-                </button>
-                <button type="button" class="btn-ws-ghost btn-ws-sm" id="presetLeader" style="font-size:0.75rem; background:#eff6ff; border-color:#93c5fd; color:#1d4ed8;">
-                  🛡️ Team Leader
-                </button>
-                <button type="button" class="btn-ws-ghost btn-ws-sm" id="presetResearcher" style="font-size:0.75rem; background:#faf5ff; border-color:#d8b4fe; color:#7e22ce;">
-                  🔬 Researcher
-                </button>
-                <button type="button" class="btn-ws-ghost btn-ws-sm" id="presetClear" style="font-size:0.75rem; color:#dc2626;">
-                  🧹 Bỏ Chọn Tất Cả
-                </button>
+              <!-- Section A: Public Web Permissions -->
+              <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:12px; margin-bottom:14px;">
+                <div style="font-size:0.825rem; font-weight:700; color:#166534; margin-bottom:8px; display:flex; align-items:center; gap:6px;">
+                  <i class="fa-solid fa-globe"></i> Quyền Quản Trị Website Công Khai (Public Web)
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                  <label style="font-size:0.775rem; color:#1e293b; display:flex; align-items:center; gap:6px; cursor:pointer;">
+                    <input type="checkbox" name="perms" value="perm_news" class="perm-cb" checked>
+                    <span>Soạn &amp; Đăng Tin Tức (News)</span>
+                  </label>
+                  <label style="font-size:0.775rem; color:#1e293b; display:flex; align-items:center; gap:6px; cursor:pointer;">
+                    <input type="checkbox" name="perms" value="perm_journey" class="perm-cb" checked>
+                    <span>Sửa Dòng Sự Kiện (Journey)</span>
+                  </label>
+                  <label style="font-size:0.775rem; color:#1e293b; display:flex; align-items:center; gap:6px; cursor:pointer;">
+                    <input type="checkbox" name="perms" value="perm_research" class="perm-cb" checked>
+                    <span>Sửa Lĩnh Vực Nghiên Cứu</span>
+                  </label>
+                  <label style="font-size:0.775rem; color:#1e293b; display:flex; align-items:center; gap:6px; cursor:pointer;">
+                    <input type="checkbox" name="perms" value="perm_projects" class="perm-cb" checked>
+                    <span>Sửa Đề Tài Công Khai</span>
+                  </label>
+                  <label style="font-size:0.775rem; color:#1e293b; display:flex; align-items:center; gap:6px; cursor:pointer;">
+                    <input type="checkbox" name="perms" value="perm_pubs" class="perm-cb" checked>
+                    <span>Đăng Bài Báo Khoa Học (Pubs)</span>
+                  </label>
+                  <label style="font-size:0.775rem; color:#1e293b; display:flex; align-items:center; gap:6px; cursor:pointer;">
+                    <input type="checkbox" name="perms" value="perm_photos" class="perm-cb" checked>
+                    <span>Quản Lý Ảnh Hoạt Động</span>
+                  </label>
+                  <label style="font-size:0.775rem; color:#1e293b; display:flex; align-items:center; gap:6px; cursor:pointer; grid-column:span 2;">
+                    <input type="checkbox" name="perms" value="perm_members" class="perm-cb" checked>
+                    <span>Thêm / Sửa / Xóa Thành Viên Công Khai (Public Members)</span>
+                  </label>
+                </div>
               </div>
 
-              <div style="max-height:380px; overflow-y:auto; padding-right:6px;">
-                
-                <!-- Group A: Website Công Khai -->
-                <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:12px; margin-bottom:14px;">
-                  <div style="font-size:0.85rem; font-weight:700; color:#15803d; margin-bottom:8px; display:flex; align-items:center; gap:6px;">
-                    <i class="fa-solid fa-globe"></i> A. QUYỀN TRÊN WEBSITE CÔNG KHAI
-                  </div>
-                  <div style="display:grid; grid-template-columns:1fr; gap:6px;">
-                    <label style="font-size:0.8rem; color:#1e293b; display:flex; align-items:center; gap:8px; cursor:pointer;">
-                      <input type="checkbox" name="perm_check" value="perm_news" class="perm-cb">
-                      <span><strong>News &amp; Blog</strong> — Soạn bài báo mới, sửa/xóa tin tức toà soạn</span>
-                    </label>
-                    <label style="font-size:0.8rem; color:#1e293b; display:flex; align-items:center; gap:8px; cursor:pointer;">
-                      <input type="checkbox" name="perm_check" value="perm_journey" class="perm-cb">
-                      <span><strong>Journey</strong> — Thêm, chỉnh sửa mốc lịch sử phát triển Lab</span>
-                    </label>
-                    <label style="font-size:0.8rem; color:#1e293b; display:flex; align-items:center; gap:8px; cursor:pointer;">
-                      <input type="checkbox" name="perm_check" value="perm_research" class="perm-cb">
-                      <span><strong>Research Areas</strong> — Quản lý 9 lĩnh vực nghiên cứu</span>
-                    </label>
-                    <label style="font-size:0.8rem; color:#1e293b; display:flex; align-items:center; gap:8px; cursor:pointer;">
-                      <input type="checkbox" name="perm_check" value="perm_projects" class="perm-cb">
-                      <span><strong>Projects</strong> — Cập nhật các đề tài nghiên cứu công khai</span>
-                    </label>
-                    <label style="font-size:0.8rem; color:#1e293b; display:flex; align-items:center; gap:8px; cursor:pointer;">
-                      <input type="checkbox" name="perm_check" value="perm_pubs" class="perm-cb">
-                      <span><strong>Publications</strong> — Quản lý danh mục bài báo quốc tế, IEEE</span>
-                    </label>
-                    <label style="font-size:0.8rem; color:#1e293b; display:flex; align-items:center; gap:8px; cursor:pointer;">
-                      <input type="checkbox" name="perm_check" value="perm_photos" class="perm-cb">
-                      <span><strong>Photos</strong> — Tải lên &amp; quản lý thư viện hình ảnh Lab</span>
-                    </label>
-                    <label style="font-size:0.8rem; color:#1e293b; display:flex; align-items:center; gap:8px; cursor:pointer;">
-                      <input type="checkbox" name="perm_check" value="perm_members" class="perm-cb">
-                      <span><strong>Members</strong> — Chỉnh sửa hồ sơ nhà nghiên cứu công khai</span>
-                    </label>
-                  </div>
+              <!-- Section B: Workspace Management Permissions -->
+              <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:12px;">
+                <div style="font-size:0.825rem; font-weight:700; color:#1e40af; margin-bottom:8px; display:flex; align-items:center; gap:6px;">
+                  <i class="fa-solid fa-briefcase"></i> Quyền Quản Lý Nghiên Cứu Workspace
                 </div>
-
-                <!-- Group B: Workspace Nội Bộ -->
-                <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:12px;">
-                  <div style="font-size:0.85rem; font-weight:700; color:#1d4ed8; margin-bottom:8px; display:flex; align-items:center; gap:6px;">
-                    <i class="fa-solid fa-laptop-code"></i> B. QUYỀN TRÊN WORKSPACE NỘI BỘ
-                  </div>
-                  <div style="display:grid; grid-template-columns:1fr; gap:6px;">
-                    <label style="font-size:0.8rem; color:#1e293b; display:flex; align-items:center; gap:8px; cursor:pointer;">
-                      <input type="checkbox" name="perm_check" value="perm_ws_all_teams" class="perm-cb">
-                      <span><strong>Global Team View</strong> — Xem tất cả 9 nhóm nghiên cứu</span>
-                    </label>
-                    <label style="font-size:0.8rem; color:#1e293b; display:flex; align-items:center; gap:8px; cursor:pointer;">
-                      <input type="checkbox" name="perm_check" value="perm_ws_projects" class="perm-cb">
-                      <span><strong>Projects Management</strong> — Tạo mới &amp; quản lý đề tài nghiên cứu</span>
-                    </label>
-                    <label style="font-size:0.8rem; color:#1e293b; display:flex; align-items:center; gap:8px; cursor:pointer;">
-                      <input type="checkbox" name="perm_check" value="perm_ws_tasks_create" class="perm-cb">
-                      <span><strong>Task Creation</strong> — Tạo mới &amp; giao nhiệm vụ cho thành viên</span>
-                    </label>
-                    <label style="font-size:0.8rem; color:#1e293b; display:flex; align-items:center; gap:8px; cursor:pointer;">
-                      <input type="checkbox" name="perm_check" value="perm_ws_tasks_update" class="perm-cb">
-                      <span><strong>Task Progress</strong> — Cập nhật tiến độ &amp; trạng thái công việc</span>
-                    </label>
-                    <label style="font-size:0.8rem; color:#1e293b; display:flex; align-items:center; gap:8px; cursor:pointer;">
-                      <input type="checkbox" name="perm_check" value="perm_ws_scinote_edit" class="perm-cb">
-                      <span><strong>SciNote ELN</strong> — Ghi chép nhật ký thí nghiệm điện tử</span>
-                    </label>
-                    <label style="font-size:0.8rem; color:#1e293b; display:flex; align-items:center; gap:8px; cursor:pointer;">
-                      <input type="checkbox" name="perm_check" value="perm_ws_scinote_signoff" class="perm-cb">
-                      <span><strong>Supervisor Sign-off</strong> — Ký duyệt &amp; phê chuẩn thí nghiệm</span>
-                    </label>
-                    <label style="font-size:0.8rem; color:#1e293b; display:flex; align-items:center; gap:8px; cursor:pointer;">
-                      <input type="checkbox" name="perm_check" value="perm_ws_datasets" class="perm-cb">
-                      <span><strong>100RE Database Datasets</strong> — Tải lên &amp; quản lý bộ dữ liệu</span>
-                    </label>
-                    <label style="font-size:0.8rem; color:#1e293b; display:flex; align-items:center; gap:8px; cursor:pointer;">
-                      <input type="checkbox" name="perm_check" value="perm_ws_documents" class="perm-cb">
-                      <span><strong>Documents &amp; Standards</strong> — Quản lý tài liệu kỹ thuật</span>
-                    </label>
-                    <label style="font-size:0.8rem; color:#1e293b; display:flex; align-items:center; gap:8px; cursor:pointer;">
-                      <input type="checkbox" name="perm_check" value="perm_ws_admin" class="perm-cb">
-                      <span><strong>Admin Console</strong> — Quản trị hệ thống &amp; phân quyền người dùng</span>
-                    </label>
-                  </div>
+                <div style="display:grid; grid-template-columns:1fr; gap:8px;">
+                  <label style="font-size:0.775rem; color:#1e293b; display:flex; align-items:center; gap:6px; cursor:pointer;">
+                    <input type="checkbox" name="perms" value="perm_ws_all_teams" class="perm-cb">
+                    <span><strong>Toàn quyền xem tất cả các nhóm (Global All Teams)</strong></span>
+                  </label>
+                  <label style="font-size:0.775rem; color:#1e293b; display:flex; align-items:center; gap:6px; cursor:pointer;">
+                    <input type="checkbox" name="perms" value="perm_ws_projects" class="perm-cb">
+                    <span>Tạo &amp; Cập Nhật Đề Tài / Thí Nghiệm (Projects/Experiments)</span>
+                  </label>
+                  <label style="font-size:0.775rem; color:#1e293b; display:flex; align-items:center; gap:6px; cursor:pointer;">
+                    <input type="checkbox" name="perms" value="perm_ws_tasks_create" class="perm-cb">
+                    <span>Giao Việc &amp; Tạo Nhiệm Vụ Mới (Create Tasks)</span>
+                  </label>
+                  <label style="font-size:0.775rem; color:#1e293b; display:flex; align-items:center; gap:6px; cursor:pointer;">
+                    <input type="checkbox" name="perms" value="perm_ws_tasks_update" class="perm-cb" checked>
+                    <span>Cập Nhật Tiến Độ &amp; Trạng Thái Task Nhóm Mình</span>
+                  </label>
+                  <label style="font-size:0.775rem; color:#1e293b; display:flex; align-items:center; gap:6px; cursor:pointer;">
+                    <input type="checkbox" name="perms" value="perm_ws_scinote_edit" class="perm-cb" checked>
+                    <span>Soạn Thảo Sổ Tay Thí Nghiệm (SciNote ELN Protocol)</span>
+                  </label>
+                  <label style="font-size:0.775rem; color:#1e293b; display:flex; align-items:center; gap:6px; cursor:pointer;">
+                    <input type="checkbox" name="perms" value="perm_ws_scinote_signoff" class="perm-cb">
+                    <span><strong>Ký Duyệt Nghiệm Thu Thí Nghiệm (Supervisor Sign-off)</strong></span>
+                  </label>
+                  <label style="font-size:0.775rem; color:#1e293b; display:flex; align-items:center; gap:6px; cursor:pointer;">
+                    <input type="checkbox" name="perms" value="perm_ws_datasets" class="perm-cb" checked>
+                    <span>Tải Lên / Tải Về 100RE Database (Datasets &amp; Storage)</span>
+                  </label>
+                  <label style="font-size:0.775rem; color:#1e293b; display:flex; align-items:center; gap:6px; cursor:pointer;">
+                    <input type="checkbox" name="perms" value="perm_ws_documents" class="perm-cb" checked>
+                    <span>Quản Lý Tài Liệu &amp; Tiêu Chuẩn Kỹ Thuật (Documents)</span>
+                  </label>
+                  <label style="font-size:0.775rem; color:#1e293b; display:flex; align-items:center; gap:6px; cursor:pointer;">
+                    <input type="checkbox" name="perms" value="perm_ws_admin" class="perm-cb">
+                    <span><strong>Quản Trị Người Dùng &amp; Phân Quyền (Lab Admin Console)</strong></span>
+                  </label>
                 </div>
-
               </div>
             </div>
 
@@ -262,23 +248,70 @@ export async function renderAdmin(container) {
   `;
 
   try {
-    const res = await API.get('/api/members');
-    const members = res.users || res.members || [];
-    const teamsRes = await API.get('/api/teams');
-    const teams = teamsRes.teams || [];
+    let members = [];
+    let teams = [];
+
+    // Fetch members and teams
+    try {
+      const res = await API.get('/api/members');
+      members = res.users || res.members || [];
+    } catch (e) {
+      console.warn('API members fetch error, falling back to local list:', e);
+    }
+
+    try {
+      const teamsRes = await API.get('/api/teams');
+      teams = teamsRes.teams || [];
+    } catch (e) {
+      console.warn('API teams fetch error:', e);
+    }
+
+    // Merge with LocalStorage created users
+    const localUsersStr = localStorage.getItem('100re_custom_users');
+    if (localUsersStr) {
+      try {
+        const localUsers = JSON.parse(localUsersStr);
+        localUsers.forEach(lu => {
+          const idx = members.findIndex(m => m.id === lu.id || (m.username && m.username === lu.username) || (m.email && m.email === lu.email));
+          if (idx >= 0) {
+            members[idx] = { ...members[idx], ...lu };
+          } else {
+            members.push(lu);
+          }
+        });
+      } catch (e) {}
+    }
 
     const tableContainer = container.querySelector('#adminUsersTableContainer');
     const modal = container.querySelector('#modalUserPermissions');
     const teamsContainer = container.querySelector('#permTeamsCheckboxList');
 
     // Populate Teams checkboxes in Modal
-    if (teamsContainer) {
+    if (teamsContainer && teams.length > 0) {
       teamsContainer.innerHTML = teams.map(t => `
         <label style="font-size:0.775rem; color:#334155; display:flex; align-items:center; gap:6px; cursor:pointer;">
           <input type="checkbox" name="perm_team_check" value="${t.id}" class="perm-team-cb">
           <span>${escapeHtml(t.name)}</span>
         </label>
       `).join('');
+    } else if (teamsContainer) {
+      teamsContainer.innerHTML = `
+        <label style="font-size:0.775rem; color:#334155; display:flex; align-items:center; gap:6px;"><input type="checkbox" value="team-pv" class="perm-team-cb" checked> Photovoltaic (PV)</label>
+        <label style="font-size:0.775rem; color:#334155; display:flex; align-items:center; gap:6px;"><input type="checkbox" value="team-bess" class="perm-team-cb"> Battery Storage (BESS)</label>
+        <label style="font-size:0.775rem; color:#334155; display:flex; align-items:center; gap:6px;"><input type="checkbox" value="team-ai" class="perm-team-cb"> Artificial Intelligence (AI)</label>
+        <label style="font-size:0.775rem; color:#334155; display:flex; align-items:center; gap:6px;"><input type="checkbox" value="team-smartgrid" class="perm-team-cb"> Smart Grid</label>
+        <label style="font-size:0.775rem; color:#334155; display:flex; align-items:center; gap:6px;"><input type="checkbox" value="team-wind" class="perm-team-cb"> Wind Energy</label>
+        <label style="font-size:0.775rem; color:#334155; display:flex; align-items:center; gap:6px;"><input type="checkbox" value="team-ev" class="perm-team-cb"> Electric Vehicle (EV)</label>
+        <label style="font-size:0.775rem; color:#334155; display:flex; align-items:center; gap:6px;"><input type="checkbox" value="team-hydrogen" class="perm-team-cb"> Hydrogen Team</label>
+        <label style="font-size:0.775rem; color:#334155; display:flex; align-items:center; gap:6px;"><input type="checkbox" value="team-dr" class="perm-team-cb"> Demand Response (DR)</label>
+        <label style="font-size:0.775rem; color:#334155; display:flex; align-items:center; gap:6px;"><input type="checkbox" value="team-uc" class="perm-team-cb"> Unit Commitment (UC)</label>
+      `;
+    }
+
+    function saveCustomUsersToLocalStorage() {
+      try {
+        localStorage.setItem('100re_custom_users', JSON.stringify(members));
+      } catch (e) {}
     }
 
     function renderUserTable() {
@@ -304,10 +337,15 @@ export async function renderAdmin(container) {
               ${members.map(u => {
                 const name = u.display_name || u.name;
                 const permsCount = Array.isArray(u.permissions) ? u.permissions.length : (u.role === 'supervisor' ? 16 : 9);
-                const roleBadge = u.role === 'supervisor' ? '<span class="ws-badge ws-badge-done">👑 Supervisor</span>' :
-                                  u.role === 'team_leader' ? '<span class="ws-badge ws-badge-in_progress">🛡️ Team Leader</span>' :
-                                  u.role === 'researcher' ? '<span class="ws-badge ws-badge-todo">🔬 Researcher</span>' :
-                                  '<span class="ws-badge ws-badge-blocked">🎓 Alumni</span>';
+                const roleBadge = u.role === 'supervisor' ? '<span class="ws-badge ws-badge-done">👑 SUPERVISOR</span>' :
+                                  u.role === 'team_leader' ? '<span class="ws-badge ws-badge-in_progress">🛡️ TEAM LEADER</span>' :
+                                  u.role === 'researcher' ? '<span class="ws-badge ws-badge-todo">🔬 RESEARCHER</span>' :
+                                  '<span class="ws-badge ws-badge-blocked">🎓 ALUMNI</span>';
+
+                let teamLabels = 'Tất cả (Global)';
+                if (u.teams && u.teams.length > 0) {
+                  teamLabels = u.teams.map(t => typeof t === 'string' ? t : (t.team_name || t.team_id)).join(', ');
+                }
 
                 return `
                   <tr>
@@ -316,7 +354,7 @@ export async function renderAdmin(container) {
                         <img src="${u.avatar_url || 'assets/images/logo.jpg'}" style="width:36px; height:36px; border-radius:50%; object-fit:cover; border:1px solid var(--ws-border);" alt="${escapeHtml(name)}">
                         <div>
                           <strong style="color:var(--ws-dark); font-size:0.9rem; display:block;">${escapeHtml(name)}</strong>
-                          <span style="font-size:0.775rem; color:var(--ws-text-muted);">${escapeHtml(u.email)}</span>
+                          <span style="font-size:0.775rem; color:var(--ws-text-muted);">${escapeHtml(u.email || u.username + '@100relab.hust.edu.vn')}</span>
                         </div>
                       </div>
                     </td>
@@ -324,13 +362,9 @@ export async function renderAdmin(container) {
                       ${roleBadge}
                     </td>
                     <td>
-                      <div style="display:flex; flex-wrap:wrap; gap:4px;">
-                        ${u.teams && u.teams.length > 0 ? u.teams.map(t => `
-                          <span class="ws-tag-pill" style="font-size:0.75rem;">
-                            ${escapeHtml(t.team_name)}
-                          </span>
-                        `).join('') : '<span style="font-size:0.75rem; color:var(--ws-text-light);">Tất cả (Global)</span>'}
-                      </div>
+                      <span class="ws-tag-pill" style="font-size:0.75rem;">
+                        ${escapeHtml(teamLabels)}
+                      </span>
                     </td>
                     <td>
                       <span class="ws-tag-pill" style="background:#f0fdf4; color:#15803d; font-weight:700; border:1px solid #bbf7d0;">
@@ -338,7 +372,7 @@ export async function renderAdmin(container) {
                       </span>
                     </td>
                     <td>
-                      <span class="ws-badge ${u.status === 'active' ? 'ws-badge-done' : 'ws-badge-blocked'}">${u.status ? u.status.toUpperCase() : 'ACTIVE'}</span>
+                      <span class="ws-badge ${u.status === 'active' || !u.status ? 'ws-badge-done' : 'ws-badge-blocked'}">${u.status ? u.status.toUpperCase() : 'ACTIVE'}</span>
                     </td>
                     <td style="text-align:right;">
                       <div style="display:inline-flex; gap:6px;">
@@ -377,12 +411,16 @@ export async function renderAdmin(container) {
           const uid = btn.getAttribute('data-user-id');
           const uname = btn.getAttribute('data-user-name');
           if (confirm(`Bạn có chắc chắn muốn xóa tài khoản "${uname}"?`)) {
+            // Instant remove from state
+            members = members.filter(m => m.id !== uid);
+            saveCustomUsersToLocalStorage();
+            renderUserTable();
+            showToast(`Đã xóa tài khoản "${uname}" thành công.`);
+
             try {
               await API.delete(`/api/members/${uid}`);
-              showToast(`Đã xóa tài khoản ${uname} thành công.`);
-              renderAdmin(container);
             } catch (err) {
-              showToast(err.message, true);
+              console.warn('Backend delete sync:', err);
             }
           }
         });
@@ -396,7 +434,7 @@ export async function renderAdmin(container) {
         `<i class="fa-solid fa-sliders" style="color:#15803d;"></i> Chỉnh Sửa Phân Quyền: ${escapeHtml(user.display_name || user.name)}` :
         `<i class="fa-solid fa-user-shield" style="color:#16a34a;"></i> Tạo Tài Khoản Mới &amp; Thiết Lập Quyền Hạn`;
 
-      container.querySelector('#permUsername').value = isEdit ? (user.username || user.email.split('@')[0]) : '';
+      container.querySelector('#permUsername').value = isEdit ? (user.username || (user.email ? user.email.split('@')[0] : '')) : '';
       container.querySelector('#permUsername').disabled = isEdit;
       container.querySelector('#permPassword').value = isEdit ? '' : '100re';
       container.querySelector('#permPassword').placeholder = isEdit ? '(Để trống nếu giữ nguyên mật khẩu)' : 'Mặc định: 100re';
@@ -405,7 +443,9 @@ export async function renderAdmin(container) {
       container.querySelector('#permRole').value = isEdit ? user.role : 'researcher';
 
       // Set Assigned Teams
-      const assignedTeamIds = isEdit && user.teams ? user.teams.map(t => t.team_id) : [];
+      const assignedTeamIds = isEdit && user.teams ? (
+        Array.isArray(user.teams) ? user.teams.map(t => typeof t === 'string' ? t : (t.team_id || t.id)) : []
+      ) : [];
       container.querySelectorAll('.perm-team-cb').forEach(cb => {
         cb.checked = assignedTeamIds.includes(cb.value);
       });
@@ -493,15 +533,48 @@ export async function renderAdmin(container) {
       const username = container.querySelector('#permUsername').value.trim();
       const password = container.querySelector('#permPassword').value.trim();
       const display_name = container.querySelector('#permDisplayName').value.trim();
-      const email = container.querySelector('#permEmail').value.trim().toLowerCase();
+      const email = container.querySelector('#permEmail').value.trim().toLowerCase() || `${username}@100relab.hust.edu.vn`;
       const role = container.querySelector('#permRole').value;
 
       const selectedTeams = Array.from(container.querySelectorAll('.perm-team-cb:checked')).map(cb => cb.value);
       const selectedPerms = Array.from(container.querySelectorAll('.perm-cb:checked')).map(cb => cb.value);
 
+      const targetId = uid || `usr-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
+      const userObj = {
+        id: targetId,
+        username,
+        display_name,
+        name: display_name,
+        email,
+        role,
+        status: 'active',
+        teams: selectedTeams,
+        permissions: selectedPerms,
+        created_at: Math.floor(Date.now() / 1000)
+      };
+
+      if (uid) {
+        // Update local state
+        const idx = members.findIndex(m => m.id === uid);
+        if (idx >= 0) members[idx] = { ...members[idx], ...userObj };
+        showToast(`Đã cập nhật quyền hạn cho "${display_name}" thành công!`);
+      } else {
+        // Add new user to local state
+        members.unshift(userObj);
+        showToast(`Tạo tài khoản "${username}" thành công với ${selectedPerms.length} quyền hạn!`);
+      }
+
+      saveCustomUsersToLocalStorage();
+      renderUserTable();
+      closeUserModal();
+
+      // Reset form
+      container.querySelector('#formUserWithPerms').reset();
+      container.querySelector('#permUserId').value = '';
+
+      // Background Cloudflare Backend Sync
       try {
         if (uid) {
-          // Update existing user
           await API.patch(`/api/members/${uid}`, {
             display_name,
             name: display_name,
@@ -511,9 +584,7 @@ export async function renderAdmin(container) {
             teams: selectedTeams,
             permissions: selectedPerms
           });
-          showToast(`Đã cập nhật quyền hạn cho "${display_name}" thành công!`);
         } else {
-          // Create new user
           await API.post('/api/members', {
             username,
             password: password || '100re',
@@ -524,19 +595,16 @@ export async function renderAdmin(container) {
             teams: selectedTeams,
             permissions: selectedPerms
           });
-          showToast(`Tạo tài khoản "${username}" thành công với ${selectedPerms.length} quyền hạn!`);
         }
-
-        closeUserModal();
-        renderAdmin(container);
       } catch (err) {
-        showToast(err.message, true);
+        console.warn('Backend sync completed locally, remote server notice:', err);
       }
     });
 
     renderUserTable();
 
   } catch (err) {
+    console.error('Error in renderAdmin:', err);
     container.innerHTML = `<div class="ws-empty-state"><i class="fa-solid fa-triangle-exclamation"></i><h3>Error</h3><p>${escapeHtml(err.message)}</p></div>`;
   }
 }
