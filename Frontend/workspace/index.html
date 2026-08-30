@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>100RE Lab Workspace | Internal Research Management</title>
+  <meta name="description" content="100RE Laboratory Internal Research Workspace. Collaborative project, task, research data and document management for lab members.">
+  <link rel="icon" type="image/jpeg" href="../assets/images/logo.jpg">
+
+  <!-- Google Fonts & FontAwesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Workspace Styles -->
+  <link rel="stylesheet" href="css/workspace.css">
+  <link rel="stylesheet" href="css/kanban.css">
+</head>
+<body class="workspace-body">
+
+  <!-- WORKSPACE LAYOUT CONTAINER -->
+  <div class="workspace-layout" id="workspaceLayout">
+
+    <!-- 1. SIDEBAR -->
+    <aside class="ws-sidebar" id="wsSidebar">
+      <!-- Brand Header -->
+      <div class="ws-sidebar-header">
+        <a href="../index.html" class="ws-brand" title="Return to Public Website">
+          <img src="../assets/images/logo.jpg" alt="100RE Logo" class="ws-brand-logo">
+          <div class="ws-brand-text">
+            <span class="ws-brand-title">100RE LAB</span>
+            <span class="ws-brand-subtitle">Internal Workspace</span>
+          </div>
+        </a>
+        <button class="ws-sidebar-close-btn" id="wsSidebarCloseBtn" aria-label="Close sidebar">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Navigation Menu -->
+      <nav class="ws-nav-container">
+        <!-- Main Nav -->
+        <ul class="ws-nav-group">
+          <li class="ws-nav-item">
+            <a href="#dashboard" class="ws-nav-link active" data-route="dashboard">
+              <i class="fa-solid fa-house-chimney"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+        </ul>
+
+        <!-- Research Section -->
+        <div class="ws-nav-section-label">RESEARCH</div>
+        <ul class="ws-nav-group">
+          <li class="ws-nav-item">
+            <a href="#teams" class="ws-nav-link" data-route="teams">
+              <i class="fa-solid fa-people-group"></i>
+              <span>Teams</span>
+              <span class="ws-nav-badge" id="badgeTeamCount">9</span>
+            </a>
+          </li>
+          <li class="ws-nav-item">
+            <a href="#projects" class="ws-nav-link" data-route="projects">
+              <i class="fa-solid fa-diagram-project"></i>
+              <span>Projects</span>
+            </a>
+          </li>
+        </ul>
+
+        <!-- Work Section -->
+        <div class="ws-nav-section-label">WORK &amp; TASKS</div>
+        <ul class="ws-nav-group">
+          <li class="ws-nav-item">
+            <a href="#tasks?filter=me" class="ws-nav-link" data-route="my-tasks">
+              <i class="fa-solid fa-list-check"></i>
+              <span>My Tasks</span>
+              <span class="ws-nav-badge ws-badge-alert" id="badgeMyTaskCount" style="display:none;">0</span>
+            </a>
+          </li>
+          <li class="ws-nav-item">
+            <a href="#tasks" class="ws-nav-link" data-route="tasks">
+              <i class="fa-solid fa-table-columns"></i>
+              <span>All Tasks / Kanban</span>
+            </a>
+          </li>
+        </ul>
+
+        <!-- Knowledge Section -->
+        <div class="ws-nav-section-label">KNOWLEDGE &amp; DATA</div>
+        <ul class="ws-nav-group">
+          <li class="ws-nav-item">
+            <a href="#datasets" class="ws-nav-link" data-route="datasets">
+              <i class="fa-solid fa-database"></i>
+              <span>Research Data</span>
+            </a>
+          </li>
+          <li class="ws-nav-item">
+            <a href="#documents" class="ws-nav-link" data-route="documents">
+              <i class="fa-solid fa-file-lines"></i>
+              <span>Documents</span>
+            </a>
+          </li>
+        </ul>
+
+        <!-- Lab Section -->
+        <div class="ws-nav-section-label">LAB</div>
+        <ul class="ws-nav-group">
+          <li class="ws-nav-item">
+            <a href="#members" class="ws-nav-link" data-route="members">
+              <i class="fa-solid fa-users"></i>
+              <span>Members</span>
+            </a>
+          </li>
+          <li class="ws-nav-item">
+            <a href="#activity" class="ws-nav-link" data-route="activity">
+              <i class="fa-solid fa-clock-rotate-left"></i>
+              <span>Activity Log</span>
+            </a>
+          </li>
+        </ul>
+
+        <!-- Admin Section (Supervisor Only) -->
+        <div class="ws-nav-section-label" id="sectionAdminLabel" style="display:none;">ADMINISTRATION</div>
+        <ul class="ws-nav-group" id="groupAdminNav" style="display:none;">
+          <li class="ws-nav-item">
+            <a href="#admin" class="ws-nav-link" data-route="admin">
+              <i class="fa-solid fa-shield-halved"></i>
+              <span>Lab Admin &amp; Users</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Sidebar Footer User Profile -->
+      <div class="ws-sidebar-footer">
+        <div class="ws-user-card" id="wsUserCard">
+          <img src="../assets/images/logo.jpg" alt="User Avatar" class="ws-user-avatar" id="sidebarUserAvatar">
+          <div class="ws-user-info">
+            <div class="ws-user-name" id="sidebarUserName">Loading...</div>
+            <div class="ws-user-role-badge" id="sidebarUserRole">researcher</div>
+          </div>
+        </div>
+        <a href="../index.html" class="ws-btn-exit" title="Back to Public Website">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        </a>
+      </div>
+    </aside>
+
+    <!-- SIDEBAR OVERLAY FOR MOBILE -->
+    <div class="ws-sidebar-overlay" id="wsSidebarOverlay"></div>
+
+    <!-- 2. MAIN CONTENT AREA -->
+    <div class="ws-main-wrapper">
+      
+      <!-- TOPBAR -->
+      <header class="ws-topbar">
+        <div class="ws-topbar-left">
+          <button class="ws-mobile-toggle" id="wsMobileToggle" aria-label="Toggle Navigation">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="ws-breadcrumb" id="wsBreadcrumb">
+            <span class="ws-crumb-root"><i class="fa-solid fa-house-chimney"></i> Workspace</span>
+            <span class="ws-crumb-sep">/</span>
+            <span class="ws-crumb-current" id="wsCrumbCurrent">Dashboard</span>
+          </div>
+        </div>
+
+        <div class="ws-topbar-right">
+          <!-- Dev Role Switcher (Visible in Development Mode) -->
+          <div class="ws-dev-switcher" id="wsDevSwitcher" title="Development Identity Switcher">
+            <span class="ws-dev-badge"><i class="fa-solid fa-flask-vial"></i> DEV ROLE:</span>
+            <select class="ws-dev-select" id="devRoleSelect">
+              <option value="usr-sup-01">Prof. Nguyen Duc Tuan (Supervisor)</option>
+              <option value="usr-ldr-02">Dr. Trinh Minh Phuong (BESS Leader)</option>
+              <option value="usr-ldr-01">Dr. Ngo Tri Duc (PV Leader)</option>
+              <option value="usr-res-01">Bui Quang Hai (AI &amp; BESS Researcher)</option>
+              <option value="usr-res-02">Nguyen Tuan Anh (Smart Grid Researcher)</option>
+              <option value="usr-alm-01">Dr. Le Anh Quan (Alumni - Read Only)</option>
+            </select>
+          </div>
+
+          <!-- Quick Action Buttons -->
+          <div class="ws-quick-actions">
+            <button class="btn-ws-primary" id="btnQuickNewTask">
+              <i class="fa-solid fa-plus"></i> <span class="hide-mobile">New Task</span>
+            </button>
+          </div>
+
+          <!-- Public Web Link -->
+          <a href="../index.html" class="btn-ws-ghost" title="Go to Public Website">
+            <i class="fa-solid fa-globe"></i> <span class="hide-mobile">Public Web</span>
+          </a>
+        </div>
+      </header>
+
+      <!-- VIEWPORT CONTAINER (Dynamically injected views) -->
+      <main class="ws-content-viewport" id="workspaceContent">
+        <div class="ws-loader-center">
+          <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+          <p>Loading 100RE Lab Workspace...</p>
+        </div>
+      </main>
+
+    </div>
+  </div>
+
+  <!-- ========================================================== -->
+  <!-- MODALS -->
+  <!-- ========================================================== -->
+
+  <!-- A. TASK MODAL (Create / Edit) -->
+  <div class="ws-modal-backdrop" id="modalTask">
+    <div class="ws-modal-dialog">
+      <div class="ws-modal-header">
+        <h3 class="ws-modal-title" id="modalTaskTitle"><i class="fa-solid fa-list-check"></i> Create New Task</h3>
+        <button class="ws-modal-close-btn" data-close-modal="modalTask">&times;</button>
+      </div>
+      <form id="formTask" class="ws-modal-form">
+        <input type="hidden" id="taskFormId">
+        <div class="form-row">
+          <div class="form-group flex-2">
+            <label for="taskFormTitle">Task Title <span class="required">*</span></label>
+            <input type="text" id="taskFormTitle" class="form-control" placeholder="e.g. Implement RegD controller" required>
+          </div>
+          <div class="form-group flex-1">
+            <label for="taskFormPriority">Priority</label>
+            <select id="taskFormPriority" class="form-control">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+              <option value="urgent">Urgent</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="taskFormTeam">Research Team <span class="required">*</span></label>
+            <select id="taskFormTeam" class="form-control" required></select>
+          </div>
+          <div class="form-group flex-1">
+            <label for="taskFormProject">Project (Optional)</label>
+            <select id="taskFormProject" class="form-control">
+              <option value="">-- General Team Task --</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="taskFormAssignee">Assignee</label>
+            <select id="taskFormAssignee" class="form-control">
+              <option value="">-- Unassigned --</option>
+            </select>
+          </div>
+          <div class="form-group flex-1">
+            <label for="taskFormDueDate">Deadline</label>
+            <input type="date" id="taskFormDueDate" class="form-control">
+          </div>
+          <div class="form-group flex-1" id="taskStatusGroup" style="display:none;">
+            <label for="taskFormStatus">Status</label>
+            <select id="taskFormStatus" class="form-control">
+              <option value="todo">To Do</option>
+              <option value="in_progress">In Progress</option>
+              <option value="review">Review</option>
+              <option value="done">Done</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="taskFormDescription">Description &amp; Research Requirements</label>
+          <textarea id="taskFormDescription" class="form-control" rows="4" placeholder="Detail the mathematical formulation, experimental requirements, and expected deliverables..."></textarea>
+        </div>
+
+        <div class="ws-modal-footer">
+          <button type="button" class="btn-ws-ghost" data-close-modal="modalTask">Cancel</button>
+          <button type="submit" class="btn-ws-primary" id="btnSaveTask">
+            <i class="fa-solid fa-floppy-disk"></i> Save Task
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- B. TASK DETAILS & COMMENTS MODAL -->
+  <div class="ws-modal-backdrop" id="modalTaskDetail">
+    <div class="ws-modal-dialog ws-modal-lg">
+      <div class="ws-modal-header">
+        <div class="ws-detail-header-left">
+          <span class="ws-badge" id="taskDetailStatusBadge">TODO</span>
+          <span class="ws-badge" id="taskDetailPriorityBadge">MEDIUM</span>
+        </div>
+        <button class="ws-modal-close-btn" data-close-modal="modalTaskDetail">&times;</button>
+      </div>
+      <div class="ws-task-detail-body">
+        <div class="ws-task-detail-main">
+          <h2 class="ws-detail-title" id="taskDetailTitle">Task Title</h2>
+          <div class="ws-detail-meta-bar">
+            <span><i class="fa-solid fa-people-group"></i> <strong id="taskDetailTeam">Team</strong></span>
+            <span><i class="fa-solid fa-diagram-project"></i> <span id="taskDetailProject">Project</span></span>
+            <span><i class="fa-regular fa-calendar"></i> Due: <span id="taskDetailDueDate">No deadline</span></span>
+          </div>
+
+          <div class="ws-detail-section">
+            <h4>Description</h4>
+            <div class="ws-detail-description" id="taskDetailDesc">No description provided.</div>
+          </div>
+
+          <!-- Comments Thread -->
+          <div class="ws-detail-section">
+            <h4>Discussion &amp; Research Updates (<span id="taskDetailCommentCount">0</span>)</h4>
+            <div class="ws-comment-thread" id="taskCommentThread"></div>
+            
+            <form id="formAddComment" class="ws-comment-form">
+              <textarea id="commentInput" class="form-control" rows="2" placeholder="Write an update, ask a question, or post experimental findings..." required></textarea>
+              <div style="display:flex; justify-content:flex-end; margin-top:8px;">
+                <button type="submit" class="btn-ws-primary" id="btnSubmitComment">
+                  <i class="fa-solid fa-paper-plane"></i> Post Comment
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="ws-task-detail-sidebar">
+          <div class="ws-detail-side-block">
+            <label>Assigned To</label>
+            <div class="ws-assignee-row" id="taskDetailAssigneeRow">
+              <img src="../assets/images/logo.jpg" id="taskDetailAssigneeAvatar" class="ws-avatar-sm" alt="Assignee">
+              <span id="taskDetailAssigneeName">Unassigned</span>
+            </div>
+          </div>
+
+          <div class="ws-detail-side-block">
+            <label>Change Status</label>
+            <div class="ws-status-btn-group">
+              <button class="btn-status-action" data-status="todo">To Do</button>
+              <button class="btn-status-action" data-status="in_progress">In Progress</button>
+              <button class="btn-status-action" data-status="review">Review</button>
+              <button class="btn-status-action" data-status="done">Done</button>
+            </div>
+          </div>
+
+          <div class="ws-detail-side-block" id="taskDetailAdminActions">
+            <label>Actions</label>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <button class="btn-ws-ghost" id="btnEditTaskFromDetail"><i class="fa-solid fa-pen"></i> Edit Task</button>
+              <button class="btn-ws-danger" id="btnDeleteTaskFromDetail"><i class="fa-solid fa-trash"></i> Delete Task</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- C. PROJECT MODAL (Create / Edit) -->
+  <div class="ws-modal-backdrop" id="modalProject">
+    <div class="ws-modal-dialog">
+      <div class="ws-modal-header">
+        <h3 class="ws-modal-title" id="modalProjectTitle"><i class="fa-solid fa-diagram-project"></i> Create New Project</h3>
+        <button class="ws-modal-close-btn" data-close-modal="modalProject">&times;</button>
+      </div>
+      <form id="formProject" class="ws-modal-form">
+        <input type="hidden" id="projectFormId">
+        <div class="form-group">
+          <label for="projectFormName">Project Name <span class="required">*</span></label>
+          <input type="text" id="projectFormName" class="form-control" placeholder="e.g. Data Center BESS Peak Shaving & Frequency Regulation" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="projectFormTeam">Research Team <span class="required">*</span></label>
+            <select id="projectFormTeam" class="form-control" required></select>
+          </div>
+          <div class="form-group flex-1">
+            <label for="projectFormStatus">Status</label>
+            <select id="projectFormStatus" class="form-control">
+              <option value="planning">Planning</option>
+              <option value="active" selected>Active</option>
+              <option value="paused">Paused</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="projectFormStartDate">Start Date</label>
+            <input type="date" id="projectFormStartDate" class="form-control">
+          </div>
+          <div class="form-group flex-1">
+            <label for="projectFormEndDate">Target Completion</label>
+            <input type="date" id="projectFormEndDate" class="form-control">
+          </div>
+          <div class="form-group flex-1">
+            <label for="projectFormProgress">Progress (%)</label>
+            <input type="number" id="projectFormProgress" class="form-control" min="0" max="100" value="0">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="projectFormDesc">Description &amp; Research Objectives</label>
+          <textarea id="projectFormDesc" class="form-control" rows="3" placeholder="Outline research scope, methodologies, funding, and publication goals..."></textarea>
+        </div>
+
+        <div class="ws-modal-footer">
+          <button type="button" class="btn-ws-ghost" data-close-modal="modalProject">Cancel</button>
+          <button type="submit" class="btn-ws-primary" id="btnSaveProject">
+            <i class="fa-solid fa-floppy-disk"></i> Save Project
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- D. UPLOAD DOCUMENT MODAL -->
+  <div class="ws-modal-backdrop" id="modalDocument">
+    <div class="ws-modal-dialog">
+      <div class="ws-modal-header">
+        <h3 class="ws-modal-title"><i class="fa-solid fa-file-arrow-up"></i> Upload Research Document</h3>
+        <button class="ws-modal-close-btn" data-close-modal="modalDocument">&times;</button>
+      </div>
+      <form id="formDocument" class="ws-modal-form">
+        <div class="form-group">
+          <label for="docFormName">Document Title <span class="required">*</span></label>
+          <input type="text" id="docFormName" class="form-control" placeholder="e.g. IEEE Trans Paper Draft or Technical Standard" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="docFormTeam">Team <span class="required">*</span></label>
+            <select id="docFormTeam" class="form-control" required></select>
+          </div>
+          <div class="form-group flex-1">
+            <label for="docFormProject">Project (Optional)</label>
+            <select id="docFormProject" class="form-control"></select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="docFormFile">Select File (PDF, DOCX, PPTX, Markdown, etc.) <span class="required">*</span></label>
+          <input type="file" id="docFormFile" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+          <label for="docFormTags">Tags (comma separated)</label>
+          <input type="text" id="docFormTags" class="form-control" placeholder="e.g. PJM, Standard, Architecture, Draft">
+        </div>
+
+        <div class="form-group">
+          <label for="docFormDesc">Description &amp; Notes</label>
+          <textarea id="docFormDesc" class="form-control" rows="2" placeholder="Summary of document contents..."></textarea>
+        </div>
+
+        <div class="ws-modal-footer">
+          <button type="button" class="btn-ws-ghost" data-close-modal="modalDocument">Cancel</button>
+          <button type="submit" class="btn-ws-primary" id="btnSaveDocument">
+            <i class="fa-solid fa-cloud-arrow-up"></i> Upload Document
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- E. UPLOAD RESEARCH DATASET MODAL -->
+  <div class="ws-modal-backdrop" id="modalDataset">
+    <div class="ws-modal-dialog">
+      <div class="ws-modal-header">
+        <h3 class="ws-modal-title"><i class="fa-solid fa-database"></i> Upload Research Dataset</h3>
+        <button class="ws-modal-close-btn" data-close-modal="modalDataset">&times;</button>
+      </div>
+      <form id="formDataset" class="ws-modal-form">
+        <div class="form-group">
+          <label for="dsFormName">Dataset Name <span class="required">*</span></label>
+          <input type="text" id="dsFormName" class="form-control" placeholder="e.g. PJM AGC RegD Dynamic Frequency Signal 2025-2026" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="dsFormTeam">Team <span class="required">*</span></label>
+            <select id="dsFormTeam" class="form-control" required></select>
+          </div>
+          <div class="form-group flex-1">
+            <label for="dsFormProject">Project (Optional)</label>
+            <select id="dsFormProject" class="form-control"></select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="dsFormSource">Data Source</label>
+            <input type="text" id="dsFormSource" class="form-control" placeholder="e.g. 100RE Rooftop Station or PJM Portal">
+          </div>
+          <div class="form-group flex-1">
+            <label for="dsFormType">Data Type</label>
+            <select id="dsFormType" class="form-control">
+              <option value="time-series">Time-series</option>
+              <option value="experimental">Experimental / Lab Bench</option>
+              <option value="measurement">Field Measurement</option>
+              <option value="simulation">Simulation Model Output</option>
+            </select>
+          </div>
+          <div class="form-group flex-1">
+            <label for="dsFormResolution">Resolution</label>
+            <input type="text" id="dsFormResolution" class="form-control" placeholder="e.g. 1-second, 15-min">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="dsFormFormat">Format</label>
+            <select id="dsFormFormat" class="form-control">
+              <option value="CSV">CSV</option>
+              <option value="Parquet">Parquet</option>
+              <option value="MAT / HDF5">MAT / HDF5</option>
+              <option value="JSON">JSON</option>
+            </select>
+          </div>
+          <div class="form-group flex-2">
+            <label for="dsFormFile">Select Dataset File <span class="required">*</span></label>
+            <input type="file" id="dsFormFile" class="form-control" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="dsFormTags">Tags (comma separated)</label>
+          <input type="text" id="dsFormTags" class="form-control" placeholder="e.g. PJM, AGC, RegD, BESS, Frequency Regulation, 2026">
+        </div>
+
+        <div class="form-group">
+          <label for="dsFormDesc">Metadata &amp; Measurement Description</label>
+          <textarea id="dsFormDesc" class="form-control" rows="2" placeholder="Describe columns, calibration setup, sampling rates..."></textarea>
+        </div>
+
+        <div class="ws-modal-footer">
+          <button type="button" class="btn-ws-ghost" data-close-modal="modalDataset">Cancel</button>
+          <button type="submit" class="btn-ws-primary" id="btnSaveDataset">
+            <i class="fa-solid fa-cloud-arrow-up"></i> Upload Dataset
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div class="ws-toast" id="wsToast">
+    <i class="fa-solid fa-circle-check" id="wsToastIcon"></i>
+    <span id="wsToastMsg">Notification message</span>
+  </div>
+
+  <!-- Scripts -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

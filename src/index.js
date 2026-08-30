@@ -1,7 +1,22 @@
 /**
- * 100RE Laboratory - Cloudflare Worker & API Gateway
- * Serves static assets from ./Frontend and handles /api/* endpoints
+ * 100RE Laboratory - Cloudflare Worker Gateway
+ * Architecture:
+ * - Public Website: Cloudflare KV (Public Member Profiles)
+ * - Lab Workspace: Cloudflare D1 (Relational Data & RBAC)
+ * - File Storage: Google Drive 5TB (Documents, Datasets, Reports)
  */
+
+import { getDatabase } from './db.js';
+import { resolveUser } from './auth.js';
+import { handleDashboard } from './routes/dashboard.js';
+import { handleTeams } from './routes/teams.js';
+import { handleProjects } from './routes/projects.js';
+import { handleTasks } from './routes/tasks.js';
+import { handleDocuments } from './routes/documents.js';
+import { handleDatasets } from './routes/datasets.js';
+import { handlePublicMembers, handleWorkspaceUsers } from './routes/members.js';
+import { handleActivity } from './routes/activity.js';
+import { handleUpload, handleDownload } from './routes/storage.js';
 
 export default {
   async fetch(request, env, ctx) {
@@ -11,27 +26,168 @@ export default {
     // CORS Headers
     const corsHeaders = {
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Dev-User-Id, X-Dev-User-Email, X-Workspace-Client, Cf-Access-Authenticated-User-Email, Cf-Access-Jwt-Assertion',
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate'
     };
 
     if (request.method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders });
     }
 
-    // ==========================================
-    // 1. API: Login
-    // ==========================================
+    // Initialize D1 Database
+    const db = getDatabase(env);
+
+    // =========================================================================
+    // A. PUBLIC MEMBER APIS (Source of Truth: Cloudflare KV)
+    // =========================================================================
+    if (path === '/api/public/members') {
+      const data = await handlePublicMembers(request, env);
+      return jsonResponse(data, 200, corsHeaders);
+    }
+
+    // =========================================================================
+    // B. WORKSPACE REST APIS (Source of Truth: Cloudflare D1 & Google Drive)
+    // =========================================================================
+
+    // 1. GET /api/me (Current Authenticated Workspace User)
+    if (path === '/api/me' && request.method === 'GET') {
+      const { user, isAuthenticated } = await resolveUser(request, env, db);
+      if (!isAuthenticated || !user) {
+        return jsonResponse({ authenticated: false, user: null }, 200, corsHeaders);
+      }
+      return jsonResponse({ authenticated: true, user }, 200, corsHeaders);
+    }
+
+    // 2. GET /api/workspace/dashboard
+    if (path === '/api/workspace/dashboard' && request.method === 'GET') {
+      const { user, isAuthenticated } = await resolveUser(request, env, db);
+      if (!isAuthenticated || !user) {
+        return jsonResponse({ error: '401 Unauthorized: Vui lòng đăng nhập.' }, 401, corsHeaders);
+      }
+      const data = await handleDashboard(user, db);
+      return jsonResponse(data, 200, corsHeaders);
+    }
+
+    // 3. /api/teams*
+    if (path.startsWith('/api/teams')) {
+      const { user, isAuthenticated } = await resolveUser(request, env, db);
+      if (!isAuthenticated || !user) {
+        return jsonResponse({ error: '401 Unauthorized.' }, 401, corsHeaders);
+      }
+      const res = await handleTeams(request, user, db);
+      return jsonResponse(res, res.status || 200, corsHeaders);
+    }
+
+    // 4. /api/projects*
+    if (path.startsWith('/api/projects')) {
+      const { user, isAuthenticated } = await resolveUser(request, env, db);
+      if (!isAuthenticated || !user) {
+        return jsonResponse({ error: '401 Unauthorized.' }, 401, corsHeaders);
+      }
+      const res = await handleProjects(request, user, db, env);
+      return jsonResponse(res, res.status || 200, corsHeaders);
+    }
+
+    // 5. /api/tasks*
+    if (path.startsWith('/api/tasks')) {
+      const { user, isAuthenticated } = await resolveUser(request, env, db);
+      if (!isAuthenticated || !user) {
+        return jsonResponse({ error: '401 Unauthorized.' }, 401, corsHeaders);
+      }
+      const res = await handleTasks(request, user, db);
+      return jsonResponse(res, res.status || 200, corsHeaders);
+    }
+
+    // 6. /api/documents*
+    if (path.startsWith('/api/documents')) {
+      const { user, isAuthenticated } = await resolveUser(request, env, db);
+      if (!isAuthenticated || !user) {
+        return jsonResponse({ error: '401 Unauthorized.' }, 401, corsHeaders);
+      }
+      const res = await handleDocuments(request, user, db, env);
+      return jsonResponse(res, res.status || 200, corsHeaders);
+    }
+
+    // 7. /api/datasets*
+    if (path.startsWith('/api/datasets')) {
+      const { user, isAuthenticated } = await resolveUser(request, env, db);
+      if (!isAuthenticated || !user) {
+        return jsonResponse({ error: '401 Unauthorized.' }, 401, corsHeaders);
+      }
+      const res = await handleDatasets(request, user, db, env);
+      return jsonResponse(res, res.status || 200, corsHeaders);
+    }
+
+    // 8. /api/activity*
+    if (path.startsWith('/api/activity')) {
+      const { user, isAuthenticated } = await resolveUser(request, env, db);
+      if (!isAuthenticated || !user) {
+        return jsonResponse({ error: '401 Unauthorized.' }, 401, corsHeaders);
+      }
+      const res = await handleActivity(request, user, db);
+      return jsonResponse(res, res.status || 200, corsHeaders);
+    }
+
+    // 9. /api/upload (Google Drive 5TB Storage)
+    if (path === '/api/upload' && request.method === 'POST') {
+      const { user, isAuthenticated } = await resolveUser(request, env, db);
+      if (!isAuthenticated || !user) {
+        return jsonResponse({ error: '401 Unauthorized.' }, 401, corsHeaders);
+      }
+      return await handleUpload(request, user, db, env);
+    }
+
+    // 10. /api/files/* (Download & Open from Google Drive)
+    if (path.startsWith('/api/files/')) {
+      const { user, isAuthenticated } = await resolveUser(request, env, db);
+      if (!isAuthenticated || !user) {
+        return jsonResponse({ error: '401 Unauthorized: Cần đăng nhập để tải file.' }, 401, corsHeaders);
+      }
+      return await handleDownload(request, user, db, env);
+    }
+
+    // 11. /api/members & /api/workspace/users (Public Member KV vs Workspace User D1)
+    if (path.startsWith('/api/workspace/users')) {
+      const { user, isAuthenticated } = await resolveUser(request, env, db);
+      if (!isAuthenticated || !user) {
+        return jsonResponse({ error: '401 Unauthorized.' }, 401, corsHeaders);
+      }
+      const res = await handleWorkspaceUsers(request, user, db, env);
+      return jsonResponse(res, res.status || 200, corsHeaders);
+    }
+
+    if (path.startsWith('/api/members')) {
+      const isWorkspaceCall = request.headers.get('x-workspace-client') === 'true' || request.headers.get('x-dev-user-id');
+      
+      // If public request from public website
+      if (!isWorkspaceCall && request.method === 'GET') {
+        const data = await handlePublicMembers(request, env);
+        return jsonResponse(data, 200, corsHeaders);
+      }
+
+      // If workspace authenticated call
+      const { user, isAuthenticated } = await resolveUser(request, env, db);
+      if (!isAuthenticated || !user) {
+        return jsonResponse({ error: '401 Unauthorized.' }, 401, corsHeaders);
+      }
+      const res = await handleWorkspaceUsers(request, user, db, env);
+      return jsonResponse(res, res.status || 200, corsHeaders);
+    }
+
+    // =========================================================================
+    // C. LEGACY ADMIN & AUTH (Public Website Member editing)
+    // =========================================================================
     if (path === '/api/login' && request.method === 'POST') {
       try {
         const body = await request.json();
         const { username, password } = body;
-        const validUser = env.ADMIN_USERNAME || '100re';
-        const validPass = env.ADMIN_PASSWORD || '100re';
+        const validUser = env?.ADMIN_USERNAME || '100re';
+        const validPass = env?.ADMIN_PASSWORD || '100re';
 
         if (username === validUser && password === validPass) {
           const token = crypto.randomUUID();
-          if (env.MEMBERS_KV) {
+          if (env && env.MEMBERS_KV) {
             await env.MEMBERS_KV.put(`session_${token}`, username, { expirationTtl: 86400 * 7 });
           }
           return jsonResponse({ success: true, token, user: username }, 200, corsHeaders);
@@ -43,9 +199,6 @@ export default {
       }
     }
 
-    // ==========================================
-    // 2. API: Auth Status
-    // ==========================================
     if (path === '/api/auth-status' && request.method === 'GET') {
       const authHeader = request.headers.get('Authorization') || '';
       const token = authHeader.replace(/^Bearer\s+/i, '').trim();
@@ -53,116 +206,37 @@ export default {
       if (!token) {
         return jsonResponse({ authenticated: false }, 200, corsHeaders);
       }
-
-      if (env.MEMBERS_KV) {
+      if (env && env.MEMBERS_KV) {
         const user = await env.MEMBERS_KV.get(`session_${token}`);
         if (user) return jsonResponse({ authenticated: true, user }, 200, corsHeaders);
       }
-
       return jsonResponse({ authenticated: true, user: '100re' }, 200, corsHeaders);
     }
 
-    // ==========================================
-    // 3. API: Logout
-    // ==========================================
     if (path === '/api/logout' && request.method === 'POST') {
       const authHeader = request.headers.get('Authorization') || '';
       const token = authHeader.replace(/^Bearer\s+/i, '').trim();
-      if (token && env.MEMBERS_KV) {
+      if (token && env && env.MEMBERS_KV) {
         await env.MEMBERS_KV.delete(`session_${token}`);
       }
       return jsonResponse({ success: true }, 200, corsHeaders);
     }
 
-    // ==========================================
-    // 4. API: Members List (GET) & Add (POST)
-    // ==========================================
-    if (path === '/api/members') {
-      if (request.method === 'GET') {
-        if (env.MEMBERS_KV) {
-          const custom = (await env.MEMBERS_KV.get('members_list')) || (await env.MEMBERS_KV.get('members_data'));
-          if (custom) {
-            return new Response(custom, {
-              headers: { 'Content-Type': 'application/json', ...corsHeaders }
-            });
-          }
-        }
-        // Fallback default members
-        return jsonResponse(getDefaultMembers(), 200, corsHeaders);
-      }
-
-      if (request.method === 'POST') {
-        try {
-          const newMember = await request.json();
-          let list = [];
-          if (env.MEMBERS_KV) {
-            const saved = (await env.MEMBERS_KV.get('members_list')) || (await env.MEMBERS_KV.get('members_data'));
-            list = saved ? JSON.parse(saved) : getDefaultMembers();
-          } else {
-            list = getDefaultMembers();
-          }
-
-          if (!newMember.id) newMember.id = `${newMember.team || 'member'}_${Date.now()}`;
-          list.unshift(newMember);
-
-          if (env.MEMBERS_KV) {
-            await env.MEMBERS_KV.put('members_list', JSON.stringify(list));
-            await env.MEMBERS_KV.put('members_data', JSON.stringify(list));
-          }
-
-          return jsonResponse({ success: true, member: newMember }, 200, corsHeaders);
-        } catch (err) {
-          return jsonResponse({ success: false, error: err.message }, 500, corsHeaders);
+    // =========================================================================
+    // D. STATIC ASSETS & WORKSPACE SPA ROUTING
+    // =========================================================================
+    if (env && env.ASSETS) {
+      if (path === '/workspace' || path === '/workspace/' || path.startsWith('/workspace/')) {
+        const hasExtension = /\.[a-zA-Z0-9]+$/.test(path);
+        if (!hasExtension) {
+          const spaRequest = new Request(`${url.origin}/workspace/index.html`, request);
+          return env.ASSETS.fetch(spaRequest);
         }
       }
-    }
-
-    // ==========================================
-    // 5. API: Member Edit / Delete (PUT / DELETE /api/members/:id)
-    // ==========================================
-    if (path.startsWith('/api/members/')) {
-      const id = decodeURIComponent(path.split('/')[3] || '');
-      let list = [];
-      if (env.MEMBERS_KV) {
-        const saved = (await env.MEMBERS_KV.get('members_list')) || (await env.MEMBERS_KV.get('members_data'));
-        list = saved ? JSON.parse(saved) : getDefaultMembers();
-      } else {
-        list = getDefaultMembers();
-      }
-
-      if (request.method === 'PUT') {
-        const payload = await request.json();
-        const idx = list.findIndex(m => String(m.id) === String(id));
-        if (idx !== -1) {
-          list[idx] = { ...list[idx], ...payload, id };
-        } else {
-          list.unshift({ id, ...payload });
-        }
-        if (env.MEMBERS_KV) {
-          await env.MEMBERS_KV.put('members_list', JSON.stringify(list));
-          await env.MEMBERS_KV.put('members_data', JSON.stringify(list));
-        }
-        return jsonResponse({ success: true, member: list[idx] || payload }, 200, corsHeaders);
-      }
-
-      if (request.method === 'DELETE') {
-        list = list.filter(m => String(m.id) !== String(id));
-        if (env.MEMBERS_KV) {
-          await env.MEMBERS_KV.put('members_list', JSON.stringify(list));
-          await env.MEMBERS_KV.put('members_data', JSON.stringify(list));
-        }
-        return jsonResponse({ success: true, id }, 200, corsHeaders);
-      }
-    }
-
-    // ==========================================
-    // 6. Serve Static Assets (Frontend)
-    // ==========================================
-    if (env.ASSETS) {
       return env.ASSETS.fetch(request);
     }
 
-    return new Response('100RE Laboratory Worker Running', { status: 200 });
+    return new Response('100RE Laboratory Worker Gateway Running', { status: 200 });
   }
 };
 
@@ -171,31 +245,7 @@ function jsonResponse(data, status = 200, headers = {}) {
     status,
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
-      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
-      'Pragma': 'no-cache',
-      'Expires': '0',
       ...headers
     }
   });
-}
-
-function getDefaultMembers() {
-  return [
-    { id: "pv-1", name: "Ngô Trí Đức", team: "pv", teamName: "PV Team", role: "PV Team", image: "assets/images/ngo_tri_duc.png", bio: "Researcher in the PV Team at 100RE Laboratory." },
-    { id: "pv-2", name: "Bui Quang Minh", team: "pv", teamName: "PV Team", role: "PV Team", image: "assets/images/bui_quang_minh.jpg", bio: "Researcher in the PV Team at 100RE Laboratory." },
-    { id: "ai-1", name: "Bui Quang Hai", team: "ai", teamName: "AI Team", role: "AI Team", image: "assets/images/bui_quang_hai.jpg", bio: "Researcher in the AI Team at 100RE Laboratory." },
-    { id: "dr_uc-1", name: "Nguyen Tuan Anh", team: "dr_uc", teamName: "Demand Response and Unit Commitment Team", role: "Unit Commitment Team", image: "assets/images/nguyen_tuan_anh.jpg", bio: "Researcher at 100RE Laboratory. Contact: anh.nt196322@sis.hust.edu.vn" },
-    { id: "dr_uc-2", name: "Le Anh Quan", team: "dr_uc", teamName: "Demand Response and Unit Commitment Team", role: "Unit Commitment Team", image: "assets/images/le_anh_quan.png", bio: "Researcher in Demand Response & Unit Commitment Team." },
-    { id: "wind-1", name: "Nguyen Hoang Nam", team: "wind", teamName: "Wind Team", role: "Wind Team", image: "assets/images/nguyen_hoang_nam.jpg", bio: "Researcher in the Wind Energy Team at 100RE Laboratory." },
-    { id: "wind-2", name: "Nguyễn Như Tùng", team: "wind", teamName: "Wind Team", role: "Wind Team", image: "assets/images/nguyen_nhu_tung.png", bio: "Researcher in the Wind Team at 100RE Laboratory." },
-    { id: "smartgrid-1", name: "Le Ngoc Dung", team: "smartgrid", teamName: "Smart Grid Team", role: "Smart Grid Team", image: "assets/images/le_ngoc_dung.jpg", bio: "Researcher in the Smart Grid Team at 100RE Laboratory." },
-    { id: "smartgrid-2", name: "Duong Minh Hai", team: "smartgrid", teamName: "Smart Grid Team", role: "Smart Grid Team", image: "assets/images/duong_minh_hai.png", bio: "Researcher in the Smart Grid Team at 100RE Laboratory." },
-    { id: "smartgrid-3", name: "Vu Tien Dung", team: "smartgrid", teamName: "Smart Grid Team", role: "Smart Grid Team", image: "assets/images/vu_tien_dung.png", bio: "Researcher in the Smart Grid Team at 100RE Laboratory." },
-    { id: "ev-1", name: "Le The Cuong", team: "ev", teamName: "Electric Vehicle", role: "Electric Vehicle Team", image: "assets/images/le_the_cuong.jpg", bio: "Researcher in the Electric Vehicle Team." },
-    { id: "ev-2", name: "Dao Quoc Khanh", team: "ev", teamName: "Electric Vehicle", role: "Electric Vehicle Team", image: "assets/images/dao_quoc_khanh.jpg", bio: "Researcher in the Electric Vehicle Team." },
-    { id: "hydrogen-1", name: "Nguyen Hoang Anh", team: "hydrogen", teamName: "Hydrogen Team", role: "Hydrogen Team", image: "assets/images/nguyen_hoang_anh.jpg", bio: "Researcher in the Hydrogen Team." },
-    { id: "bess-1", name: "Trinh Minh Phuong", team: "bess", teamName: "BESS Team", role: "BESS Team", image: "assets/images/trinh_minh_phuong.jpg", bio: "Researcher in the BESS Team." },
-    { id: "bess-2", name: "Nguyen Quang Anh", team: "bess", teamName: "BESS Team", role: "BESS Team", image: "assets/images/nguyen_quang_anh.png", bio: "Researcher in the BESS Team." },
-    { id: "bess-3", name: "Tran Thi Hong Vinh", team: "bess", teamName: "BESS Team", role: "BESS Team", image: "assets/images/tran_thi_hong_vinh.png", bio: "Researcher in the BESS Team." }
-  ];
 }

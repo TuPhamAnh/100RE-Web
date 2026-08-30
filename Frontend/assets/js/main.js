@@ -1023,11 +1023,33 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  function initWorkspaceNav() {
+    const navMenu = document.querySelector('.nav-menu');
+    if (navMenu && !document.getElementById('navWorkspaceLink')) {
+      const li = document.createElement('li');
+      li.className = 'nav-item';
+      li.id = 'navWorkspaceLink';
+      li.innerHTML = `
+        <a href="workspace/index.html" class="nav-link" style="color:#4ade80; font-weight:700; display:inline-flex; align-items:center; gap:6px;">
+          <i class="fa-solid fa-flask-vial"></i> Workspace
+        </a>
+      `;
+      const loginItem = document.getElementById('loginNavItem');
+      if (loginItem) {
+        navMenu.insertBefore(li, loginItem);
+      } else {
+        navMenu.appendChild(li);
+      }
+    }
+  }
+
   // Initialize All UX Enhancements
   checkAuthStatus();
   loadMembers();
   initAnimatedCounters();
   initSearchUX();
+  initWorkspaceNav();
 });
+
 
 

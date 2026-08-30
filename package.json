@@ -2,6 +2,7 @@
   "name": "100re-web",
   "version": "1.0.0",
   "description": "100RE Laboratory Member Management Frontend & Cloudflare Worker API",
+  "type": "module",
   "scripts": {
     "dev": "wrangler dev",
     "build": "echo Static assets ready",
