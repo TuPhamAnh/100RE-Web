@@ -321,6 +321,40 @@ async function runTests() {
     }
   });
 
+  await test('Public Member CRUD & Cloudflare KV Persistence: POST, GET, DELETE /api/public/members', async () => {
+    // 1. Add public member
+    const newMember = {
+      id: 'pv-new-test',
+      name: 'Nguyen Van Test',
+      team: 'pv',
+      teamName: 'PV Team',
+      role: 'Solar Cell Researcher',
+      bio: 'Pioneering bifacial perovskite tandem cells at 100RE Lab.'
+    };
+    const addReq = makeReq('/api/public/members', 'POST', newMember);
+    const addRes = await worker.fetch(addReq, mockEnv);
+    const addData = await addRes.json();
+    if (!addData.success || !addData.member || addData.member.name !== 'Nguyen Van Test') {
+      throw new Error(`Expected public member add success, got ${JSON.stringify(addData)}`);
+    }
+
+    // 2. Fetch public members
+    const getReq = makeReq('/api/public/members', 'GET');
+    const getRes = await worker.fetch(getReq, mockEnv);
+    const getData = await getRes.json();
+    if (!Array.isArray(getData) || !getData.find(m => m.id === 'pv-new-test')) {
+      throw new Error(`Expected public member list to include pv-new-test, got ${JSON.stringify(getData)}`);
+    }
+
+    // 3. Delete public member
+    const delReq = makeReq('/api/public/members/pv-new-test', 'DELETE');
+    const delRes = await worker.fetch(delReq, mockEnv);
+    const delData = await delRes.json();
+    if (!delData.success || delData.members.find(m => m.id === 'pv-new-test')) {
+      throw new Error(`Expected member to be deleted from list, got ${JSON.stringify(delData)}`);
+    }
+  });
+
   console.log(`\n==============================================`);
   console.log(`Test Summary: ${passed} Passed, ${failed} Failed`);
   console.log(`==============================================\n`);

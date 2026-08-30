@@ -40,6 +40,71 @@ export async function handlePublicMembers(request, env) {
     return DEFAULT_MEMBERS;
   }
 
+  if (method === 'POST' || method === 'PUT') {
+    try {
+      const body = await request.json();
+      let current = DEFAULT_MEMBERS;
+      if (env && env.MEMBERS_KV) {
+        const custom = (await env.MEMBERS_KV.get('members_list')) || (await env.MEMBERS_KV.get('members_data'));
+        if (custom) {
+          try { current = JSON.parse(custom); } catch (e) {}
+        }
+      }
+
+      let savedMember = null;
+      if (Array.isArray(body)) {
+        current = body;
+      } else if (body && Array.isArray(body.members)) {
+        current = body.members;
+      } else if (body && (body.name || body.display_name)) {
+        const item = {
+          id: body.id || `${body.team || 'pv'}-${Date.now()}`,
+          name: body.name || body.display_name,
+          team: body.team || 'pv',
+          teamName: body.teamName || (body.team ? body.team.toUpperCase() + ' Team' : 'PV Team'),
+          role: body.role || 'Researcher',
+          image: body.image || body.avatar_url || 'assets/images/logo.jpg',
+          bio: body.bio || ''
+        };
+        const idx = current.findIndex(m => String(m.id) === String(item.id));
+        if (idx !== -1) {
+          current[idx] = { ...current[idx], ...item };
+        } else {
+          current.unshift(item);
+        }
+        savedMember = item;
+      }
+
+      if (env && env.MEMBERS_KV) {
+        await env.MEMBERS_KV.put('members_list', JSON.stringify(current));
+      }
+      return { success: true, member: savedMember, members: current };
+    } catch (e) {
+      return { error: 'Failed to update members: ' + e.message };
+    }
+  }
+
+  if (method === 'DELETE') {
+    try {
+      const url = new URL(request.url);
+      const memberId = url.pathname.split('/').pop();
+      let current = DEFAULT_MEMBERS;
+      if (env && env.MEMBERS_KV) {
+        const custom = (await env.MEMBERS_KV.get('members_list')) || (await env.MEMBERS_KV.get('members_data'));
+        if (custom) {
+          try { current = JSON.parse(custom); } catch (e) {}
+        }
+      }
+      current = current.filter(m => String(m.id) !== String(memberId));
+      if (env && env.MEMBERS_KV) {
+        await env.MEMBERS_KV.put('members_list', JSON.stringify(current));
+      }
+      return { success: true, members: current };
+    } catch (e) {
+      return { error: 'Failed to delete member: ' + e.message };
+    }
+  }
+
   return { error: 'Method Not Allowed' };
 }
 

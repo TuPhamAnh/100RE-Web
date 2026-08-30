@@ -43,7 +43,7 @@ export default {
     // =========================================================================
     // A. PUBLIC MEMBER APIS (Source of Truth: Cloudflare KV)
     // =========================================================================
-    if (path === '/api/public/members') {
+    if (path === '/api/public/members' || path.startsWith('/api/public/members/')) {
       const data = await handlePublicMembers(request, env);
       return jsonResponse(data, 200, corsHeaders);
     }

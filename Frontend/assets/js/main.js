@@ -145,16 +145,18 @@ document.addEventListener('DOMContentLoaded', () => {
   async function loadMembers() {
     try {
       // Add timestamp to prevent browser & proxy cache on other devices
-      const res = await fetch(`${API_BASE}/api/members?_t=${Date.now()}`, {
+      const res = await fetch(`${API_BASE}/api/public/members?_t=${Date.now()}`, {
         headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
       });
-      if (!res.ok) throw new Error('API status not ok');
-      const data = await res.json();
-      if (Array.isArray(data) && data.length > 0) {
-        allMembers = data;
-        safeSaveLocalStorage('100re_local_members', JSON.stringify(allMembers));
-        renderAllTeamGrids();
-        return;
+      if (res.ok) {
+        const data = await res.json();
+        const list = Array.isArray(data) ? data : (data && Array.isArray(data.members) ? data.members : null);
+        if (list && list.length > 0) {
+          allMembers = list;
+          safeSaveLocalStorage('100re_local_members', JSON.stringify(allMembers));
+          renderAllTeamGrids();
+          return;
+        }
       }
     } catch (e) {
       console.warn('Could not load from API, using cached/default members:', e);
@@ -673,55 +675,39 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         }
 
-        const payload = { name, team, teamName, role, bio, image: imagePath };
+        const payload = { id: id || `${team}-${Date.now()}`, name, team, teamName, role, bio, image: imagePath };
 
-        // Always sync with Server API
+        // 1. Update local state immediately for instant responsive UI
+        if (id) {
+          const idx = allMembers.findIndex(m => String(m.id) === String(id));
+          if (idx !== -1) {
+            allMembers[idx] = { ...allMembers[idx], ...payload };
+          } else {
+            allMembers.unshift(payload);
+          }
+        } else {
+          allMembers.unshift(payload);
+        }
+
+        safeSaveLocalStorage('100re_local_members', JSON.stringify(allMembers));
+        renderAllTeamGrids();
+        closeModal(memberFormModal);
+        showToast(id ? 'Cập nhật thành viên thành công!' : 'Đã thêm thành viên mới thành công!');
+
+        // 2. Synchronize to Cloudflare KV database in background
         const tokenToSend = currentAuthToken || localStorage.getItem('100re_token') || '100re_admin_session';
         try {
-          const url = id ? `${API_BASE}/api/members/${encodeURIComponent(id)}` : `${API_BASE}/api/members`;
-          const method = id ? 'PUT' : 'POST';
-          const apiRes = await fetchTimeout(url, {
-            method: method,
+          await fetch(`${API_BASE}/api/public/members`, {
+            method: 'POST',
             headers: {
               'Content-Type': 'application/json',
               'Authorization': `Bearer ${tokenToSend}`
             },
             body: JSON.stringify(payload)
-          }, 8000);
-
-          if (apiRes.ok) {
-            const apiData = await apiRes.json();
-            if (apiData.member) {
-              if (id) {
-                const idx = allMembers.findIndex(m => String(m.id) === String(id));
-                if (idx !== -1) allMembers[idx] = apiData.member;
-              } else {
-                allMembers.unshift(apiData.member);
-              }
-            }
-          }
+          });
         } catch (apiErr) {
-          console.warn('API sync timed out/failed, saved to local cache:', apiErr);
-          // Local fallback
-          if (id) {
-            const idx = allMembers.findIndex(m => String(m.id) === String(id));
-            if (idx !== -1) {
-              allMembers[idx] = { ...allMembers[idx], ...payload, id };
-            } else {
-              allMembers.unshift({ id, ...payload });
-            }
-          } else {
-            const newId = `${team}_${Date.now()}`;
-            allMembers.unshift({ id: newId, ...payload });
-          }
+          console.warn('Background KV sync note:', apiErr);
         }
-
-        safeSaveLocalStorage('100re_local_members', JSON.stringify(allMembers));
-        closeModal(memberFormModal);
-        showToast(id ? 'Cập nhật thành viên thành công!' : 'Đã thêm thành viên mới thành công!');
-        renderAllTeamGrids();
-        // Background refresh to confirm cloud sync
-        loadMembers();
       } catch (saveError) {
         console.error('Error saving member:', saveError);
         showToast('Có lỗi xảy ra: ' + saveError.message, true);
@@ -739,30 +725,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const confirmDelete = confirm(`Bạn có chắc chắn muốn xóa thành viên "${member.name}" khỏi danh sách?`);
     if (!confirmDelete) return;
 
+    // 1. Remove from local state immediately
+    allMembers = allMembers.filter(m => String(m.id) !== String(member.id));
+    safeSaveLocalStorage('100re_local_members', JSON.stringify(allMembers));
+    renderAllTeamGrids();
+    showToast(`Đã xóa thành viên "${member.name}".`);
+
+    // 2. Sync deletion to Cloudflare KV database
     const tokenToSend = currentAuthToken || localStorage.getItem('100re_token') || '100re_admin_session';
     try {
-      const res = await fetchTimeout(`${API_BASE}/api/members/${encodeURIComponent(member.id)}`, {
+      await fetch(`${API_BASE}/api/public/members/${encodeURIComponent(member.id)}`, {
         method: 'DELETE',
         headers: { 
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${tokenToSend}` 
         }
-      }, 8000);
-      const data = await res.json();
-      if (data.success) {
-        showToast(`Đã xóa thành viên "${member.name}".`);
-        await loadMembers();
-        return;
-      }
+      });
     } catch (e) {
-      console.warn('Delete API failed, removing locally:', e);
+      console.warn('Background KV delete note:', e);
     }
-
-    // Fallback local delete
-    allMembers = allMembers.filter(m => String(m.id) !== String(member.id));
-    safeSaveLocalStorage('100re_local_members', JSON.stringify(allMembers));
-    renderAllTeamGrids();
-    showToast(`Đã xóa thành viên "${member.name}".`);
   }
 
   // ==========================================
