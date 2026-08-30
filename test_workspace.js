@@ -226,6 +226,27 @@ async function runTests() {
     }
   });
 
+  await test('Cloudflare KV Database Sync: PUT & GET /api/public/content/news saves and loads globally', async () => {
+    // 1. PUT news into Cloudflare KV
+    const testArticles = [
+      { id: 'news-test-1', title: 'HUST Clean Energy Breakthrough 2026', date: 'March 2026', category: 'International Collaboration' }
+    ];
+    const putReq = makeReq('/api/public/content/news', 'PUT', testArticles);
+    const putRes = await worker.fetch(putReq, mockEnv);
+    const putData = await putRes.json();
+    if (!putData.success || putData.count !== 1) {
+      throw new Error(`Expected KV save success, got ${JSON.stringify(putData)}`);
+    }
+
+    // 2. GET news from Cloudflare KV
+    const getReq = makeReq('/api/public/content/news', 'GET');
+    const getRes = await worker.fetch(getReq, mockEnv);
+    const getData = await getRes.json();
+    if (!Array.isArray(getData) || getData.length !== 1 || getData[0].id !== 'news-test-1') {
+      throw new Error(`Expected KV retrieve array with news-test-1, got ${JSON.stringify(getData)}`);
+    }
+  });
+
   console.log(`\n==============================================`);
   console.log(`Test Summary: ${passed} Passed, ${failed} Failed`);
   console.log(`==============================================\n`);

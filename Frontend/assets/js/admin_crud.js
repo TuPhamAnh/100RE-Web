@@ -6,7 +6,9 @@
 (function () {
   'use strict';
 
-  // 1. Unified Data Manager
+  // 1. Unified Data Manager with Cloudflare KV Real-Time Database Sync
+  const API_BASE = window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1') ? '' : '';
+
   const DataManager = {
     get(key) {
       try {
@@ -26,6 +28,46 @@
       }
       if (window.LAB_DATA) window.LAB_DATA[key] = items;
       window.dispatchEvent(new CustomEvent('100re_data_updated', { detail: { key, items } }));
+
+      // Synchronize with Cloudflare KV Database in background
+      this.syncToServer(key, items);
+    },
+
+    async fetchFromServer(key) {
+      try {
+        const res = await fetch(`${API_BASE}/api/public/content/${key}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            localStorage.setItem('100re_data_' + key, JSON.stringify(data));
+            if (window.LAB_DATA) window.LAB_DATA[key] = data;
+            window.dispatchEvent(new CustomEvent('100re_data_updated', { detail: { key, items: data } }));
+            return data;
+          }
+        }
+      } catch (e) {
+        // Fallback to local memory / LAB_DATA silently
+      }
+      return null;
+    },
+
+    async syncToServer(key, items) {
+      try {
+        const token = localStorage.getItem('100re_token');
+        const headers = { 'Content-Type': 'application/json' };
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+
+        const res = await fetch(`${API_BASE}/api/public/content/${key}`, {
+          method: 'PUT',
+          headers,
+          body: JSON.stringify(items)
+        });
+        if (res.ok) {
+          console.log(`[100RE Cloudflare KV] Successfully synchronized collection '${key}' to global database.`);
+        }
+      } catch (e) {
+        console.warn(`[100RE Cloudflare KV] Background sync error for '${key}':`, e);
+      }
     },
 
     add(key, item) {
@@ -54,6 +96,11 @@
       return true;
     }
   };
+
+  // Preload and sync all collections from KV Database on startup
+  ['news', 'journey', 'researchAreas', 'projects', 'publications', 'photos'].forEach(key => {
+    DataManager.fetchFromServer(key);
+  });
 
   window.DataManager = DataManager;
 
