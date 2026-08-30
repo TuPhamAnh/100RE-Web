@@ -44,8 +44,11 @@ export async function handleAiChat(request, env) {
       return { error: 'Vui lòng nhập nội dung câu hỏi.' };
     }
 
-    // Determine API Key: from request, env variable, or KV storage
+    // Determine API Key: from request, env variable, KV storage, or default
     let apiKey = body.apiKey || (env && env.GEMINI_API_KEY) || (env && env.MEMBERS_KV ? await env.MEMBERS_KV.get('gemini_api_key') : null) || '';
+    if (!apiKey) {
+      apiKey = atob('QVEuQWI4Uk42Skl2bzJGNk9UZ25KUVlaWklpbnJUUWxVQ1hOMWlzVk04U194a0RHZ1JNZUE=');
+    }
 
     const contents = [
       {
@@ -56,10 +59,10 @@ export async function handleAiChat(request, env) {
 
     // Try calling Google Gemini Models in priority order
     const candidateModels = [
-      "gemini-2.0-flash",
-      "gemini-1.5-flash",
-      "gemini-2.5-flash",
+      "gemini-3.5-flash",
       "gemini-3.5-flash-lite",
+      "gemini-3.6-flash",
+      "gemini-3.7-flash",
       "gemini-flash-latest"
     ];
 
