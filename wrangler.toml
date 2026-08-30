@@ -10,13 +10,13 @@ binding = "ASSETS"
 # 1. PUBLIC WEBSITE: Cloudflare KV for Public Member Profiles
 [[kv_namespaces]]
 binding = "MEMBERS_KV"
-id = "a1b2c3d4e5f6g7h8i9j0"
+id = "d24f895e1c7e4c9bbe3f8842f39b5675"
 
 # 2. LAB WORKSPACE: Cloudflare D1 Database
 [[d1_databases]]
 binding = "DB"
 database_name = "100re-workspace-db"
-database_id = "local-dev-db"
+database_id = "a42f8267-2f0e-4aa0-96d1-e3f1b3d8eb03"
 migrations_dir = "migrations"
 
 # 3. ENVIRONMENT CONFIGURATION (5 TB Google Drive Cloud Storage)
