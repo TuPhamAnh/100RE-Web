@@ -22,6 +22,19 @@
   color: #ffffff;
 }
 
+.page-hero-title.home-hero-title {
+  font-size: clamp(1.8rem, 3.5vw, 3.4rem);
+  line-height: 1.2;
+  margin-bottom: 20px;
+  letter-spacing: 0.8px;
+}
+
+@media (min-width: 900px) {
+  .page-hero-title.home-hero-title {
+    white-space: nowrap;
+  }
+}
+
 .page-hero-title span {
   color: #4ade80;
 }
