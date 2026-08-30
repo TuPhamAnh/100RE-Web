@@ -91,9 +91,51 @@
   <!-- MAIN NEWS CONTENT -->
   <main class="container section">
     
-    <div class="news-grid" id="newsContainer">
-      <!-- Populated dynamically from LAB_DATA.news -->
+    <!-- Admin Action Bar -->
+    <div class="universal-admin-bar" id="newsAdminBar" style="display: none;">
+      <div>
+        <strong style="color:#15803d; font-size: 0.95rem;"><i class="fa-solid fa-shield-halved"></i> Toà Soạn / Admin Newsroom Active</strong>
+        <div style="font-size: 0.8rem; color:#475569;">Bạn có quyền viết bài mới, chỉnh sửa hoặc xóa tin tức bài viết trên trang.</div>
+      </div>
+      <button type="button" class="btn-universal-add" onclick="window.NewsApp.openComposer()">
+        <i class="fa-solid fa-feather-pointed"></i> + Soạn Bài Báo Mới (Write News Article)
+      </button>
     </div>
+
+    <!-- 1. CATALOG VIEW (All Posts & Feed) -->
+    <div id="newsCatalogView">
+      
+      <!-- Control Bar: Search & Category Filter -->
+      <div class="news-control-bar">
+        <div class="news-search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" class="news-search-input" id="newsSearchInput" placeholder="Tìm kiếm bài viết theo tiêu đề, tác giả, nội dung hoặc từ khóa...">
+        </div>
+        <div class="filter-pills" style="margin-bottom: 0;">
+          <button class="filter-btn active" data-news-filter="all">Tất Cả Bài Viết (All)</button>
+          <button class="filter-btn" data-news-filter="international">Hợp Tác Quốc Tế (International)</button>
+          <button class="filter-btn" data-news-filter="workshops">Hội Thảo &amp; Tọa Đàm (Workshops)</button>
+          <button class="filter-btn" data-news-filter="climate">Thanh Niên &amp; Khí Hậu (Climate)</button>
+          <button class="filter-btn" data-news-filter="awards">Giải Thưởng &amp; Học Bổng (Awards)</button>
+        </div>
+      </div>
+
+      <!-- Featured Spotlight Article -->
+      <div id="newsFeaturedContainer">
+        <!-- Injected dynamically via news.js -->
+      </div>
+
+      <!-- News Articles Grid -->
+      <div class="news-grid" id="newsGridContainer">
+        <!-- Injected dynamically via news.js -->
+      </div>
+
+    </div>
+
+    <!-- 2. SINGLE ARTICLE READER VIEW -->
+    <article class="article-reader-view" id="newsArticleView">
+      <!-- Full article content injected dynamically via news.js -->
+    </article>
 
   </main>
 
@@ -143,6 +185,6 @@
   <script src="assets/js/data.js"></script>
   <script src="assets/js/main.js"></script>
   <script src="assets/js/admin_crud.js"></script>
-  
+  <script src="assets/js/news.js"></script>
 </body>
 </html>
