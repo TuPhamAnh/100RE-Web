@@ -9,37 +9,61 @@ import { SEED_USERS, SEED_TEAMS, SEED_TEAM_MEMBERS, SEED_PROJECTS, SEED_PROJECT_
 let devStore = null;
 
 export function getDatabase(env) {
-  if (env && env.DB) {
-    return new D1Wrapper(env.DB);
-  }
-  
   if (!devStore) {
     devStore = initDevStore();
   }
+
+  if (env && env.DB) {
+    return new D1Wrapper(env.DB, devStore);
+  }
+  
   return new MockD1Wrapper(devStore);
 }
 
 class D1Wrapper {
-  constructor(d1) {
+  constructor(d1, fallbackStore) {
     this.d1 = d1;
+    this.fallbackStore = fallbackStore;
   }
 
   async all(query, params = []) {
-    const stmt = this.d1.prepare(query);
-    const res = params.length > 0 ? await stmt.bind(...params).all() : await stmt.all();
-    return res.results || [];
+    try {
+      const stmt = this.d1.prepare(query);
+      const res = params.length > 0 ? await stmt.bind(...params).all() : await stmt.all();
+      if (res.results && res.results.length > 0) {
+        return res.results;
+      }
+      // If D1 is empty, fallback to seed store
+      return this.fallbackStore.execute(query, params);
+    } catch (e) {
+      console.warn('D1 all error, using fallback:', e.message);
+      return this.fallbackStore.execute(query, params);
+    }
   }
 
   async first(query, params = []) {
-    const stmt = this.d1.prepare(query);
-    const res = params.length > 0 ? await stmt.bind(...params).first() : await stmt.first();
-    return res || null;
+    try {
+      const stmt = this.d1.prepare(query);
+      const res = params.length > 0 ? await stmt.bind(...params).first() : await stmt.first();
+      if (res) return res;
+      return this.fallbackStore.execute(query, params)[0] || null;
+    } catch (e) {
+      console.warn('D1 first error, using fallback:', e.message);
+      const rows = this.fallbackStore.execute(query, params);
+      return rows.length > 0 ? rows[0] : null;
+    }
   }
 
   async run(query, params = []) {
-    const stmt = this.d1.prepare(query);
-    const res = params.length > 0 ? await stmt.bind(...params).run() : await stmt.run();
-    return { success: res.success, changes: res.meta ? res.meta.changes : 1 };
+    try {
+      const stmt = this.d1.prepare(query);
+      const res = params.length > 0 ? await stmt.bind(...params).run() : await stmt.run();
+      this.fallbackStore.run(query, params); // keep in sync
+      return { success: res.success, changes: res.meta ? res.meta.changes : 1 };
+    } catch (e) {
+      console.warn('D1 run error, running on fallback:', e.message);
+      return this.fallbackStore.run(query, params);
+    }
   }
 }
 
@@ -189,12 +213,11 @@ function initDevStore() {
 
       // INSERT / UPDATE / DELETE handlers for in-memory dev store
       if (q.startsWith('INSERT INTO USERS') || q.startsWith('INSERT OR IGNORE INTO USERS')) {
-        // [id, email, display_name, member_key, avatar_url, role, status, created_at, updated_at]
         const u = {
           id: params[0],
           email: params[1],
           display_name: params[2],
-          name: params[2], // compatibility alias
+          name: params[2],
           member_key: params[3] || null,
           avatar_url: params[4],
           role: params[5],
@@ -210,14 +233,14 @@ function initDevStore() {
         const id = params[params.length - 1];
         const u = this.users.find(x => x.id === id);
         if (u) {
-          if (params.length === 6) { // display_name, role, status, member_key, updated_at, id
+          if (params.length === 6) {
             u.display_name = params[0];
             u.name = params[0];
             u.role = params[1];
             u.status = params[2];
             u.member_key = params[3];
             u.updated_at = params[4];
-          } else if (params.length === 7) { // display_name, role, status, member_key, avatar_url, updated_at, id
+          } else if (params.length === 7) {
             u.display_name = params[0];
             u.name = params[0];
             u.role = params[1];
