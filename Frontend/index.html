@@ -152,71 +152,143 @@
     </div>
 
     <!-- 2. Nine Research Teams Preview -->
-    <div style="margin-bottom: 50px;">
+    <div style="margin-bottom: 60px;">
       <div class="section-header">
         <div class="section-title-group">
           <div class="section-icon"><i class="fa-solid fa-atom"></i></div>
-          <h2 class="section-title">Our 9 Research Teams</h2>
+          <h2 class="section-title">Research Areas</h2>
         </div>
-        <a href="research-areas.html" style="font-size: 0.9rem; font-weight: 700; color: #16a34a; text-decoration: none;">
+        <a href="research-areas.html" style="font-size: 0.95rem; font-weight: 700; color: #16a34a; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
           View All Details <i class="fa-solid fa-arrow-right"></i>
         </a>
       </div>
 
-      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
-        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-top: 3px solid #16a34a; padding: 20px;">
-          <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.25rem; color: #0f172a; margin-bottom: 4px;">1. PV Team</h3>
-          <div style="font-size: 0.85rem; color: #16a34a; font-weight: 600; margin-bottom: 8px;">Leader: Bui Quang Minh</div>
-          <p style="font-size: 0.88rem; color: #64748b;">PV modeling, array reconfiguration, SCADA monitoring &amp; hosting capacity.</p>
-        </div>
+      <div class="research-areas-grid">
+        <!-- 1. PV -->
+        <article class="research-card">
+          <div class="research-card-img-wrap">
+            <img src="assets/images/banner_pv.jpg" alt="Solar Energy (PV)" class="research-card-thumb">
+            <div class="research-card-badge"><i class="fa-solid fa-solar-panel"></i> 1. PV Team</div>
+          </div>
+          <div class="research-card-body">
+            <h3 class="research-card-title"><a href="research-areas.html">Solar Energy (PV)</a></h3>
+            <div class="research-card-leader">Leader: Bui Quang Minh</div>
+            <p class="research-card-desc">Advanced PV modeling, irradiance forecasting, dynamic array reconfiguration, and rooftop SCADA optimization.</p>
+            <a href="research-areas.html" class="research-card-link">Explore Research <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+        </article>
 
-        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-top: 3px solid #16a34a; padding: 20px;">
-          <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.25rem; color: #0f172a; margin-bottom: 4px;">2. Wind Team</h3>
-          <div style="font-size: 0.85rem; color: #16a34a; font-weight: 600; margin-bottom: 8px;">Leader: Nguyen Hoang Nam</div>
-          <p style="font-size: 0.88rem; color: #64748b;">Low Voltage Ride Through (LVRT), output smoothing &amp; wind-BESS integration.</p>
-        </div>
+        <!-- 2. Wind -->
+        <article class="research-card">
+          <div class="research-card-img-wrap">
+            <img src="assets/images/banner_wind.jpg" alt="Wind Energy" class="research-card-thumb">
+            <div class="research-card-badge"><i class="fa-solid fa-wind"></i> 2. Wind Team</div>
+          </div>
+          <div class="research-card-body">
+            <h3 class="research-card-title"><a href="research-areas.html">Wind Energy</a></h3>
+            <div class="research-card-leader">Leader: Nguyen Hoang Nam</div>
+            <p class="research-card-desc">Low Voltage Ride Through (LVRT), power smoothing, wake effect modeling, and hybrid wind-BESS integration.</p>
+            <a href="research-areas.html" class="research-card-link">Explore Research <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+        </article>
 
-        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-top: 3px solid #16a34a; padding: 20px;">
-          <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.25rem; color: #0f172a; margin-bottom: 4px;">3. Hydrogen Team</h3>
-          <div style="font-size: 0.85rem; color: #16a34a; font-weight: 600; margin-bottom: 8px;">Leader: Nguyen Hoang Anh</div>
-          <p style="font-size: 0.88rem; color: #64748b;">Water electrolyzers, green hydrogen supply chains &amp; seasonal energy storage.</p>
-        </div>
+        <!-- 3. Hydrogen -->
+        <article class="research-card">
+          <div class="research-card-img-wrap">
+            <img src="assets/images/banner_hydrogen.jpg" alt="Green Hydrogen" class="research-card-thumb">
+            <div class="research-card-badge"><i class="fa-solid fa-atom"></i> 3. Hydrogen Team</div>
+          </div>
+          <div class="research-card-body">
+            <h3 class="research-card-title"><a href="research-areas.html">Green Hydrogen</a></h3>
+            <div class="research-card-leader">Leader: Nguyen Hoang Anh</div>
+            <p class="research-card-desc">Renewable-powered water electrolysis, fuel cell efficiency, green hydrogen supply chains, and seasonal energy storage.</p>
+            <a href="research-areas.html" class="research-card-link">Explore Research <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+        </article>
 
-        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-top: 3px solid #16a34a; padding: 20px;">
-          <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.25rem; color: #0f172a; margin-bottom: 4px;">4. Smart Grid Team</h3>
-          <div style="font-size: 0.85rem; color: #16a34a; font-weight: 600; margin-bottom: 8px;">Leader: Le Ngoc Dung</div>
-          <p style="font-size: 0.88rem; color: #64748b;">Intelligent control, microgrid automation, cybersecurity &amp; ICT integration.</p>
-        </div>
+        <!-- 4. Smart Grid -->
+        <article class="research-card">
+          <div class="research-card-img-wrap">
+            <img src="assets/images/banner_smartgrid.jpg" alt="Smart Grid & Microgrid" class="research-card-thumb">
+            <div class="research-card-badge"><i class="fa-solid fa-tower-broadcast"></i> 4. Smart Grid Team</div>
+          </div>
+          <div class="research-card-body">
+            <h3 class="research-card-title"><a href="research-areas.html">Smart Grid &amp; Microgrid</a></h3>
+            <div class="research-card-leader">Leader: Le Ngoc Dung</div>
+            <p class="research-card-desc">Intelligent control, microgrid automation, Virtual Power Plants (VPP), and active distribution network regulation.</p>
+            <a href="research-areas.html" class="research-card-link">Explore Research <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+        </article>
 
-        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-top: 3px solid #16a34a; padding: 20px;">
-          <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.25rem; color: #0f172a; margin-bottom: 4px;">5. Electric Vehicle Team</h3>
-          <div style="font-size: 0.85rem; color: #16a34a; font-weight: 600; margin-bottom: 8px;">Leader: Dao Quoc Khanh</div>
-          <p style="font-size: 0.88rem; color: #64748b;">EV charging optimization, Vehicle-to-Grid (V2G) &amp; distribution power quality.</p>
-        </div>
+        <!-- 5. EV -->
+        <article class="research-card">
+          <div class="research-card-img-wrap">
+            <img src="assets/images/banner_ev.jpg" alt="Electric Vehicle" class="research-card-thumb">
+            <div class="research-card-badge"><i class="fa-solid fa-car-side"></i> 5. EV Team</div>
+          </div>
+          <div class="research-card-body">
+            <h3 class="research-card-title"><a href="research-areas.html">Electric Vehicle (EV)</a></h3>
+            <div class="research-card-leader">Leader: Dao Quoc Khanh</div>
+            <p class="research-card-desc">EV smart charging optimization, Vehicle-to-Grid (V2G) integration, power electronics, and battery health degradation.</p>
+            <a href="research-areas.html" class="research-card-link">Explore Research <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+        </article>
 
-        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-top: 3px solid #16a34a; padding: 20px;">
-          <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.25rem; color: #0f172a; margin-bottom: 4px;">6. Artificial Intelligence Team</h3>
-          <div style="font-size: 0.85rem; color: #16a34a; font-weight: 600; margin-bottom: 8px;">Leader: Nguyen Trong Thanh</div>
-          <p style="font-size: 0.88rem; color: #64748b;">Deep Learning SAM-LSTM, renewable forecasting &amp; blockchain energy trading.</p>
-        </div>
+        <!-- 6. AI -->
+        <article class="research-card">
+          <div class="research-card-img-wrap">
+            <img src="assets/images/banner_ai.jpg" alt="Artificial Intelligence" class="research-card-thumb">
+            <div class="research-card-badge"><i class="fa-solid fa-brain"></i> 6. AI Team</div>
+          </div>
+          <div class="research-card-body">
+            <h3 class="research-card-title"><a href="research-areas.html">Artificial Intelligence (AI)</a></h3>
+            <div class="research-card-leader">Leader: Nguyen Trong Thanh</div>
+            <p class="research-card-desc">Deep Learning SAM-LSTM architectures, renewable generation forecasting, and blockchain peer-to-peer energy trading.</p>
+            <a href="research-areas.html" class="research-card-link">Explore Research <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+        </article>
 
-        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-top: 3px solid #16a34a; padding: 20px;">
-          <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.25rem; color: #0f172a; margin-bottom: 4px;">7. Unit Commitment Team</h3>
-          <div style="font-size: 0.85rem; color: #16a34a; font-weight: 600; margin-bottom: 8px;">Leader: Nguyen Tuan Anh</div>
-          <p style="font-size: 0.88rem; color: #64748b;">Microgrid Unit Commitment, MILP vs GA algorithms &amp; stochastic uncertainty.</p>
-        </div>
+        <!-- 7. Unit Commitment -->
+        <article class="research-card">
+          <div class="research-card-img-wrap">
+            <img src="assets/images/banner_dr_uc.jpg" alt="Unit Commitment & Dispatch" class="research-card-thumb">
+            <div class="research-card-badge"><i class="fa-solid fa-sliders"></i> 7. UC Team</div>
+          </div>
+          <div class="research-card-body">
+            <h3 class="research-card-title"><a href="research-areas.html">Unit Commitment &amp; Dispatch</a></h3>
+            <div class="research-card-leader">Leader: Nguyen Tuan Anh</div>
+            <p class="research-card-desc">Microgrid generation scheduling, MILP vs GA algorithms, power dispatch optimization under stochastic renewable uncertainty.</p>
+            <a href="research-areas.html" class="research-card-link">Explore Research <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+        </article>
 
-        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-top: 3px solid #16a34a; padding: 20px;">
-          <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.25rem; color: #0f172a; margin-bottom: 4px;">8. Battery Storage System (BESS)</h3>
-          <div style="font-size: 0.85rem; color: #16a34a; font-weight: 600; margin-bottom: 8px;">Leader: Nguyen Quang Anh</div>
-          <p style="font-size: 0.88rem; color: #64748b;">Grid-scale frequency &amp; voltage regulation, battery degradation modeling.</p>
-        </div>
+        <!-- 8. BESS -->
+        <article class="research-card">
+          <div class="research-card-img-wrap">
+            <img src="assets/images/banner_bess.jpg" alt="Battery Storage (BESS)" class="research-card-thumb">
+            <div class="research-card-badge"><i class="fa-solid fa-car-battery"></i> 8. BESS Team</div>
+          </div>
+          <div class="research-card-body">
+            <h3 class="research-card-title"><a href="research-areas.html">Battery Storage (BESS)</a></h3>
+            <div class="research-card-leader">Leader: Nguyen Quang Anh</div>
+            <p class="research-card-desc">Grid-scale frequency &amp; voltage regulation, battery SoC/SoH estimation, thermal management, and peak shaving strategies.</p>
+            <a href="research-areas.html" class="research-card-link">Explore Research <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+        </article>
 
-        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-top: 3px solid #16a34a; padding: 20px;">
-          <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.25rem; color: #0f172a; margin-bottom: 4px;">9. Demand Response Team</h3>
-          <div style="font-size: 0.85rem; color: #16a34a; font-weight: 600; margin-bottom: 8px;">Leader: Ta Xuan Hung</div>
-          <p style="font-size: 0.88rem; color: #64748b;">Incentive DR programs, dynamic pricing &amp; social welfare optimization.</p>
-        </div>
+        <!-- 9. Demand Response -->
+        <article class="research-card">
+          <div class="research-card-img-wrap">
+            <img src="assets/images/banner_dr_uc.jpg" alt="Demand Response" class="research-card-thumb">
+            <div class="research-card-badge"><i class="fa-solid fa-chart-line"></i> 9. DR Team</div>
+          </div>
+          <div class="research-card-body">
+            <h3 class="research-card-title"><a href="research-areas.html">Demand Response (DR)</a></h3>
+            <div class="research-card-leader">Leader: Ta Xuan Hung</div>
+            <p class="research-card-desc">Incentive-based demand response programs, dynamic retail pricing mechanisms, load shifting, and social welfare optimization.</p>
+            <a href="research-areas.html" class="research-card-link">Explore Research <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+        </article>
       </div>
     </div>
 
