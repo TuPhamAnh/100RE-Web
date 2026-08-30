@@ -251,14 +251,21 @@ export async function renderAdmin(container) {
     let members = [];
     let teams = [];
 
-    // Fetch members and teams
+    // Load blacklist of permanently deleted user IDs
+    let deletedUserIds = [];
+    try {
+      deletedUserIds = JSON.parse(localStorage.getItem('100re_deleted_user_ids') || '[]');
+    } catch (e) {}
+
+    // Fetch members from API
     try {
       const res = await API.get('/api/members');
       members = res.users || res.members || [];
     } catch (e) {
-      console.warn('API members fetch error, falling back to local list:', e);
+      console.warn('API members fetch error, using local state:', e);
     }
 
+    // Fetch teams
     try {
       const teamsRes = await API.get('/api/teams');
       teams = teamsRes.teams || [];
@@ -266,17 +273,22 @@ export async function renderAdmin(container) {
       console.warn('API teams fetch error:', e);
     }
 
+    // Filter out deleted users from API list
+    members = members.filter(m => !deletedUserIds.includes(m.id) && !deletedUserIds.includes(m.username) && !deletedUserIds.includes(m.email));
+
     // Merge with LocalStorage created users
     const localUsersStr = localStorage.getItem('100re_custom_users');
     if (localUsersStr) {
       try {
         const localUsers = JSON.parse(localUsersStr);
         localUsers.forEach(lu => {
-          const idx = members.findIndex(m => m.id === lu.id || (m.username && m.username === lu.username) || (m.email && m.email === lu.email));
-          if (idx >= 0) {
-            members[idx] = { ...members[idx], ...lu };
-          } else {
-            members.push(lu);
+          if (!deletedUserIds.includes(lu.id) && !deletedUserIds.includes(lu.username) && !deletedUserIds.includes(lu.email)) {
+            const idx = members.findIndex(m => m.id === lu.id || (m.username && m.username === lu.username) || (m.email && m.email === lu.email));
+            if (idx >= 0) {
+              members[idx] = { ...members[idx], ...lu };
+            } else {
+              members.push(lu);
+            }
           }
         });
       } catch (e) {}
@@ -411,6 +423,17 @@ export async function renderAdmin(container) {
           const uid = btn.getAttribute('data-user-id');
           const uname = btn.getAttribute('data-user-name');
           if (confirm(`Bạn có chắc chắn muốn xóa tài khoản "${uname}"?`)) {
+            const targetObj = members.find(m => m.id === uid);
+            
+            // Add to persistent deleted blacklist
+            try {
+              let curDeleted = JSON.parse(localStorage.getItem('100re_deleted_user_ids') || '[]');
+              if (uid) curDeleted.push(uid);
+              if (targetObj && targetObj.username) curDeleted.push(targetObj.username);
+              if (targetObj && targetObj.email) curDeleted.push(targetObj.email);
+              localStorage.setItem('100re_deleted_user_ids', JSON.stringify(curDeleted));
+            } catch (e) {}
+
             // Instant remove from state
             members = members.filter(m => m.id !== uid);
             saveCustomUsersToLocalStorage();
@@ -538,6 +561,13 @@ export async function renderAdmin(container) {
 
       const selectedTeams = Array.from(container.querySelectorAll('.perm-team-cb:checked')).map(cb => cb.value);
       const selectedPerms = Array.from(container.querySelectorAll('.perm-cb:checked')).map(cb => cb.value);
+
+      // Un-blacklist if re-created
+      try {
+        let curDeleted = JSON.parse(localStorage.getItem('100re_deleted_user_ids') || '[]');
+        curDeleted = curDeleted.filter(id => id !== uid && id !== username && id !== email);
+        localStorage.setItem('100re_deleted_user_ids', JSON.stringify(curDeleted));
+      } catch (e) {}
 
       const targetId = uid || `usr-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
       const userObj = {
