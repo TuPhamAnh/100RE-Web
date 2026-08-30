@@ -429,19 +429,29 @@ export async function renderAdmin(container) {
         cb.checked = userPerms.includes(cb.value);
       });
 
+      modal.classList.add('show');
       modal.style.display = 'flex';
+      modal.style.opacity = '1';
+      modal.style.pointerEvents = 'auto';
     }
 
     function closeUserModal() {
+      modal.classList.remove('show');
       modal.style.display = 'none';
+      modal.style.opacity = '0';
+      modal.style.pointerEvents = 'none';
     }
 
-    container.querySelector('#btnOpenCreateUserModal')?.addEventListener('click', () => {
+    container.querySelector('#btnOpenCreateUserModal')?.addEventListener('click', (e) => {
+      e.preventDefault();
       openUserModal(null);
     });
 
     container.querySelector('#btnCloseUserPermModal')?.addEventListener('click', closeUserModal);
     container.querySelector('#btnCancelUserPermModal')?.addEventListener('click', closeUserModal);
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeUserModal();
+    });
 
     // Preset Buttons
     container.querySelector('#presetSupervisor')?.addEventListener('click', () => {
