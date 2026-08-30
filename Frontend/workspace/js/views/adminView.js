@@ -1,6 +1,6 @@
 /**
  * 100RE LAB WORKSPACE — Supervisor Administration Console
- * User Account Creation & Granular Permissions Matrix for Website and Workspace
+ * User Account Creation, Granular Permissions Matrix & Credentials Management
  */
 
 import { API } from '../api.js';
@@ -24,12 +24,31 @@ export async function renderAdmin(container) {
     <div class="ws-page-header">
       <div class="ws-page-title-group">
         <h1>Lab Administration &amp; Access Control</h1>
-        <p>Supervisor management console for workspace users, accounts, granular permissions, and 100RE Database storage.</p>
+        <p>Supervisor management console for workspace users, login credentials, granular permissions, and 100RE Database storage.</p>
       </div>
       <div class="ws-page-actions">
         <button class="btn-ws-primary" id="btnOpenCreateUserModal">
           <i class="fa-solid fa-user-shield"></i> + Tạo Tài Khoản &amp; Phân Quyền (Create User)
         </button>
+      </div>
+    </div>
+
+    <!-- Credentials Reference Notice Box -->
+    <div class="ws-card" style="background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%); border: 1px solid #a7f3d0; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.08);">
+      <div style="padding: 16px 20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+          <div>
+            <h4 style="font-size: 1rem; font-weight: 700; color: #065f46; margin: 0 0 4px 0; display:flex; align-items:center; gap:8px;">
+              <i class="fa-solid fa-key" style="color:#10b981;"></i> Thông Tin Đăng Nhập Hệ Thống (Login Credentials Directory)
+            </h4>
+            <p style="font-size: 0.8rem; color: #047857; margin: 0;">
+              Tất cả các tài khoản mặc định và tài khoản tạo mới đều có thể đăng nhập bằng <strong>Tên đăng nhập (Username)</strong> và <strong>Mật khẩu (Password)</strong> hiển thị bên dưới (Mật khẩu mặc định: <code style="background:#d1fae5; padding:2px 6px; border-radius:4px; font-weight:700;">100re</code>).
+            </p>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <span class="ws-badge ws-badge-done" style="font-size:0.75rem;"><i class="fa-solid fa-circle-check"></i> Cloudflare KV Synced</span>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -58,10 +77,22 @@ export async function renderAdmin(container) {
       </div>
     </div>
 
+    <!-- Filter & Search Bar -->
+    <div class="ws-filter-bar" style="margin-bottom:16px;">
+      <input type="text" id="adminSearchInput" class="ws-search-input" placeholder="Tìm kiếm theo Tên, Username, Email hoặc Nhóm nghiên cứu...">
+      <select id="adminRoleFilter" class="ws-select-filter">
+        <option value="">Tất cả chức vụ (All Roles)</option>
+        <option value="supervisor">👑 Supervisor (Chủ nhiệm)</option>
+        <option value="team_leader">🛡️ Team Leader (Trưởng nhóm)</option>
+        <option value="researcher">🔬 Researcher (Nghiên cứu viên)</option>
+        <option value="alumni">🎓 Alumni (Cựu thành viên)</option>
+      </select>
+    </div>
+
     <!-- Users Management Table -->
     <div class="ws-card">
       <div class="ws-card-header" style="display:flex; justify-content:space-between; align-items:center;">
-        <div class="ws-card-title"><i class="fa-solid fa-users-gear" style="color:var(--ws-primary)"></i> Danh Sách Tài Khoản &amp; Phân Quyền Chi Tiết (User Accounts &amp; Permissions)</div>
+        <div class="ws-card-title"><i class="fa-solid fa-users-gear" style="color:var(--ws-primary)"></i> Danh Sách Tài Khoản, Tên Đăng Nhập, Mật Khẩu &amp; Phân Quyền Chi Tiết</div>
       </div>
       <div class="ws-card-body" style="padding:0;">
         <div id="adminUsersTableContainer">
@@ -92,17 +123,22 @@ export async function renderAdmin(container) {
             <!-- CỘT TRÁI: THÔNG TIN TÀI KHOẢN -->
             <div>
               <h4 style="font-size:0.95rem; font-weight:700; color:#1e293b; margin-bottom:14px; padding-bottom:6px; border-bottom:2px solid #e2e8f0;">
-                <i class="fa-solid fa-id-card"></i> 1. Thông Tin Tài Khoản (Account Info)
+                <i class="fa-solid fa-id-card"></i> 1. Thông Tin Đăng Nhập &amp; Tài Khoản (Login Info)
               </h4>
 
               <div class="form-group" style="margin-bottom:12px;">
                 <label style="display:block; font-size:0.8rem; font-weight:700; color:#475569; margin-bottom:4px;">Tên Đăng Nhập (Username) *</label>
-                <input type="text" id="permUsername" class="ws-search-input" style="width:100%; border-radius:6px;" placeholder="ví dụ: hai.duongminh, duc_pv..." required>
+                <input type="text" id="permUsername" class="ws-search-input" style="width:100%; border-radius:6px; font-family:monospace; font-weight:700;" placeholder="ví dụ: hai.duongminh, supervisor, leader.pv..." required>
               </div>
 
               <div class="form-group" style="margin-bottom:12px;">
-                <label style="display:block; font-size:0.8rem; font-weight:700; color:#475569; margin-bottom:4px;">Mật Khẩu (Password) *</label>
-                <input type="text" id="permPassword" class="ws-search-input" style="width:100%; border-radius:6px;" value="100re" placeholder="Mặc định: 100re" required>
+                <label style="display:block; font-size:0.8rem; font-weight:700; color:#475569; margin-bottom:4px;">Mật Khẩu Đăng Nhập (Password) *</label>
+                <div style="position:relative;">
+                  <input type="text" id="permPassword" class="ws-search-input" style="width:100%; border-radius:6px; font-family:monospace; font-weight:700; padding-right:40px;" value="100re" placeholder="Mặc định: 100re" required>
+                  <button type="button" id="btnTogglePassVisibility" style="position:absolute; right:8px; top:50%; transform:translateY(-50%); background:none; border:none; color:#64748b; cursor:pointer;" title="Hiện / Ẩn mật khẩu">
+                    <i class="fa-solid fa-eye"></i>
+                  </button>
+                </div>
               </div>
 
               <div class="form-group" style="margin-bottom:12px;">
@@ -268,14 +304,15 @@ export async function renderAdmin(container) {
     // Default Seed Members if empty
     if (!members || members.length === 0) {
       members = [
-        { id: 'usr-sup-01', username: 'supervisor', display_name: 'Assoc. Prof. Nguyen Duc Tuyen', name: 'Assoc. Prof. Nguyen Duc Tuyen', email: 'supervisor@100relab.hust.edu.vn', role: 'supervisor', status: 'active', teams: [], permissions: [] },
-        { id: 'usr-ldr-01', username: 'leader.pv', display_name: 'Dr. Ngo Tri Duc', name: 'Dr. Ngo Tri Duc', email: 'leader.pv@100relab.hust.edu.vn', role: 'team_leader', status: 'active', teams: ['team-pv'], permissions: [] },
-        { id: 'usr-ldr-02', username: 'leader.bess', display_name: 'Dr. Trinh Minh Phuong', name: 'Dr. Trinh Minh Phuong', email: 'leader.bess@100relab.hust.edu.vn', role: 'team_leader', status: 'active', teams: ['team-bess'], permissions: [] },
-        { id: 'usr-res-01', username: 'hai.ai', display_name: 'Bui Quang Hai', name: 'Bui Quang Hai', email: 'hai.ai@100relab.hust.edu.vn', role: 'researcher', status: 'active', teams: ['team-ai', 'team-pv'], permissions: [] },
-        { id: 'usr-res-02', username: 'anh.grid', display_name: 'Nguyen Tuan Anh', name: 'Nguyen Tuan Anh', email: 'anh.grid@100relab.hust.edu.vn', role: 'researcher', status: 'active', teams: ['team-smartgrid', 'team-uc'], permissions: [] },
-        { id: 'usr-res-03', username: 'nam.wind', display_name: 'Nguyen Hoang Nam', name: 'Nguyen Hoang Nam', email: 'nam.wind@100relab.hust.edu.vn', role: 'researcher', status: 'active', teams: ['team-wind'], permissions: [] },
-        { id: 'usr-res-04', username: 'cuong.ev', display_name: 'Le The Cuong', name: 'Le The Cuong', email: 'cuong.ev@100relab.hust.edu.vn', role: 'researcher', status: 'active', teams: ['team-ev'], permissions: [] },
-        { id: 'usr-res-05', username: 'hai.duongminh', display_name: 'Duong Minh Hai', name: 'Duong Minh Hai', email: 'hai.duongminh@100relab.hust.edu.vn', role: 'researcher', status: 'active', teams: ['team-smartgrid'], permissions: [] }
+        { id: 'usr-sup-01', username: 'supervisor', password: '100re', display_name: 'Assoc. Prof. Nguyen Duc Tuyen', name: 'Assoc. Prof. Nguyen Duc Tuyen', email: 'supervisor@100relab.hust.edu.vn', role: 'supervisor', status: 'active', teams: [], permissions: [] },
+        { id: 'usr-ldr-01', username: 'leader.pv', password: '100re', display_name: 'Dr. Ngo Tri Duc', name: 'Dr. Ngo Tri Duc', email: 'leader.pv@100relab.hust.edu.vn', role: 'team_leader', status: 'active', teams: ['team-pv'], permissions: [] },
+        { id: 'usr-ldr-02', username: 'leader.bess', password: '100re', display_name: 'Dr. Trinh Minh Phuong', name: 'Dr. Trinh Minh Phuong', email: 'leader.bess@100relab.hust.edu.vn', role: 'team_leader', status: 'active', teams: ['team-bess'], permissions: [] },
+        { id: 'usr-res-01', username: 'hai.ai', password: '100re', display_name: 'Bui Quang Hai', name: 'Bui Quang Hai', email: 'hai.ai@100relab.hust.edu.vn', role: 'researcher', status: 'active', teams: ['team-ai', 'team-pv'], permissions: [] },
+        { id: 'usr-res-02', username: 'anh.grid', password: '100re', display_name: 'Nguyen Tuan Anh', name: 'Nguyen Tuan Anh', email: 'anh.grid@100relab.hust.edu.vn', role: 'researcher', status: 'active', teams: ['team-smartgrid', 'team-uc'], permissions: [] },
+        { id: 'usr-res-03', username: 'nam.wind', password: '100re', display_name: 'Nguyen Hoang Nam', name: 'Nguyen Hoang Nam', email: 'nam.wind@100relab.hust.edu.vn', role: 'researcher', status: 'active', teams: ['team-wind'], permissions: [] },
+        { id: 'usr-res-04', username: 'cuong.ev', password: '100re', display_name: 'Le The Cuong', name: 'Le The Cuong', email: 'cuong.ev@100relab.hust.edu.vn', role: 'researcher', status: 'active', teams: ['team-ev'], permissions: [] },
+        { id: 'usr-res-05', username: 'hai.duongminh', password: '100re', display_name: 'Duong Minh Hai', name: 'Duong Minh Hai', email: 'hai.duongminh@100relab.hust.edu.vn', role: 'researcher', status: 'active', teams: ['team-smartgrid'], permissions: [] },
+        { id: 'usr-res-06', username: 'dung.scada', password: '100re', display_name: 'Vu Tien Dung', name: 'Vu Tien Dung', email: 'dung.scada@100relab.hust.edu.vn', role: 'researcher', status: 'active', teams: ['team-smartgrid'], permissions: [] }
       ];
     }
 
@@ -345,9 +382,9 @@ export async function renderAdmin(container) {
       `;
     }
 
-    function renderUserTable() {
-      if (members.length === 0) {
-        tableContainer.innerHTML = renderEmptyState('Chưa có tài khoản nào trong hệ thống.');
+    function renderUserTable(listToRender = members) {
+      if (listToRender.length === 0) {
+        tableContainer.innerHTML = renderEmptyState('Chưa có tài khoản nào phù hợp với bộ lọc tìm kiếm.');
         return;
       }
 
@@ -356,17 +393,20 @@ export async function renderAdmin(container) {
           <table class="ws-table">
             <thead>
               <tr>
-                <th>Tài Khoản / Email</th>
+                <th>Tài Khoản / Tên Đăng Nhập</th>
+                <th>Mật Khẩu (Password)</th>
                 <th>Chức Vụ (Role)</th>
                 <th>Nhóm Phân Công</th>
-                <th>Số Quyền Được Cấp</th>
+                <th>Quyền Hạn</th>
                 <th>Trạng Thái</th>
                 <th style="text-align:right;">Thao Tác</th>
               </tr>
             </thead>
             <tbody>
-              ${members.map(u => {
+              ${listToRender.map(u => {
                 const name = u.display_name || u.name;
+                const username = u.username || (u.email ? u.email.split('@')[0] : 'user');
+                const password = u.password || '100re';
                 const permsCount = Array.isArray(u.permissions) && u.permissions.length > 0 ? u.permissions.length : (u.role === 'supervisor' ? 16 : 9);
                 const roleBadge = u.role === 'supervisor' ? '<span class="ws-badge ws-badge-done">👑 SUPERVISOR</span>' :
                                   u.role === 'team_leader' ? '<span class="ws-badge ws-badge-in_progress">🛡️ TEAM LEADER</span>' :
@@ -382,11 +422,25 @@ export async function renderAdmin(container) {
                   <tr>
                     <td>
                       <div style="display:flex; align-items:center; gap:10px;">
-                        <img src="${u.avatar_url || 'assets/images/logo.jpg'}" style="width:36px; height:36px; border-radius:50%; object-fit:cover; border:1px solid var(--ws-border);" alt="${escapeHtml(name)}">
+                        <img src="${u.avatar_url || 'assets/images/logo.jpg'}" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:1px solid var(--ws-border);" alt="${escapeHtml(name)}">
                         <div>
-                          <strong style="color:var(--ws-dark); font-size:0.9rem; display:block;">${escapeHtml(name)}</strong>
-                          <span style="font-size:0.775rem; color:var(--ws-text-muted);">${escapeHtml(u.email || (u.username ? u.username + '@100relab.hust.edu.vn' : ''))}</span>
+                          <strong style="color:var(--ws-dark); font-size:0.92rem; display:block;">${escapeHtml(name)}</strong>
+                          <div style="display:flex; align-items:center; gap:6px; margin-top:2px;">
+                            <span style="font-size:0.75rem; font-family:monospace; background:#f1f5f9; padding:1px 6px; border-radius:4px; color:#0f172a; border:1px solid #cbd5e1; font-weight:700;">
+                              <i class="fa-solid fa-user" style="color:#64748b; font-size:0.65rem;"></i> ${escapeHtml(username)}
+                            </span>
+                            <span style="font-size:0.75rem; color:var(--ws-text-muted);">${escapeHtml(u.email || (username + '@100relab.hust.edu.vn'))}</span>
+                          </div>
                         </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div style="display:inline-flex; align-items:center; gap:6px; background:#f0fdf4; border:1px solid #a7f3d0; padding:3px 8px; border-radius:6px;">
+                        <i class="fa-solid fa-key" style="color:#10b981; font-size:0.7rem;"></i>
+                        <span style="font-family:monospace; font-size:0.8rem; font-weight:700; color:#065f46;">${escapeHtml(password)}</span>
+                        <button type="button" class="btn-copy-cred" data-copy="${escapeHtml(username)}|${escapeHtml(password)}" style="background:none; border:none; color:#059669; cursor:pointer; font-size:0.75rem; padding:0 2px;" title="Sao chép Tên đăng nhập & Mật khẩu">
+                          <i class="fa-regular fa-copy"></i>
+                        </button>
                       </div>
                     </td>
                     <td>
@@ -407,8 +461,8 @@ export async function renderAdmin(container) {
                     </td>
                     <td style="text-align:right;">
                       <div style="display:inline-flex; gap:6px;">
-                        <button class="btn-ws-ghost btn-ws-sm btn-edit-perms" data-user-id="${u.id}" style="color:#15803d; border-color:#86efac; font-weight:700;" title="Chỉnh sửa quyền hạn">
-                          <i class="fa-solid fa-sliders"></i> Phân Quyền
+                        <button class="btn-ws-ghost btn-ws-sm btn-edit-perms" data-user-id="${u.id}" style="color:#15803d; border-color:#86efac; font-weight:700;" title="Chỉnh sửa quyền hạn và mật khẩu">
+                          <i class="fa-solid fa-sliders"></i> Phân Quyền &amp; Mật Khẩu
                         </button>
                         ${u.role !== 'supervisor' ? `
                           <button class="btn-ws-ghost btn-ws-sm btn-delete-user" data-user-id="${u.id}" data-user-name="${escapeHtml(name)}" style="color:#dc2626;" title="Xóa tài khoản">
@@ -424,6 +478,17 @@ export async function renderAdmin(container) {
           </table>
         </div>
       `;
+
+      // Copy credentials button
+      tableContainer.querySelectorAll('.btn-copy-cred').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const [u, p] = btn.getAttribute('data-copy').split('|');
+          navigator.clipboard.writeText(`Username: ${u}
+Password: ${p}`);
+          showToast(`Đã sao chép: Username: ${u} | Password: ${p}`);
+        });
+      });
 
       // Bind Edit Permissions Buttons
       tableContainer.querySelectorAll('.btn-edit-perms').forEach(btn => {
@@ -475,13 +540,12 @@ export async function renderAdmin(container) {
       const isEdit = !!user;
       container.querySelector('#permUserId').value = isEdit ? user.id : '';
       container.querySelector('#modalUserPermTitle').innerHTML = isEdit ?
-        `<i class="fa-solid fa-sliders" style="color:#15803d;"></i> Chỉnh Sửa Phân Quyền: ${escapeHtml(user.display_name || user.name)}` :
+        `<i class="fa-solid fa-sliders" style="color:#15803d;"></i> Chỉnh Sửa Tài Khoản &amp; Phân Quyền: ${escapeHtml(user.display_name || user.name)}` :
         `<i class="fa-solid fa-user-shield" style="color:#16a34a;"></i> Tạo Tài Khoản Mới &amp; Thiết Lập Quyền Hạn`;
 
       container.querySelector('#permUsername').value = isEdit ? (user.username || (user.email ? user.email.split('@')[0] : '')) : '';
       container.querySelector('#permUsername').disabled = isEdit;
-      container.querySelector('#permPassword').value = isEdit ? '' : '100re';
-      container.querySelector('#permPassword').placeholder = isEdit ? '(Để trống nếu giữ nguyên mật khẩu)' : 'Mặc định: 100re';
+      container.querySelector('#permPassword').value = isEdit ? (user.password || '100re') : '100re';
       container.querySelector('#permDisplayName').value = isEdit ? (user.display_name || user.name) : '';
       container.querySelector('#permEmail').value = isEdit ? user.email : '';
       container.querySelector('#permRole').value = isEdit ? user.role : 'researcher';
@@ -541,6 +605,18 @@ export async function renderAdmin(container) {
       if (e.target === modal) closeUserModal();
     });
 
+    // Toggle Password Visibility
+    container.querySelector('#btnTogglePassVisibility')?.addEventListener('click', () => {
+      const pInput = container.querySelector('#permPassword');
+      if (pInput.type === 'password') {
+        pInput.type = 'text';
+        container.querySelector('#btnTogglePassVisibility').innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
+      } else {
+        pInput.type = 'password';
+        container.querySelector('#btnTogglePassVisibility').innerHTML = '<i class="fa-solid fa-eye"></i>';
+      }
+    });
+
     // Preset Buttons
     container.querySelector('#presetSupervisor')?.addEventListener('click', () => {
       container.querySelector('#permRole').value = 'supervisor';
@@ -573,6 +649,32 @@ export async function renderAdmin(container) {
     container.querySelector('#presetClear')?.addEventListener('click', () => {
       container.querySelectorAll('.perm-cb').forEach(cb => { cb.checked = false; });
     });
+
+    // Search and Filter logic
+    const searchInput = container.querySelector('#adminSearchInput');
+    const roleFilter = container.querySelector('#adminRoleFilter');
+
+    function applyAdminFilter() {
+      const q = (searchInput?.value || '').toLowerCase().trim();
+      const r = roleFilter?.value || '';
+
+      const filtered = members.filter(u => {
+        const name = (u.display_name || u.name || '').toLowerCase();
+        const username = (u.username || '').toLowerCase();
+        const email = (u.email || '').toLowerCase();
+        const matchesQuery = !q || name.includes(q) || username.includes(q) || email.includes(q) || (u.teams && u.teams.some(t => {
+          const tname = typeof t === 'string' ? t : (t.team_name || t.team_id || '');
+          return tname.toLowerCase().includes(q);
+        }));
+        const matchesRole = !r || u.role === r;
+        return matchesQuery && matchesRole;
+      });
+
+      renderUserTable(filtered);
+    }
+
+    searchInput?.addEventListener('input', applyAdminFilter);
+    roleFilter?.addEventListener('change', applyAdminFilter);
 
     // Form Submit
     container.querySelector('#formUserWithPerms')?.addEventListener('submit', async (e) => {
@@ -608,6 +710,7 @@ export async function renderAdmin(container) {
       const userObj = {
         id: targetId,
         username,
+        password,
         display_name,
         name: display_name,
         email,
@@ -635,7 +738,7 @@ export async function renderAdmin(container) {
         // Update local state in-memory
         const idx = members.findIndex(m => m.id === uid);
         if (idx >= 0) members[idx] = { ...members[idx], ...userObj };
-        showToast(`Đã cập nhật quyền hạn cho "${display_name}" thành công!`);
+        showToast(`Đã cập nhật mật khẩu & quyền hạn cho "${display_name}" thành công!`);
       } else {
         // Add new user to local state in-memory at top
         const existingIdx = members.findIndex(m => m.username === username || m.email === email);
@@ -644,7 +747,7 @@ export async function renderAdmin(container) {
         } else {
           members.unshift(userObj);
         }
-        showToast(`Tạo tài khoản "${username}" thành công với ${userObj.permissions.length} quyền hạn!`);
+        showToast(`Tạo tài khoản "${username}" thành công (Mật khẩu: ${password})!`);
       }
 
       renderUserTable();
