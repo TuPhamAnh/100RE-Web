@@ -1,6 +1,6 @@
 /**
  * 100RE LAB WORKSPACE — Documents Catalog View
- * Storage: Google Drive 5TB Cloud Storage (Files) + Cloudflare D1 (Metadata)
+ * Storage: 100RE Database Cloud Storage (Files) + Cloudflare D1 (Metadata)
  */
 
 import { API } from '../api.js';
@@ -11,8 +11,8 @@ export async function renderDocuments(container) {
   container.innerHTML = `
     <div class="ws-page-header">
       <div class="ws-page-title-group">
-        <h1>Research Documents &amp; Standards (Google Drive 5TB)</h1>
-        <p>Scientific papers, technical manuals, IEEE standards, architecture reports and simulation codes stored securely on Google Drive.</p>
+        <h1>Research Documents &amp; Standards (100RE Database)</h1>
+        <p>Scientific papers, technical manuals, IEEE standards, architecture reports and simulation codes stored securely on 100RE Database.</p>
       </div>
       <div class="ws-page-actions">
         ${!Auth.isAlumni() ? '<button class="btn-ws-primary" id="btnUploadDoc"><i class="fa-solid fa-file-arrow-up"></i> Upload Document</button>' : ''}
@@ -90,7 +90,7 @@ export async function renderDocuments(container) {
                       </td>
                       <td>
                         <span class="ws-badge" style="background:#e0f2fe; color:#0369a1;">
-                          <i class="fa-brands fa-google-drive"></i> Google Drive
+                          <i class="fa-solid fa-database"></i> 100RE Database
                         </span>
                       </td>
                       <td>
@@ -107,8 +107,8 @@ export async function renderDocuments(container) {
                           <button class="btn-ws-primary btn-ws-sm" onclick="window.downloadResource('documents', '${doc.id}', '${escapeHtml(doc.file_name)}')">
                             <i class="fa-solid fa-download"></i>
                           </button>
-                          <button class="btn-ws-ghost btn-ws-sm" onclick="window.openDriveFile('documents', '${doc.id}')" title="Open in Google Drive">
-                            <i class="fa-brands fa-google-drive"></i>
+                          <button class="btn-ws-ghost btn-ws-sm" onclick="window.openDriveFile('documents', '${doc.id}')" title="Open in 100RE Database">
+                            <i class="fa-solid fa-database"></i>
                           </button>
                         </div>
                       </td>

@@ -1,6 +1,6 @@
 /**
  * 100RE LAB WORKSPACE — Supervisor Administration Console
- * Architecture: KV (Public Profiles) + D1 (Workspace Users & RBAC) + Google Drive 5TB
+ * Architecture: KV (Public Profiles) + D1 (Workspace Users & RBAC) + 100RE Database
  */
 
 import { API } from '../api.js';
@@ -24,7 +24,7 @@ export async function renderAdmin(container) {
     <div class="ws-page-header">
       <div class="ws-page-title-group">
         <h1>Lab Administration &amp; Access Control</h1>
-        <p>Supervisor management console for workspace users, roles, team assignments, and Google Drive 5TB storage.</p>
+        <p>Supervisor management console for workspace users, roles, team assignments, and 100RE Database storage.</p>
       </div>
       <div class="ws-page-actions">
         <button class="btn-ws-primary" id="btnAdminCreateUserModal"><i class="fa-solid fa-user-plus"></i> New Workspace User</button>
@@ -43,9 +43,9 @@ export async function renderAdmin(container) {
       <div class="ws-stat-card">
         <div class="ws-stat-info">
           <div class="ws-stat-val" style="color:#0284c7; font-size:1.4rem;">ACTIVE (5 TB)</div>
-          <div class="ws-stat-lbl">Google Drive Storage</div>
+          <div class="ws-stat-lbl">100RE Database Storage</div>
         </div>
-        <div class="ws-stat-icon" style="background:#e0f2fe; color:#0284c7;"><i class="fa-brands fa-google-drive"></i></div>
+        <div class="ws-stat-icon" style="background:#e0f2fe; color:#0284c7;"><i class="fa-solid fa-database"></i></div>
       </div>
       <div class="ws-stat-card">
         <div class="ws-stat-info">

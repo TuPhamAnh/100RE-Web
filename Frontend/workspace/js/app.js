@@ -1,6 +1,6 @@
 /**
  * 100RE LAB WORKSPACE — Single Page Application (SPA) Main Orchestrator (SciNote ELN Compatible)
- * Architecture: KV (Public Profiles) + D1 (Workspace DB) + Google Drive 5TB (File Storage)
+ * Architecture: KV (Public Profiles) + D1 (Workspace DB) + 100RE Database (File Storage)
  */
 
 import { API } from './api.js';
@@ -136,8 +136,8 @@ function updateNav(route, paramId) {
       'teams': paramId ? `Team: ${paramId.toUpperCase()}` : 'Research Teams',
       'projects': paramId ? `Project: ${paramId}` : 'Projects',
       'tasks': 'Tasks & Protocols',
-      'datasets': 'Google Drive Datasets',
-      'documents': 'Google Drive Documents',
+      'datasets': '100RE Database Datasets',
+      'documents': '100RE Database Documents',
       'members': 'Members & Users',
       'activity': 'Audit Trail',
       'admin': 'Administration'
@@ -268,7 +268,7 @@ function bindGlobalEvents() {
 
       try {
         await API.post('/api/projects', { name, team_id, status, start_date, end_date, progress, description });
-        showToast('Tạo đề tài nghiên cứu thành công (Thư mục Google Drive đã tạo)!');
+        showToast('Tạo đề tài nghiên cứu thành công (Thư mục 100RE Database đã tạo)!');
         closeModal('modalProject');
         handleRouting();
       } catch (err) {
@@ -297,9 +297,9 @@ function bindGlobalEvents() {
       formData.append('description', document.getElementById('docFormDesc').value || '');
 
       try {
-        showToast('Đang tải lên Google Drive 5TB...');
+        showToast('Đang tải lên 100RE Database...');
         await API.upload(formData);
-        showToast('Tải tài liệu lên Google Drive thành công!');
+        showToast('Tải tài liệu lên 100RE Database thành công!');
         closeModal('modalDocument');
         handleRouting();
       } catch (err) {
@@ -332,9 +332,9 @@ function bindGlobalEvents() {
       formData.append('description', document.getElementById('dsFormDesc').value || '');
 
       try {
-        showToast('Đang tải dataset lên Google Drive 5TB...');
+        showToast('Đang tải dataset lên 100RE Database...');
         await API.upload(formData);
-        showToast('Tải dataset lên Google Drive thành công!');
+        showToast('Tải dataset lên 100RE Database thành công!');
         closeModal('modalDataset');
         handleRouting();
       } catch (err) {
@@ -499,12 +499,12 @@ window.openTaskDetail = async function(taskId) {
       };
     }
 
-    // Tab 3: Google Drive Files
+    // Tab 3: 100RE Database Files
     const driveListEl = document.getElementById('taskDriveFilesList');
     if (driveListEl) {
       const allFiles = [...(datasets || []), ...(documents || [])];
       if (allFiles.length === 0) {
-        driveListEl.innerHTML = '<p style="color:var(--ws-text-muted); font-size:0.85rem;">No files uploaded under this project in Google Drive 5TB yet.</p>';
+        driveListEl.innerHTML = '<p style="color:var(--ws-text-muted); font-size:0.85rem;">No files uploaded under this project in 100RE Database yet.</p>';
       } else {
         driveListEl.innerHTML = `
           <div style="display:flex; flex-direction:column; gap:8px;">
@@ -512,7 +512,7 @@ window.openTaskDetail = async function(taskId) {
               <div style="padding:10px 14px; background:#f8fafc; border:1px solid var(--ws-border); border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
                 <div>
                   <strong style="font-size:0.875rem; color:var(--ws-dark);">${escapeHtml(f.name)}</strong>
-                  <div style="font-size:0.75rem; color:var(--ws-text-muted);"><i class="fa-brands fa-google-drive" style="color:#16a34a;"></i> Drive ID: <code>${escapeHtml(f.drive_file_id || 'Drive')}</code></div>
+                  <div style="font-size:0.75rem; color:var(--ws-text-muted);"><i class="fa-solid fa-database" style="color:#16a34a;"></i> Drive ID: <code>${escapeHtml(f.drive_file_id || 'Drive')}</code></div>
                 </div>
                 <a href="/api/files/${f.format ? 'datasets' : 'documents'}/${f.id}/download" target="_blank" class="btn-ws-ghost btn-ws-sm">
                   <i class="fa-solid fa-download"></i> Download

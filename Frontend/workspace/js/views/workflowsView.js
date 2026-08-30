@@ -38,7 +38,7 @@ export async function renderWorkflows(container, filterExpId = null) {
             <span class="ws-badge ws-badge-done"><i class="fa-solid fa-diagram-project"></i> SCINOTE WORKFLOW CANVAS</span>
           </div>
           <h1>Visual Experiment Workflow</h1>
-          <p>End-to-end interactive protocol pipeline from sample calibration to Google Drive dataset publication.</p>
+          <p>End-to-end interactive protocol pipeline from sample calibration to 100RE Database dataset publication.</p>
         </div>
         <div class="ws-page-actions">
           <div style="display:flex; align-items:center; gap:10px;">

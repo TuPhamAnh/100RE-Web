@@ -37,7 +37,7 @@ export async function renderDashboard(container) {
             <span class="ws-badge ws-badge-primary"><i class="fa-solid fa-flask-vial"></i> 100RE LAB ELECTRONIC NOTEBOOK</span>
           </div>
           <h1>Welcome, ${escapeHtml(user?.display_name || 'Researcher')}</h1>
-          <p>Electronic Lab Notebook (ELN) — Managing 9 Research Teams, 5TB Research Storage, and Lab Testbeds.</p>
+          <p>Electronic Lab Notebook (ELN) — Managing 9 Research Teams, 100RE Database Storage, and Lab Testbeds.</p>
         </div>
         <div class="ws-page-actions">
           <button class="btn-ws-primary" onclick="window.openNewTaskModal()"><i class="fa-solid fa-plus"></i> New Task / Step</button>
@@ -79,11 +79,11 @@ export async function renderDashboard(container) {
 
         <div class="ws-stat-card">
           <div class="ws-stat-icon" style="background:#f3e8ff; color:#9333ea;">
-            <i class="fa-brands fa-google-drive"></i>
+            <i class="fa-solid fa-database"></i>
           </div>
           <div class="ws-stat-content">
             <div class="ws-stat-number">${(stats.datasets || 3) + (stats.documents || 3)}</div>
-            <div class="ws-stat-label">Google Drive Files</div>
+            <div class="ws-stat-label">100RE Database Files</div>
           </div>
         </div>
       </div>
@@ -156,10 +156,10 @@ export async function renderDashboard(container) {
           </div>
         </div>
 
-        <!-- Bottom Right: Google Drive 5TB Datasets -->
+        <!-- Bottom Right: 100RE Database Datasets -->
         <div class="ws-card" style="margin-bottom:0;">
           <div class="ws-card-header" style="padding:16px 20px; border-bottom:1px solid var(--ws-border); display:flex; justify-content:space-between; align-items:center;">
-            <h3 class="ws-card-title"><i class="fa-brands fa-google-drive" style="color:#16a34a;"></i> Google Drive 5TB Datasets</h3>
+            <h3 class="ws-card-title"><i class="fa-solid fa-database" style="color:#16a34a;"></i> 100RE Database Datasets</h3>
             <a href="#datasets" class="ws-card-link">View All &rarr;</a>
           </div>
           <div style="padding:16px 20px;">
