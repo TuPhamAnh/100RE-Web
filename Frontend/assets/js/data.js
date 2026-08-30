@@ -997,5 +997,17 @@ window.LAB_DATA = {
       url: "https://erav.vn/",
       desc: "Regulatory documents, competitive electricity market rules, and clean energy tariff decrees in Vietnam."
     }
+  ],
+
+  // 12. Photos Gallery Dataset
+  photos: [
+    { id: "photo-1", title: "PV Team Banner & Solar Research", category: "teams", caption: "PV Team research testbed and rooftop solar installation at Building D9.", image: "assets/images/banner_pv.jpg" },
+    { id: "photo-2", title: "AI Team Deep Learning Platform", category: "teams", caption: "Deep learning models SAM-LSTM for solar irradiance and wind power forecasting.", image: "assets/images/banner_ai.jpg" },
+    { id: "photo-3", title: "Demand Response & Unit Commitment Team", category: "teams", caption: "Microgrid power dispatch, MILP optimization, and electricity market simulation.", image: "assets/images/banner_dr_uc.jpg" },
+    { id: "photo-4", title: "Wind Energy Research Cluster", category: "teams", caption: "Wind turbine aerodynamics, LVRT capability, and grid stability testbed.", image: "assets/images/banner_wind.jpg" },
+    { id: "photo-5", title: "Smart Grid & SCADA Automation", category: "teams", caption: "Intelligent microgrid control, cybersecurity, and IEC 61850 substation integration.", image: "assets/images/banner_smartgrid.jpg" },
+    { id: "photo-6", title: "Electric Vehicle & V2G Infrastructure", category: "teams", caption: "EV smart charging algorithms and Vehicle-to-Grid distribution grid impact.", image: "assets/images/banner_ev.jpg" },
+    { id: "photo-7", title: "Green Hydrogen Production & Fuel Cell", category: "teams", caption: "Renewable electrolysis coupling, fuel cell efficiency, and hydrogen supply chains.", image: "assets/images/banner_hydrogen.jpg" },
+    { id: "photo-8", title: "Battery Energy Storage Systems (BESS)", category: "teams", caption: "Utility-scale BESS frequency regulation and battery degradation modeling.", image: "assets/images/banner_bess.jpg" }
   ]
 };

@@ -46,7 +46,6 @@
               <li class="dropdown-item"><a href="collaborations.html"><i class="fa-solid fa-handshake"></i> Collaborations</a></li>
             </ul>
           </li>
-          <li class="nav-item"><a href="achievements.html" class="nav-link">Achievement</a></li>
           <li class="nav-item"><a href="projects.html" class="nav-link active">Project</a></li>
           <li class="nav-item"><a href="news.html" class="nav-link">News</a></li>
           <li class="nav-item"><a href="journey.html" class="nav-link">Journey</a></li>
@@ -143,23 +142,7 @@
 
   <script src="assets/js/data.js"></script>
   <script src="assets/js/main.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const container = document.getElementById('projectsContainer');
-      if (container && window.LAB_DATA && window.LAB_DATA.projects) {
-        container.innerHTML = window.LAB_DATA.projects.map(p => `
-          <article class="project-card">
-            <span class="card-header-badge"><i class="fa-regular fa-clock"></i> ${p.period}</span>
-            <h3 class="card-item-title">${p.title}</h3>
-            <div class="card-item-org"><i class="fa-solid fa-building"></i> ${p.org}</div>
-            <p class="card-item-desc">${p.desc}</p>
-            <div class="card-tags">
-              ${p.tags.map(t => `<span class="card-tag">#${t}</span>`).join('')}
-            </div>
-          </article>
-        `).join('');
-      }
-    });
-  </script>
+  <script src="assets/js/admin_crud.js"></script>
+  
 </body>
 </html>

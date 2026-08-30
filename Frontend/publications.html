@@ -46,7 +46,6 @@
               <li class="dropdown-item"><a href="collaborations.html"><i class="fa-solid fa-handshake"></i> Collaborations</a></li>
             </ul>
           </li>
-          <li class="nav-item"><a href="achievements.html" class="nav-link">Achievement</a></li>
           <li class="nav-item"><a href="projects.html" class="nav-link">Project</a></li>
           <li class="nav-item"><a href="news.html" class="nav-link">News</a></li>
           <li class="nav-item"><a href="journey.html" class="nav-link">Journey</a></li>
@@ -160,6 +159,7 @@
 
   <script src="assets/js/data.js"></script>
   <script src="assets/js/main.js"></script>
+  <script src="assets/js/admin_crud.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const container = document.getElementById('pubListContainer');
@@ -167,14 +167,15 @@
       const filterBtns = document.querySelectorAll('[data-pub-filter]');
 
       function renderPublications() {
-        if (!container || !window.LAB_DATA || !window.LAB_DATA.publications) return;
+        const allPubs = (window.DataManager ? window.DataManager.get('publications') : (window.LAB_DATA ? window.LAB_DATA.publications : [])) || [];
+        if (!container) return;
         const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
         const activeBtn = document.querySelector('[data-pub-filter].active');
         const category = activeBtn ? activeBtn.getAttribute('data-pub-filter') : 'all';
 
-        const filtered = window.LAB_DATA.publications.filter(pub => {
+        const filtered = allPubs.filter(pub => {
           const matchCat = (category === 'all' || pub.category === category);
-          const fullText = `${pub.title} ${pub.authors} ${pub.venue} ${pub.year} ${pub.doi || ''}`.toLowerCase();
+          const fullText = `${pub.title || ''} ${pub.authors || ''} ${pub.venue || ''} ${pub.year || ''} ${pub.doi || ''}`.toLowerCase();
           const matchQuery = !query || fullText.includes(query);
           return matchCat && matchQuery;
         });
@@ -197,19 +198,27 @@
                           pub.category === 'conference' ? 'Conference' :
                           pub.category === 'book-chapter' ? 'Book Chapter' : 'Invited Talk';
           return `
-            <article class="pub-item">
+            <article class="pub-item" data-id="${pub.id}">
               <div class="pub-meta-top">
                 <span class="pub-badge-category">${catName}</span>
                 ${pub.quartile ? `<span class="pub-badge-quartile">${pub.quartile}</span>` : ''}
                 <span class="pub-year"><i class="fa-regular fa-calendar"></i> ${pub.year || ''}</span>
               </div>
               <h3 class="pub-title">${pub.title}</h3>
-              <div class="pub-authors"><strong>Authors:</strong> ${pub.authors}</div>
-              <div class="pub-venue"><strong>Venue:</strong> ${pub.venue}</div>
+              <div class="pub-authors"><strong>Authors:</strong> ${pub.authors || ''}</div>
+              <div class="pub-venue"><strong>Venue:</strong> ${pub.venue || pub.journal || ''}</div>
               <div class="pub-links">
-                ${pub.doi ? `<a href="${pub.url || 'https://doi.org/' + pub.doi}" target="_blank" rel="noopener noreferrer" class="pub-link-btn"><i class="fa-solid fa-link"></i> DOI: ${pub.doi}</a>` : ''}
-                <button class="pub-link-btn" type="button" onclick="navigator.clipboard.writeText('${pub.authors.replace(/'/g, "\\'")} (${pub.year}). ${pub.title.replace(/'/g, "\\'")}. ${pub.venue.replace(/'/g, "\\'")}.'); if (typeof showToast === 'function') { showToast('Đã sao chép trích dẫn APA vào clipboard!'); } else { alert('Citation copied to clipboard!'); }">
+                ${pub.doi ? `<a href="${pub.url || (pub.doi.startsWith('http') ? pub.doi : 'https://doi.org/' + pub.doi)}" target="_blank" rel="noopener noreferrer" class="pub-link-btn"><i class="fa-solid fa-link"></i> DOI: ${pub.doi}</a>` : ''}
+                <button class="pub-link-btn" type="button" onclick="navigator.clipboard.writeText('${(pub.authors || '').replace(/'/g, "\\\\'")} (${pub.year}). ${(pub.title || '').replace(/'/g, "\\\\'")}. ${(pub.venue || pub.journal || '').replace(/'/g, "\\\\'")}.'); if (typeof showToast === 'function') { showToast('Đã sao chép trích dẫn APA vào clipboard!'); } else { alert('Citation copied to clipboard!'); }">
                   <i class="fa-regular fa-copy"></i> Copy Citation
+                </button>
+              </div>
+              <div class="universal-admin-card-actions">
+                <button type="button" class="btn-crud-edit" onclick="window.AdminCRUD.openModal('publications', '${pub.id}')">
+                  <i class="fa-solid fa-pen-to-square"></i> Edit
+                </button>
+                <button type="button" class="btn-crud-delete" onclick="window.AdminCRUD.confirmDelete('publications', '${pub.id}')">
+                  <i class="fa-solid fa-trash"></i> Delete
                 </button>
               </div>
             </article>
@@ -218,8 +227,7 @@
       }
 
       function updateCategoryCounts() {
-        if (!window.LAB_DATA || !window.LAB_DATA.publications) return;
-        const allPubs = window.LAB_DATA.publications;
+        const allPubs = (window.DataManager ? window.DataManager.get('publications') : (window.LAB_DATA ? window.LAB_DATA.publications : [])) || [];
         filterBtns.forEach(btn => {
           const cat = btn.getAttribute('data-pub-filter');
           const count = cat === 'all' ? allPubs.length : allPubs.filter(p => p.category === cat).length;
@@ -251,6 +259,13 @@
           });
         });
       }
+
+      window.addEventListener('100re_data_updated', (e) => {
+        if (e.detail && e.detail.key === 'publications') {
+          updateCategoryCounts();
+          renderPublications();
+        }
+      });
 
       updateCategoryCounts();
       renderPublications();

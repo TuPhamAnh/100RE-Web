@@ -46,7 +46,6 @@
               <li class="dropdown-item"><a href="collaborations.html"><i class="fa-solid fa-handshake"></i> Collaborations</a></li>
             </ul>
           </li>
-          <li class="nav-item"><a href="achievements.html" class="nav-link">Achievement</a></li>
           <li class="nav-item"><a href="projects.html" class="nav-link">Project</a></li>
           <li class="nav-item"><a href="news.html" class="nav-link">News</a></li>
           <li class="nav-item"><a href="journey.html" class="nav-link">Journey</a></li>
@@ -154,33 +153,7 @@
 
   <script src="assets/js/data.js"></script>
   <script src="assets/js/main.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const container = document.getElementById('researchAreasContainer');
-      if (container && window.LAB_DATA && window.LAB_DATA.researchAreas) {
-        container.innerHTML = window.LAB_DATA.researchAreas.map(area => `
-          <article class="research-card">
-            <div class="research-card-header">
-              <div class="research-card-icon"><i class="fa-solid ${area.icon}"></i></div>
-              <div>
-                <h3 class="research-card-title">${area.title}</h3>
-                <div class="research-card-leader">Leader: ${area.leader} (${area.team})</div>
-              </div>
-            </div>
-            <div class="research-card-body">
-              <p class="research-card-desc">${area.summary}</p>
-              <div style="font-size: 0.85rem; font-weight: 700; color: #0f172a; text-transform: uppercase; letter-spacing: 0.5px;">Core Topics:</div>
-              <ul class="research-topics-list">
-                ${area.topics.map(t => `<li><i class="fa-solid fa-check"></i> <span>${t}</span></li>`).join('')}
-              </ul>
-              <div style="margin-top: auto; padding-top: 14px; border-top: 1px dashed #e2e8f0; font-size: 0.85rem; color: #64748b;">
-                <strong>Future Direction:</strong> ${area.futureDirections}
-              </div>
-            </div>
-          </article>
-        `).join('');
-      }
-    });
-  </script>
+  <script src="assets/js/admin_crud.js"></script>
+  
 </body>
 </html>

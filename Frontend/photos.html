@@ -46,7 +46,6 @@
               <li class="dropdown-item"><a href="collaborations.html"><i class="fa-solid fa-handshake"></i> Collaborations</a></li>
             </ul>
           </li>
-          <li class="nav-item"><a href="achievements.html" class="nav-link">Achievement</a></li>
           <li class="nav-item"><a href="projects.html" class="nav-link">Project</a></li>
           <li class="nav-item"><a href="news.html" class="nav-link">News</a></li>
           <li class="nav-item"><a href="journey.html" class="nav-link">Journey</a></li>
@@ -102,38 +101,7 @@
 
     <!-- Gallery Grid -->
     <div class="gallery-grid" id="galleryGrid">
-      <div class="gallery-item" data-category="teams" onclick="openLightbox('assets/images/banner_pv.jpg', 'PV Team Banner &amp; Solar Research')">
-        <img src="assets/images/banner_pv.jpg" alt="PV Team" class="gallery-img">
-        <div class="gallery-caption-overlay">PV Team Banner &amp; Solar Research</div>
-      </div>
-      <div class="gallery-item" data-category="teams" onclick="openLightbox('assets/images/banner_ai.jpg', 'AI Team Deep Learning Platform')">
-        <img src="assets/images/banner_ai.jpg" alt="AI Team" class="gallery-img">
-        <div class="gallery-caption-overlay">AI Team Deep Learning Platform</div>
-      </div>
-      <div class="gallery-item" data-category="teams" onclick="openLightbox('assets/images/banner_dr_uc.jpg', 'Demand Response &amp; Unit Commitment Team')">
-        <img src="assets/images/banner_dr_uc.jpg" alt="Demand Response Team" class="gallery-img">
-        <div class="gallery-caption-overlay">Demand Response &amp; Unit Commitment Team</div>
-      </div>
-      <div class="gallery-item" data-category="teams" onclick="openLightbox('assets/images/banner_wind.jpg', 'Wind Energy Research Cluster')">
-        <img src="assets/images/banner_wind.jpg" alt="Wind Team" class="gallery-img">
-        <div class="gallery-caption-overlay">Wind Energy Research Cluster</div>
-      </div>
-      <div class="gallery-item" data-category="teams" onclick="openLightbox('assets/images/banner_smartgrid.jpg', 'Smart Grid &amp; SCADA Automation')">
-        <img src="assets/images/banner_smartgrid.jpg" alt="Smart Grid Team" class="gallery-img">
-        <div class="gallery-caption-overlay">Smart Grid &amp; SCADA Automation</div>
-      </div>
-      <div class="gallery-item" data-category="teams" onclick="openLightbox('assets/images/banner_ev.jpg', 'Electric Vehicle &amp; V2G Infrastructure')">
-        <img src="assets/images/banner_ev.jpg" alt="EV Team" class="gallery-img">
-        <div class="gallery-caption-overlay">Electric Vehicle &amp; V2G Infrastructure</div>
-      </div>
-      <div class="gallery-item" data-category="teams" onclick="openLightbox('assets/images/banner_hydrogen.jpg', 'Green Hydrogen Production &amp; Fuel Cell')">
-        <img src="assets/images/banner_hydrogen.jpg" alt="Hydrogen Team" class="gallery-img">
-        <div class="gallery-caption-overlay">Green Hydrogen Production &amp; Fuel Cell</div>
-      </div>
-      <div class="gallery-item" data-category="teams" onclick="openLightbox('assets/images/banner_bess.jpg', 'Battery Energy Storage Systems (BESS)')">
-        <img src="assets/images/banner_bess.jpg" alt="BESS Team" class="gallery-img">
-        <div class="gallery-caption-overlay">Battery Energy Storage Systems (BESS)</div>
-      </div>
+      <!-- Dynamic rendering from window.DataManager.get('photos') / LAB_DATA.photos -->
     </div>
 
   </main>
@@ -197,26 +165,27 @@
 
   <script src="assets/js/data.js"></script>
   <script src="assets/js/main.js"></script>
+  <script src="assets/js/admin_crud.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const filterBtns = document.querySelectorAll('[data-gallery-filter]');
-      const items = document.querySelectorAll('.gallery-item');
-
-      filterBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          filterBtns.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          const filter = btn.getAttribute('data-gallery-filter');
-
-          items.forEach(item => {
-            if (filter === 'all' || item.getAttribute('data-category') === filter) {
-              item.style.display = 'block';
-            } else {
-              item.style.display = 'none';
-            }
+      if (filterBtns) {
+        filterBtns.forEach(btn => {
+          btn.addEventListener('click', () => {
+            filterBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const cat = btn.getAttribute('data-gallery-filter');
+            const items = document.querySelectorAll('#galleryGrid .gallery-item');
+            items.forEach(el => {
+              if (cat === 'all' || el.getAttribute('data-category') === cat) {
+                el.style.display = 'block';
+              } else {
+                el.style.display = 'none';
+              }
+            });
           });
         });
-      });
+      }
     });
   </script>
 </body>

@@ -46,7 +46,6 @@
               <li class="dropdown-item"><a href="collaborations.html"><i class="fa-solid fa-handshake"></i> Collaborations</a></li>
             </ul>
           </li>
-          <li class="nav-item"><a href="achievements.html" class="nav-link">Achievement</a></li>
           <li class="nav-item"><a href="projects.html" class="nav-link">Project</a></li>
           <li class="nav-item"><a href="news.html" class="nav-link active">News</a></li>
           <li class="nav-item"><a href="journey.html" class="nav-link">Journey</a></li>
@@ -143,24 +142,7 @@
 
   <script src="assets/js/data.js"></script>
   <script src="assets/js/main.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const container = document.getElementById('newsContainer');
-      if (container && window.LAB_DATA && window.LAB_DATA.news) {
-        container.innerHTML = window.LAB_DATA.news.map(item => `
-          <article class="news-card">
-            <div class="news-img-wrap">
-              <img src="${item.image}" alt="${item.title}" class="news-img" onerror="this.src='assets/images/logo.jpg'">
-            </div>
-            <div class="news-card-body">
-              <div class="news-date"><i class="fa-regular fa-calendar"></i> ${item.date} · <i class="fa-regular fa-clock"></i> ${item.readTime}</div>
-              <h3 class="news-title">${item.title}</h3>
-              <p class="news-excerpt">${item.excerpt}</p>
-            </div>
-          </article>
-        `).join('');
-      }
-    });
-  </script>
+  <script src="assets/js/admin_crud.js"></script>
+  
 </body>
 </html>
