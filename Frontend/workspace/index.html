@@ -3,34 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>100RE Lab Workspace | Internal Research Management</title>
-  <meta name="description" content="100RE Laboratory Internal Research Workspace. Collaborative project, task, research data and document management for lab members.">
-  <link rel="icon" type="image/jpeg" href="../assets/images/logo.jpg">
-
-  <!-- Google Fonts & FontAwesome -->
+  <title>100RE LAB WORKSPACE — Electronic Lab Notebook &amp; Research Workspace</title>
+  
+  <!-- FontAwesome 6 Pro CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Google Fonts: Inter & Outfit -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 
-  <!-- Workspace Styles -->
+  <!-- Workspace Modular Styles -->
   <link rel="stylesheet" href="css/workspace.css">
-  <link rel="stylesheet" href="css/kanban.css">
 </head>
-<body class="workspace-body">
+<body class="ws-body">
 
-  <!-- WORKSPACE LAYOUT CONTAINER -->
-  <div class="workspace-layout" id="workspaceLayout">
+  <!-- WORKSPACE APP WRAPPER -->
+  <div class="ws-app-layout" id="wsAppLayout">
 
-    <!-- 1. SIDEBAR -->
+    <!-- 1. SIDEBAR NAVIGATION -->
     <aside class="ws-sidebar" id="wsSidebar">
-      <!-- Brand Header -->
-      <div class="ws-sidebar-header">
-        <a href="../index.html" class="ws-brand" title="Return to Public Website">
+      <!-- Workspace Brand -->
+      <div class="ws-brand">
+        <a href="#dashboard" class="ws-brand-link">
           <img src="../assets/images/logo.jpg" alt="100RE Logo" class="ws-brand-logo">
           <div class="ws-brand-text">
             <span class="ws-brand-title">100RE LAB</span>
-            <span class="ws-brand-subtitle">Internal Workspace</span>
+            <span class="ws-brand-subtitle">SciNote ELN Workspace</span>
           </div>
         </a>
         <button class="ws-sidebar-close-btn" id="wsSidebarCloseBtn" aria-label="Close sidebar">
@@ -50,25 +49,42 @@
           </li>
         </ul>
 
-        <!-- Research Section -->
-        <div class="ws-nav-section-label">RESEARCH</div>
+        <!-- SciNote Research Hierarchy -->
+        <div class="ws-nav-section-label">SCINOTE ELN</div>
         <ul class="ws-nav-group">
           <li class="ws-nav-item">
-            <a href="#teams" class="ws-nav-link" data-route="teams">
-              <i class="fa-solid fa-people-group"></i>
-              <span>Teams</span>
-              <span class="ws-nav-badge" id="badgeTeamCount">9</span>
+            <a href="#experiments" class="ws-nav-link" data-route="experiments">
+              <i class="fa-solid fa-folder-tree"></i>
+              <span>Projects &amp; Experiments</span>
             </a>
           </li>
           <li class="ws-nav-item">
-            <a href="#projects" class="ws-nav-link" data-route="projects">
+            <a href="#workflows" class="ws-nav-link" data-route="workflows">
               <i class="fa-solid fa-diagram-project"></i>
-              <span>Projects</span>
+              <span>Visual Workflows</span>
+            </a>
+          </li>
+          <li class="ws-nav-item">
+            <a href="#protocols" class="ws-nav-link" data-route="protocols">
+              <i class="fa-solid fa-book-medical"></i>
+              <span>Protocols &amp; SOPs</span>
+            </a>
+          </li>
+          <li class="ws-nav-item">
+            <a href="#inventory" class="ws-nav-link" data-route="inventory">
+              <i class="fa-solid fa-microchip"></i>
+              <span>Lab Inventory</span>
+            </a>
+          </li>
+          <li class="ws-nav-item">
+            <a href="#signoffs" class="ws-nav-link" data-route="signoffs">
+              <i class="fa-solid fa-file-signature"></i>
+              <span>Sign-offs &amp; Approvals</span>
             </a>
           </li>
         </ul>
 
-        <!-- Work Section -->
+        <!-- Work & Tasks -->
         <div class="ws-nav-section-label">WORK &amp; TASKS</div>
         <ul class="ws-nav-group">
           <li class="ws-nav-item">
@@ -84,21 +100,28 @@
               <span>All Tasks / Kanban</span>
             </a>
           </li>
+          <li class="ws-nav-item">
+            <a href="#teams" class="ws-nav-link" data-route="teams">
+              <i class="fa-solid fa-people-group"></i>
+              <span>Research Teams</span>
+              <span class="ws-nav-badge" id="badgeTeamCount">9</span>
+            </a>
+          </li>
         </ul>
 
-        <!-- Knowledge Section -->
-        <div class="ws-nav-section-label">KNOWLEDGE &amp; DATA</div>
+        <!-- Knowledge & Google Drive -->
+        <div class="ws-nav-section-label">GOOGLE DRIVE 5TB</div>
         <ul class="ws-nav-group">
           <li class="ws-nav-item">
             <a href="#datasets" class="ws-nav-link" data-route="datasets">
               <i class="fa-solid fa-database"></i>
-              <span>Research Data</span>
+              <span>Research Datasets</span>
             </a>
           </li>
           <li class="ws-nav-item">
             <a href="#documents" class="ws-nav-link" data-route="documents">
               <i class="fa-solid fa-file-lines"></i>
-              <span>Documents</span>
+              <span>Documents &amp; Reports</span>
             </a>
           </li>
         </ul>
@@ -109,13 +132,13 @@
           <li class="ws-nav-item">
             <a href="#members" class="ws-nav-link" data-route="members">
               <i class="fa-solid fa-users"></i>
-              <span>Members</span>
+              <span>Members &amp; Profiles</span>
             </a>
           </li>
           <li class="ws-nav-item">
             <a href="#activity" class="ws-nav-link" data-route="activity">
               <i class="fa-solid fa-clock-rotate-left"></i>
-              <span>Activity Log</span>
+              <span>Audit Trail / Log</span>
             </a>
           </li>
         </ul>
@@ -137,8 +160,8 @@
         <div class="ws-user-card" id="wsUserCard">
           <img src="../assets/images/logo.jpg" alt="User Avatar" class="ws-user-avatar" id="sidebarUserAvatar">
           <div class="ws-user-info">
-            <div class="ws-user-name" id="sidebarUserName">Loading...</div>
-            <div class="ws-user-role-badge" id="sidebarUserRole">researcher</div>
+            <div class="ws-user-name" id="sidebarUserName">Assoc. Prof. Nguyen Duc Tuyen</div>
+            <div class="ws-user-role-badge" id="sidebarUserRole">SUPERVISOR</div>
           </div>
         </div>
         <a href="../index.html" class="ws-btn-exit" title="Back to Public Website">
@@ -183,7 +206,7 @@
           <!-- Quick Action Buttons -->
           <div class="ws-quick-actions">
             <button class="btn-ws-primary" id="btnQuickNewTask">
-              <i class="fa-solid fa-plus"></i> <span class="hide-mobile">New Task</span>
+              <i class="fa-solid fa-plus"></i> <span class="hide-mobile">New Task / Step</span>
             </button>
           </div>
 
@@ -198,30 +221,45 @@
       <main class="ws-content-viewport" id="workspaceContent">
         <div class="ws-loader-center">
           <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
-          <p>Loading 100RE Lab Workspace...</p>
+          <p style="margin-top:12px; color:var(--ws-text-muted);">Loading 100RE SciNote Workspace...</p>
         </div>
       </main>
-
     </div>
   </div>
 
-  <!-- ========================================================== -->
-  <!-- MODALS -->
-  <!-- ========================================================== -->
+  <!-- ========================================== -->
+  <!-- 3. MODALS (CREATE, EDIT, DETAIL VIEWS)     -->
+  <!-- ========================================== -->
 
-  <!-- A. TASK MODAL (Create / Edit) -->
+  <!-- A. TASK / PROTOCOL STEP MODAL (Create / Edit) -->
   <div class="ws-modal-backdrop" id="modalTask">
     <div class="ws-modal-dialog">
       <div class="ws-modal-header">
-        <h3 class="ws-modal-title" id="modalTaskTitle"><i class="fa-solid fa-list-check"></i> Create New Task</h3>
+        <h3 class="ws-modal-title" id="modalTaskTitle"><i class="fa-solid fa-list-check"></i> Create New Protocol Task</h3>
         <button class="ws-modal-close-btn" data-close-modal="modalTask">&times;</button>
       </div>
       <form id="formTask" class="ws-modal-form">
         <input type="hidden" id="taskFormId">
+        <div class="form-group">
+          <label for="taskFormTitle">Task Title <span class="required">*</span></label>
+          <input type="text" id="taskFormTitle" class="form-control" placeholder="e.g. Implement RegD frequency regulation control algorithm" required>
+        </div>
+
         <div class="form-row">
-          <div class="form-group flex-2">
-            <label for="taskFormTitle">Task Title <span class="required">*</span></label>
-            <input type="text" id="taskFormTitle" class="form-control" placeholder="e.g. Implement RegD controller" required>
+          <div class="form-group flex-1">
+            <label for="taskFormTeam">Research Team <span class="required">*</span></label>
+            <select id="taskFormTeam" class="form-control" required></select>
+          </div>
+          <div class="form-group flex-1">
+            <label for="taskFormProject">Project / Experiment</label>
+            <select id="taskFormProject" class="form-control"></select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="taskFormAssignee">Assigned Researcher</label>
+            <select id="taskFormAssignee" class="form-control"></select>
           </div>
           <div class="form-group flex-1">
             <label for="taskFormPriority">Priority</label>
@@ -232,36 +270,10 @@
               <option value="urgent">Urgent</option>
             </select>
           </div>
-        </div>
-
-        <div class="form-row">
           <div class="form-group flex-1">
-            <label for="taskFormTeam">Research Team <span class="required">*</span></label>
-            <select id="taskFormTeam" class="form-control" required></select>
-          </div>
-          <div class="form-group flex-1">
-            <label for="taskFormProject">Project (Optional)</label>
-            <select id="taskFormProject" class="form-control">
-              <option value="">-- General Team Task --</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group flex-1">
-            <label for="taskFormAssignee">Assignee</label>
-            <select id="taskFormAssignee" class="form-control">
-              <option value="">-- Unassigned --</option>
-            </select>
-          </div>
-          <div class="form-group flex-1">
-            <label for="taskFormDueDate">Deadline</label>
-            <input type="date" id="taskFormDueDate" class="form-control">
-          </div>
-          <div class="form-group flex-1" id="taskStatusGroup" style="display:none;">
             <label for="taskFormStatus">Status</label>
             <select id="taskFormStatus" class="form-control">
-              <option value="todo">To Do</option>
+              <option value="todo" selected>To Do</option>
               <option value="in_progress">In Progress</option>
               <option value="review">Review</option>
               <option value="done">Done</option>
@@ -269,9 +281,16 @@
           </div>
         </div>
 
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="taskFormDueDate">Due Date</label>
+            <input type="date" id="taskFormDueDate" class="form-control">
+          </div>
+        </div>
+
         <div class="form-group">
-          <label for="taskFormDescription">Description &amp; Research Requirements</label>
-          <textarea id="taskFormDescription" class="form-control" rows="4" placeholder="Detail the mathematical formulation, experimental requirements, and expected deliverables..."></textarea>
+          <label for="taskFormDesc">Description, Methodology &amp; Protocol Guidelines</label>
+          <textarea id="taskFormDesc" class="form-control" rows="3" placeholder="Outline specific test steps, equations, parameters, safety protocols..."></textarea>
         </div>
 
         <div class="ws-modal-footer">
@@ -284,78 +303,86 @@
     </div>
   </div>
 
-  <!-- B. TASK DETAILS & COMMENTS MODAL -->
+  <!-- B. SCINOTE ELECTRONIC LAB SHEET (Task Detailed View) -->
   <div class="ws-modal-backdrop" id="modalTaskDetail">
     <div class="ws-modal-dialog ws-modal-lg">
-      <div class="ws-modal-header">
-        <div class="ws-detail-header-left">
-          <span class="ws-badge" id="taskDetailStatusBadge">TODO</span>
-          <span class="ws-badge" id="taskDetailPriorityBadge">MEDIUM</span>
+      <div class="ws-modal-header" style="background:#f8fafc; border-bottom:1px solid var(--ws-border);">
+        <div>
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+            <span class="ws-badge ws-badge-primary" id="taskDetailTeam">Team</span>
+            <span class="ws-badge" id="taskDetailStatusBadge">TODO</span>
+            <span class="ws-badge" id="taskDetailPriorityBadge">MEDIUM</span>
+          </div>
+          <h3 class="ws-modal-title" id="taskDetailTitle" style="font-size:1.25rem;">Task Title</h3>
         </div>
         <button class="ws-modal-close-btn" data-close-modal="modalTaskDetail">&times;</button>
       </div>
-      <div class="ws-task-detail-body">
-        <div class="ws-task-detail-main">
-          <h2 class="ws-detail-title" id="taskDetailTitle">Task Title</h2>
-          <div class="ws-detail-meta-bar">
-            <span><i class="fa-solid fa-people-group"></i> <strong id="taskDetailTeam">Team</strong></span>
-            <span><i class="fa-solid fa-diagram-project"></i> <span id="taskDetailProject">Project</span></span>
-            <span><i class="fa-regular fa-calendar"></i> Due: <span id="taskDetailDueDate">No deadline</span></span>
+
+      <div class="ws-modal-body" style="padding:0;">
+        <!-- SciNote Tabs -->
+        <div class="ws-tabs-bar" style="padding:0 24px; border-bottom:1px solid var(--ws-border); background:#fff;">
+          <button class="ws-tab-btn active" data-tab="tabTaskProtocol"><i class="fa-solid fa-clipboard-check"></i> Protocol Steps</button>
+          <button class="ws-tab-btn" data-tab="tabTaskNotes"><i class="fa-solid fa-book-open"></i> Lab Notes &amp; Observations</button>
+          <button class="ws-tab-btn" data-tab="tabTaskDrive"><i class="fa-brands fa-google-drive"></i> Google Drive Data</button>
+          <button class="ws-tab-btn" data-tab="tabTaskSignoff"><i class="fa-solid fa-signature"></i> Review &amp; Sign-off</button>
+          <button class="ws-tab-btn" data-tab="tabTaskComments"><i class="fa-solid fa-comments"></i> Discussion</button>
+        </div>
+
+        <div style="padding:24px;">
+          <!-- Tab 1: Protocol Steps Checklist -->
+          <div id="tabTaskProtocol" class="ws-tab-pane active">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+              <h4 style="font-size:1rem; font-weight:700; color:var(--ws-dark);"><i class="fa-solid fa-list-ol" style="color:var(--ws-primary);"></i> Interactive Protocol Checklist</h4>
+              <button class="btn-ws-ghost btn-ws-sm" id="btnAddStepBtn"><i class="fa-solid fa-plus"></i> Add Step</button>
+            </div>
+            <div id="taskProtocolStepsList" style="display:flex; flex-direction:column; gap:10px;"></div>
           </div>
 
-          <div class="ws-detail-section">
-            <h4>Description</h4>
-            <div class="ws-detail-description" id="taskDetailDesc">No description provided.</div>
+          <!-- Tab 2: Lab Notes & Parameters -->
+          <div id="tabTaskNotes" class="ws-tab-pane" style="display:none;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+              <h4 style="font-size:1rem; font-weight:700; color:var(--ws-dark);"><i class="fa-solid fa-pen-to-square" style="color:#0284c7;"></i> Experimental Observations &amp; Parameters</h4>
+              <button class="btn-ws-ghost btn-ws-sm" id="btnAddNoteBtn"><i class="fa-solid fa-plus"></i> New Observation Note</button>
+            </div>
+            <div id="taskLabNotesList" style="display:flex; flex-direction:column; gap:12px;"></div>
           </div>
 
-          <!-- Comments Thread -->
-          <div class="ws-detail-section">
-            <h4>Discussion &amp; Research Updates (<span id="taskDetailCommentCount">0</span>)</h4>
-            <div class="ws-comment-thread" id="taskCommentThread"></div>
-            
-            <form id="formAddComment" class="ws-comment-form">
-              <textarea id="commentInput" class="form-control" rows="2" placeholder="Write an update, ask a question, or post experimental findings..." required></textarea>
-              <div style="display:flex; justify-content:flex-end; margin-top:8px;">
-                <button type="submit" class="btn-ws-primary" id="btnSubmitComment">
-                  <i class="fa-solid fa-paper-plane"></i> Post Comment
-                </button>
+          <!-- Tab 3: Google Drive Data -->
+          <div id="tabTaskDrive" class="ws-tab-pane" style="display:none;">
+            <div style="margin-bottom:16px;">
+              <h4 style="font-size:1rem; font-weight:700; color:var(--ws-dark); margin-bottom:6px;"><i class="fa-brands fa-google-drive" style="color:#16a34a;"></i> Project Datasets &amp; Files in Google Drive 5TB</h4>
+              <p style="font-size:0.85rem; color:var(--ws-text-muted);">Root: <code>100RE LAB (Internal Workspace)</code></p>
+            </div>
+            <div id="taskDriveFilesList"></div>
+          </div>
+
+          <!-- Tab 4: Sign-off & Review -->
+          <div id="tabTaskSignoff" class="ws-tab-pane" style="display:none;">
+            <div id="taskSignoffSection"></div>
+          </div>
+
+          <!-- Tab 5: Comments & Audit -->
+          <div id="tabTaskComments" class="ws-tab-pane" style="display:none;">
+            <div class="ws-comments-thread" id="taskDetailCommentsList"></div>
+            <form id="formAddComment" class="ws-comment-form" style="margin-top:16px;">
+              <div style="display:flex; gap:10px;">
+                <input type="text" id="inputCommentText" class="form-control" placeholder="Add research feedback or technical question..." required>
+                <button type="submit" class="btn-ws-primary" style="white-space:nowrap;"><i class="fa-solid fa-paper-plane"></i> Send</button>
               </div>
             </form>
           </div>
         </div>
+      </div>
 
-        <div class="ws-task-detail-sidebar">
-          <div class="ws-detail-side-block">
-            <label>Assigned To</label>
-            <div class="ws-assignee-row" id="taskDetailAssigneeRow">
-              <img src="../assets/images/logo.jpg" id="taskDetailAssigneeAvatar" class="ws-avatar-sm" alt="Assignee">
-              <span id="taskDetailAssigneeName">Unassigned</span>
-            </div>
-          </div>
-
-          <div class="ws-detail-side-block">
-            <label>Change Status</label>
-            <div class="ws-status-btn-group">
-              <button class="btn-status-action" data-status="todo">To Do</button>
-              <button class="btn-status-action" data-status="in_progress">In Progress</button>
-              <button class="btn-status-action" data-status="review">Review</button>
-              <button class="btn-status-action" data-status="done">Done</button>
-            </div>
-          </div>
-
-          <div class="ws-detail-side-block" id="taskDetailAdminActions">
-            <label>Actions</label>
-            <div style="display:flex; flex-direction:column; gap:8px;">
-              <button class="btn-ws-ghost" id="btnEditTaskFromDetail"><i class="fa-solid fa-pen"></i> Edit Task</button>
-              <button class="btn-ws-danger" id="btnDeleteTaskFromDetail"><i class="fa-solid fa-trash"></i> Delete Task</button>
-            </div>
-          </div>
-        </div>
+      <div class="ws-modal-footer" style="border-top:1px solid var(--ws-border); background:#f8fafc;">
+        <button type="button" class="btn-ws-ghost" data-close-modal="modalTaskDetail">Close</button>
+        <button class="btn-ws-secondary" id="btnEditTaskFromDetail"><i class="fa-solid fa-pen-to-square"></i> Edit Task</button>
+        <button class="btn-ws-danger" id="btnDeleteTaskFromDetail"><i class="fa-solid fa-trash"></i> Delete Task</button>
       </div>
     </div>
   </div>
 
-  <!-- C. PROJECT MODAL (Create / Edit) -->
+  <!-- C. PROJECT / EXPERIMENT MODAL (Create / Edit) -->
   <div class="ws-modal-backdrop" id="modalProject">
     <div class="ws-modal-dialog">
       <div class="ws-modal-header">
@@ -366,7 +393,7 @@
         <input type="hidden" id="projectFormId">
         <div class="form-group">
           <label for="projectFormName">Project Name <span class="required">*</span></label>
-          <input type="text" id="projectFormName" class="form-control" placeholder="e.g. Data Center BESS Peak Shaving & Frequency Regulation" required>
+          <input type="text" id="projectFormName" class="form-control" placeholder="e.g. Data Center BESS Peak Shaving &amp; Frequency Regulation" required>
         </div>
 
         <div class="form-row">

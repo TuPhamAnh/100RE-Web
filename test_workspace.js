@@ -186,6 +186,46 @@ async function runTests() {
     }
   });
 
+  // 10. Test SciNote ELN Endpoints
+  await test('GET /api/experiments returns active laboratory experiments', async () => {
+    const req = makeReq('/api/experiments', 'GET', null, { 'X-Dev-User-Id': 'usr-sup-01' });
+    const res = await worker.fetch(req, mockEnv);
+    const data = await res.json();
+    if (!data.experiments || data.experiments.length === 0 || !data.experiments[0].project) {
+      throw new Error(`Expected experiments, got ${JSON.stringify(data)}`);
+    }
+  });
+
+  await test('GET /api/instruments returns laboratory hardware inventory', async () => {
+    const req = makeReq('/api/instruments', 'GET', null, { 'X-Dev-User-Id': 'usr-res-01' });
+    const res = await worker.fetch(req, mockEnv);
+    const data = await res.json();
+    if (!data.instruments || data.instruments.length === 0) {
+      throw new Error(`Expected instruments, got ${JSON.stringify(data)}`);
+    }
+  });
+
+  await test('GET /api/tasks/:id/scinote returns full electronic lab sheet', async () => {
+    const req = makeReq('/api/tasks/tsk-01/scinote', 'GET', null, { 'X-Dev-User-Id': 'usr-res-01' });
+    const res = await worker.fetch(req, mockEnv);
+    const data = await res.json();
+    if (!data.task || !Array.isArray(data.steps) || !Array.isArray(data.notes)) {
+      throw new Error(`Expected SciNote sheet structure, got ${JSON.stringify(data)}`);
+    }
+  });
+
+  await test('Supervisor Sign-off: POST /api/tasks/:id/sign-off marks task as approved', async () => {
+    const req = makeReq('/api/tasks/tsk-02/sign-off', 'POST', {
+      status: 'approved',
+      comments: 'Electrochemical degradation verified by Assoc. Prof. Nguyen Duc Tuyen'
+    }, { 'X-Dev-User-Id': 'usr-sup-01' });
+    const res = await worker.fetch(req, mockEnv);
+    const data = await res.json();
+    if (!data.success) {
+      throw new Error(`Sign-off failed: ${JSON.stringify(data)}`);
+    }
+  });
+
   console.log(`\n==============================================`);
   console.log(`Test Summary: ${passed} Passed, ${failed} Failed`);
   console.log(`==============================================\n`);

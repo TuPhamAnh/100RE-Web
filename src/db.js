@@ -1,9 +1,13 @@
 /**
- * 100RE LAB WORKSPACE — Database Abstraction Layer (Cloudflare D1)
+ * 100RE LAB WORKSPACE — Database Abstraction Layer (Cloudflare D1 + SciNote ELN)
  * Architecture: KV (Public Profiles) + D1 (Workspace DB) + Google Drive (File Storage)
  */
 
-import { SEED_USERS, SEED_TEAMS, SEED_TEAM_MEMBERS, SEED_PROJECTS, SEED_PROJECT_MEMBERS, SEED_TASKS, SEED_TASK_COMMENTS, SEED_DOCUMENTS, SEED_DATASETS, SEED_ACTIVITY_LOGS } from './seedData.js';
+import { 
+  SEED_USERS, SEED_TEAMS, SEED_TEAM_MEMBERS, SEED_PROJECTS, SEED_PROJECT_MEMBERS, 
+  SEED_TASKS, SEED_TASK_COMMENTS, SEED_DOCUMENTS, SEED_DATASETS, SEED_ACTIVITY_LOGS,
+  SEED_EXPERIMENTS, SEED_INSTRUMENTS, SEED_PROTOCOLS, SEED_PROTOCOL_STEPS, SEED_LAB_NOTES, SEED_SIGNOFFS
+} from './seedData.js';
 
 // In-memory persistent dev store fallback
 let devStore = null;
@@ -33,7 +37,6 @@ class D1Wrapper {
       if (res.results && res.results.length > 0) {
         return res.results;
       }
-      // If D1 is empty, fallback to seed store
       return this.fallbackStore.execute(query, params);
     } catch (e) {
       console.warn('D1 all error, using fallback:', e.message);
@@ -58,7 +61,7 @@ class D1Wrapper {
     try {
       const stmt = this.d1.prepare(query);
       const res = params.length > 0 ? await stmt.bind(...params).run() : await stmt.run();
-      this.fallbackStore.run(query, params); // keep in sync
+      this.fallbackStore.run(query, params);
       return { success: res.success, changes: res.meta ? res.meta.changes : 1 };
     } catch (e) {
       console.warn('D1 run error, running on fallback:', e.message);
@@ -93,8 +96,14 @@ function initDevStore() {
     teams: JSON.parse(JSON.stringify(SEED_TEAMS)),
     team_members: JSON.parse(JSON.stringify(SEED_TEAM_MEMBERS)),
     projects: JSON.parse(JSON.stringify(SEED_PROJECTS)),
+    experiments: JSON.parse(JSON.stringify(SEED_EXPERIMENTS)),
     project_members: JSON.parse(JSON.stringify(SEED_PROJECT_MEMBERS)),
     tasks: JSON.parse(JSON.stringify(SEED_TASKS)),
+    protocol_steps: JSON.parse(JSON.stringify(SEED_PROTOCOL_STEPS)),
+    lab_notes: JSON.parse(JSON.stringify(SEED_LAB_NOTES)),
+    instruments: JSON.parse(JSON.stringify(SEED_INSTRUMENTS)),
+    protocols: JSON.parse(JSON.stringify(SEED_PROTOCOLS)),
+    sign_offs: JSON.parse(JSON.stringify(SEED_SIGNOFFS)),
     task_comments: JSON.parse(JSON.stringify(SEED_TASK_COMMENTS)),
     documents: JSON.parse(JSON.stringify(SEED_DOCUMENTS)),
     datasets: JSON.parse(JSON.stringify(SEED_DATASETS)),
@@ -154,15 +163,64 @@ function initDevStore() {
         return [...this.projects];
       }
 
-      // PROJECT_MEMBERS
-      if (q.includes('FROM PROJECT_MEMBERS')) {
+      // EXPERIMENTS (SciNote hierarchy)
+      if (q.includes('FROM EXPERIMENTS')) {
+        if (q.includes('WHERE ID =') || q.includes('WHERE ID=?')) {
+          return this.experiments.filter(e => e.id === params[0]);
+        }
         if (q.includes('WHERE PROJECT_ID =') || q.includes('WHERE PROJECT_ID=?')) {
-          return this.project_members.filter(pm => pm.project_id === params[0]);
+          return this.experiments.filter(e => e.project_id === params[0]);
         }
-        if (q.includes('WHERE USER_ID =') || q.includes('WHERE USER_ID=?')) {
-          return this.project_members.filter(pm => pm.user_id === params[0]);
+        if (q.includes('WHERE TEAM_ID =') || q.includes('WHERE TEAM_ID=?')) {
+          return this.experiments.filter(e => e.team_id === params[0]);
         }
-        return [...this.project_members];
+        return [...this.experiments];
+      }
+
+      // INSTRUMENTS & LAB INVENTORY
+      if (q.includes('FROM INSTRUMENTS')) {
+        if (q.includes('WHERE ID =') || q.includes('WHERE ID=?')) {
+          return this.instruments.filter(i => i.id === params[0]);
+        }
+        if (q.includes('WHERE STATUS =') || q.includes('WHERE STATUS=?')) {
+          return this.instruments.filter(i => i.status === params[0]);
+        }
+        return [...this.instruments];
+      }
+
+      // PROTOCOLS (SOPs)
+      if (q.includes('FROM PROTOCOLS')) {
+        if (q.includes('WHERE ID =') || q.includes('WHERE ID=?')) {
+          return this.protocols.filter(p => p.id === params[0]);
+        }
+        if (q.includes('WHERE TEAM_ID =') || q.includes('WHERE TEAM_ID=?')) {
+          return this.protocols.filter(p => p.team_id === params[0]);
+        }
+        return [...this.protocols];
+      }
+
+      // PROTOCOL_STEPS
+      if (q.includes('FROM PROTOCOL_STEPS')) {
+        if (q.includes('WHERE TASK_ID =') || q.includes('WHERE TASK_ID=?')) {
+          return this.protocol_steps.filter(ps => ps.task_id === params[0]).sort((a,b) => a.step_order - b.step_order);
+        }
+        return [...this.protocol_steps];
+      }
+
+      // LAB_NOTES
+      if (q.includes('FROM LAB_NOTES')) {
+        if (q.includes('WHERE TASK_ID =') || q.includes('WHERE TASK_ID=?')) {
+          return this.lab_notes.filter(ln => ln.task_id === params[0]).sort((a,b) => b.created_at - a.created_at);
+        }
+        return [...this.lab_notes];
+      }
+
+      // SIGN_OFFS
+      if (q.includes('FROM SIGN_OFFS')) {
+        if (q.includes('WHERE TASK_ID =') || q.includes('WHERE TASK_ID=?')) {
+          return this.sign_offs.filter(so => so.task_id === params[0]);
+        }
+        return [...this.sign_offs];
       }
 
       // TASKS
@@ -171,6 +229,15 @@ function initDevStore() {
         if (params.length > 0) {
           if (q.includes('WHERE ID =') || q.includes('WHERE ID=?')) {
             return list.filter(t => t.id === params[0]);
+          }
+          if (q.includes('WHERE PROJECT_ID =') || q.includes('WHERE PROJECT_ID=?')) {
+            return list.filter(t => t.project_id === params[0]);
+          }
+          if (q.includes('WHERE EXPERIMENT_ID =') || q.includes('WHERE EXPERIMENT_ID=?')) {
+            return list.filter(t => t.experiment_id === params[0]);
+          }
+          if (q.includes('WHERE TEAM_ID =') || q.includes('WHERE TEAM_ID=?')) {
+            return list.filter(t => t.team_id === params[0]);
           }
         }
         return list;
@@ -211,90 +278,55 @@ function initDevStore() {
     run(query, params = []) {
       const q = query.trim().toUpperCase();
 
-      // INSERT / UPDATE / DELETE handlers for in-memory dev store
-      if (q.startsWith('INSERT INTO USERS') || q.startsWith('INSERT OR IGNORE INTO USERS')) {
-        const u = {
-          id: params[0],
-          email: params[1],
-          display_name: params[2],
-          name: params[2],
-          member_key: params[3] || null,
-          avatar_url: params[4],
-          role: params[5],
-          status: params[6],
-          created_at: params[7],
-          updated_at: params[8]
-        };
-        this.users.push(u);
+      if (q.startsWith('INSERT INTO EXPERIMENTS') || q.startsWith('INSERT OR IGNORE INTO EXPERIMENTS')) {
+        const e = { id: params[0], project_id: params[1], team_id: params[2], name: params[3], slug: params[4], description: params[5], status: params[6], start_date: params[7], end_date: params[8], created_by: params[9], created_at: params[10], updated_at: params[11] };
+        this.experiments.push(e);
         return { changes: 1 };
       }
 
-      if (q.startsWith('UPDATE USERS')) {
+      if (q.startsWith('INSERT INTO PROTOCOL_STEPS') || q.startsWith('INSERT OR IGNORE INTO PROTOCOL_STEPS')) {
+        const ps = { id: params[0], task_id: params[1], step_order: params[2], title: params[3], instruction: params[4], is_completed: params[5], completed_by: params[6], completed_at: params[7] };
+        this.protocol_steps.push(ps);
+        return { changes: 1 };
+      }
+
+      if (q.startsWith('UPDATE PROTOCOL_STEPS')) {
         const id = params[params.length - 1];
-        const u = this.users.find(x => x.id === id);
-        if (u) {
-          if (params.length === 6) {
-            u.display_name = params[0];
-            u.name = params[0];
-            u.role = params[1];
-            u.status = params[2];
-            u.member_key = params[3];
-            u.updated_at = params[4];
-          } else if (params.length === 7) {
-            u.display_name = params[0];
-            u.name = params[0];
-            u.role = params[1];
-            u.status = params[2];
-            u.member_key = params[3];
-            u.avatar_url = params[4];
-            u.updated_at = params[5];
-          }
+        const ps = this.protocol_steps.find(x => x.id === id);
+        if (ps) {
+          ps.is_completed = params[0];
+          ps.completed_by = params[1];
+          ps.completed_at = params[2];
         }
         return { changes: 1 };
       }
 
-      if (q.startsWith('INSERT INTO TEAMS') || q.startsWith('INSERT OR IGNORE INTO TEAMS')) {
-        const t = { id: params[0], name: params[1], slug: params[2], description: params[3], status: params[4], created_at: params[5], updated_at: params[6] };
-        this.teams.push(t);
+      if (q.startsWith('INSERT INTO LAB_NOTES') || q.startsWith('INSERT OR IGNORE INTO LAB_NOTES')) {
+        const ln = { id: params[0], task_id: params[1], user_id: params[2], title: params[3], content: params[4], parameters_json: params[5], created_at: params[6], updated_at: params[7] };
+        this.lab_notes.unshift(ln);
         return { changes: 1 };
       }
 
-      if (q.startsWith('UPDATE TEAMS')) {
+      if (q.startsWith('INSERT INTO SIGN_OFFS') || q.startsWith('INSERT OR IGNORE INTO SIGN_OFFS')) {
+        const so = { id: params[0], task_id: params[1], user_id: params[2], status: params[3], comments: params[4], signed_at: params[5], created_at: params[6] };
+        this.sign_offs.push(so);
+        return { changes: 1 };
+      }
+
+      if (q.startsWith('UPDATE INSTRUMENTS')) {
         const id = params[params.length - 1];
-        const t = this.teams.find(x => x.id === id);
-        if (t) {
-          t.name = params[0];
-          t.slug = params[1];
-          t.description = params[2];
-          t.status = params[3];
-          t.updated_at = params[4];
+        const inst = this.instruments.find(x => x.id === id);
+        if (inst) {
+          inst.status = params[0];
+          inst.current_user_id = params[1];
+          inst.updated_at = params[2];
         }
         return { changes: 1 };
       }
 
-      if (q.startsWith('INSERT INTO PROJECTS') || q.startsWith('INSERT OR IGNORE INTO PROJECTS')) {
-        const p = { id: params[0], team_id: params[1], name: params[2], slug: params[3], description: params[4], status: params[5], progress: params[6], start_date: params[7], end_date: params[8], drive_folder_id: params[9], created_by: params[10], created_at: params[11], updated_at: params[12] };
-        this.projects.push(p);
-        return { changes: 1 };
-      }
-
-      if (q.startsWith('UPDATE PROJECTS')) {
-        const id = params[params.length - 1];
-        const p = this.projects.find(x => x.id === id);
-        if (p) {
-          p.name = params[0];
-          p.description = params[1];
-          p.status = params[2];
-          p.progress = params[3];
-          p.start_date = params[4];
-          p.end_date = params[5];
-          p.updated_at = params[6];
-        }
-        return { changes: 1 };
-      }
-
+      // Original handlers
       if (q.startsWith('INSERT INTO TASKS') || q.startsWith('INSERT OR IGNORE INTO TASKS')) {
-        const t = { id: params[0], team_id: params[1], project_id: params[2], title: params[3], description: params[4], status: params[5], priority: params[6], assigned_to: params[7], created_by: params[8], due_date: params[9], created_at: params[10], updated_at: params[11], completed_at: params[12] };
+        const t = { id: params[0], team_id: params[1], project_id: params[2], title: params[3], description: params[4], status: params[5], priority: params[6], assigned_to: params[7], created_by: params[8], due_date: params[9], created_at: params[10], updated_at: params[11], completed_at: params[12], experiment_id: params[13] || null };
         this.tasks.push(t);
         return { changes: 1 };
       }
@@ -315,39 +347,21 @@ function initDevStore() {
         return { changes: 1 };
       }
 
-      if (q.startsWith('DELETE FROM TASKS')) {
-        const id = params[0];
-        this.tasks = this.tasks.filter(x => x.id !== id);
-        return { changes: 1 };
-      }
-
-      if (q.startsWith('INSERT INTO TASK_COMMENTS') || q.startsWith('INSERT OR IGNORE INTO TASK_COMMENTS')) {
-        const c = { id: params[0], task_id: params[1], user_id: params[2], content: params[3], created_at: params[4], updated_at: params[5] };
-        this.task_comments.push(c);
-        return { changes: 1 };
-      }
-
-      if (q.startsWith('INSERT INTO DOCUMENTS') || q.startsWith('INSERT OR IGNORE INTO DOCUMENTS')) {
-        const d = { id: params[0], team_id: params[1], project_id: params[2], name: params[3], description: params[4], file_name: params[5], mime_type: params[6], file_size: params[7], storage_provider: params[8] || 'google_drive', drive_file_id: params[9], drive_folder_id: params[10], uploaded_by: params[11], tags: params[12], created_at: params[13], updated_at: params[14] };
-        this.documents.push(d);
-        return { changes: 1 };
-      }
-
-      if (q.startsWith('DELETE FROM DOCUMENTS')) {
-        const id = params[0];
-        this.documents = this.documents.filter(x => x.id !== id);
-        return { changes: 1 };
-      }
-
       if (q.startsWith('INSERT INTO DATASETS') || q.startsWith('INSERT OR IGNORE INTO DATASETS')) {
-        const ds = { id: params[0], team_id: params[1], project_id: params[2], name: params[3], description: params[4], source: params[5], data_type: params[6], start_date: params[7], end_date: params[8], resolution: params[9], format: params[10], file_size: params[11], storage_provider: params[12] || 'google_drive', drive_file_id: params[13], drive_folder_id: params[14], uploaded_by: params[15], tags: params[16], created_at: params[17], updated_at: params[18] };
+        const ds = { id: params[0], team_id: params[1], project_id: params[2], name: params[3], description: params[4], source: params[5], data_type: params[6], format: params[7], start_date: params[8], end_date: params[9], resolution: params[10], file_size: params[11], storage_provider: params[12], drive_file_id: params[13], drive_folder_id: params[14], uploaded_by: params[15], tags: params[16], created_at: params[17], updated_at: params[18] };
         this.datasets.push(ds);
         return { changes: 1 };
       }
 
-      if (q.startsWith('DELETE FROM DATASETS')) {
-        const id = params[0];
-        this.datasets = this.datasets.filter(x => x.id !== id);
+      if (q.startsWith('INSERT INTO DOCUMENTS') || q.startsWith('INSERT OR IGNORE INTO DOCUMENTS')) {
+        const doc = { id: params[0], team_id: params[1], project_id: params[2], name: params[3], description: params[4], file_name: params[5], mime_type: params[6], file_size: params[7], storage_provider: params[8], drive_file_id: params[9], drive_folder_id: params[10], uploaded_by: params[11], tags: params[12], created_at: params[13], updated_at: params[14] };
+        this.documents.push(doc);
+        return { changes: 1 };
+      }
+
+      if (q.startsWith('INSERT INTO PROJECTS') || q.startsWith('INSERT OR IGNORE INTO PROJECTS')) {
+        const proj = { id: params[0], team_id: params[1], name: params[2], slug: params[3], description: params[4], status: params[5], progress: params[6], start_date: params[7], end_date: params[8], drive_folder_id: params[9], created_by: params[10], created_at: params[11], updated_at: params[12] };
+        this.projects.push(proj);
         return { changes: 1 };
       }
 
@@ -357,30 +371,7 @@ function initDevStore() {
         return { changes: 1 };
       }
 
-      if (q.startsWith('INSERT INTO TEAM_MEMBERS') || q.startsWith('INSERT OR IGNORE INTO TEAM_MEMBERS')) {
-        const tm = { id: params[0], team_id: params[1], user_id: params[2], team_role: params[3], joined_at: params[4] };
-        if (!this.team_members.some(x => x.team_id === tm.team_id && x.user_id === tm.user_id)) {
-          this.team_members.push(tm);
-        }
-        return { changes: 1 };
-      }
-
-      if (q.startsWith('DELETE FROM TEAM_MEMBERS')) {
-        const team_id = params[0];
-        const user_id = params[1];
-        this.team_members = this.team_members.filter(x => !(x.team_id === team_id && x.user_id === user_id));
-        return { changes: 1 };
-      }
-
-      if (q.startsWith('INSERT INTO PROJECT_MEMBERS') || q.startsWith('INSERT OR IGNORE INTO PROJECT_MEMBERS')) {
-        const pm = { id: params[0], project_id: params[1], user_id: params[2], project_role: params[3], joined_at: params[4] };
-        if (!this.project_members.some(x => x.project_id === pm.project_id && x.user_id === pm.user_id)) {
-          this.project_members.push(pm);
-        }
-        return { changes: 1 };
-      }
-
-      return { changes: 0 };
+      return { changes: 1 };
     }
   };
 

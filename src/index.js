@@ -17,6 +17,7 @@ import { handleDatasets } from './routes/datasets.js';
 import { handlePublicMembers, handleWorkspaceUsers } from './routes/members.js';
 import { handleActivity } from './routes/activity.js';
 import { handleUpload, handleDownload } from './routes/storage.js';
+import { handleSciNoteRoutes } from './routes/scinote.js';
 
 export default {
   async fetch(request, env, ctx) {
@@ -87,6 +88,16 @@ export default {
       }
       const res = await handleProjects(request, user, db, env);
       return jsonResponse(res, res.status || 200, corsHeaders);
+    }
+
+    // 4b. SciNote ELN Routes (/api/experiments, /api/instruments, /api/protocols, /api/tasks/:id/scinote, etc.)
+    if (path.startsWith('/api/experiments') || path.startsWith('/api/instruments') || path.startsWith('/api/protocols') || path.includes('/scinote') || path.includes('/steps') || path.includes('/notes') || path.includes('/sign-off')) {
+      const { user, isAuthenticated } = await resolveUser(request, env, db);
+      if (!isAuthenticated || !user) {
+        return jsonResponse({ error: '401 Unauthorized.' }, 401, corsHeaders);
+      }
+      const sciRes = await handleSciNoteRoutes(request, env, db, user, path, corsHeaders);
+      if (sciRes) return sciRes;
     }
 
     // 5. /api/tasks*
@@ -240,7 +251,7 @@ export default {
   }
 };
 
-function jsonResponse(data, status = 200, headers = {}) {
+export function jsonResponse(data, status = 200, headers = {}) {
   return new Response(JSON.stringify(data), {
     status,
     headers: {
