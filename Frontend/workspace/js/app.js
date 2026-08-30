@@ -69,6 +69,25 @@ function handleRouting() {
   // Close mobile sidebar if open
   closeMobileSidebar();
 
+  // Authentication barrier
+  if (!Auth.getUser()) {
+    container.innerHTML = `
+      <div class="ws-empty-state" style="max-width:480px; margin:60px auto; text-align:center; padding:40px 24px; background:#fff; border-radius:12px; border:1px solid var(--ws-border); box-shadow:var(--ws-shadow-md);">
+        <i class="fa-solid fa-lock" style="font-size:3rem; color:#f59e0b; margin-bottom:16px;"></i>
+        <h2 style="font-size:1.3rem; color:var(--ws-dark); margin-bottom:8px; font-weight:700;">Yêu cầu Đăng nhập</h2>
+        <p style="color:var(--ws-text-muted); font-size:0.875rem; line-height:1.5; margin-bottom:24px;">
+          Khu vực 100RE Lab Workspace chỉ dành cho thành viên nội bộ phòng nghiên cứu. Vui lòng đăng nhập từ trang chủ để tiếp tục.
+        </p>
+        <div style="display:flex; gap:12px; justify-content:center;">
+          <a href="../index.html" class="btn-ws-primary" style="display:inline-flex; align-items:center; gap:6px;">
+            <i class="fa-solid fa-right-to-bracket"></i> Đăng nhập tại Trang chủ
+          </a>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
   switch (rootRoute) {
     case 'dashboard':
       renderDashboard(container);

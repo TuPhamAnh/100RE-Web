@@ -116,6 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function setAdminState(isAdmin, username = '100re') {
+    const wsLink = document.getElementById('navWorkspaceLink');
     if (isAdmin) {
       document.body.classList.add('admin-mode');
       if (adminTopbar) adminTopbar.classList.add('active');
@@ -123,12 +124,14 @@ document.addEventListener('DOMContentLoaded', () => {
       if (navLoginBtn) {
         navLoginBtn.innerHTML = `<i class="fa-solid fa-user-shield"></i> ${username}`;
       }
+      if (wsLink) wsLink.style.display = 'block';
     } else {
       document.body.classList.remove('admin-mode');
       if (adminTopbar) adminTopbar.classList.remove('active');
       if (navLoginBtn) {
         navLoginBtn.innerHTML = `<i class="fa-solid fa-lock"></i> Login`;
       }
+      if (wsLink) wsLink.style.display = 'none';
     }
   }
 
@@ -1029,12 +1032,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const li = document.createElement('li');
       li.className = 'nav-item';
       li.id = 'navWorkspaceLink';
+      const isAuth = !!(currentAuthToken || localStorage.getItem('100re_token'));
+      li.style.display = isAuth ? 'block' : 'none';
       li.innerHTML = `
         <a href="workspace/index.html" class="nav-link" style="color:#4ade80; font-weight:700; display:inline-flex; align-items:center; gap:6px;">
           <i class="fa-solid fa-flask-vial"></i> Workspace
         </a>
       `;
-      const loginItem = document.getElementById('loginNavItem');
+      const loginItem = document.getElementById('loginNavItem') || document.querySelector('.nav-item:last-child');
       if (loginItem) {
         navMenu.insertBefore(li, loginItem);
       } else {
