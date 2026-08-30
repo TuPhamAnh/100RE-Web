@@ -19,6 +19,7 @@ import { handleActivity } from './routes/activity.js';
 import { handleUpload, handleDownload } from './routes/storage.js';
 import { handleSciNoteRoutes } from './routes/scinote.js';
 import { handlePublicContent } from './routes/content.js';
+import { handleAiChat } from './routes/ai.js';
 
 export default {
   async fetch(request, env, ctx) {
@@ -54,6 +55,14 @@ export default {
     if (path.startsWith('/api/public/content/') || path.startsWith('/api/admin/content/')) {
       const collectionKey = path.split('/').pop();
       const data = await handlePublicContent(request, env, collectionKey);
+      return jsonResponse(data, 200, corsHeaders);
+    }
+
+    // =========================================================================
+    // A3. AI CHAT ASSISTANT API (Google Gemini 100RE Co-Pilot)
+    // =========================================================================
+    if (path === '/api/chat' || path === '/api/ai/ask') {
+      const data = await handleAiChat(request, env);
       return jsonResponse(data, 200, corsHeaders);
     }
 

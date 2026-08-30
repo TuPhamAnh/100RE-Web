@@ -355,6 +355,15 @@ async function runTests() {
     }
   });
 
+  await test('AI Chat Assistant Gateway: POST /api/chat responds with 100RE Lab knowledge', async () => {
+    const chatReq = makeReq('/api/chat', 'POST', { message: 'Phòng Lab 100RE có những nhóm nghiên cứu nào?' });
+    const chatRes = await worker.fetch(chatReq, mockEnv);
+    const chatData = await chatRes.json();
+    if (!chatData.success || !chatData.answer || !chatData.answer.includes('PV')) {
+      throw new Error(`Expected AI Chat response with PV/teams, got ${JSON.stringify(chatData)}`);
+    }
+  });
+
   console.log(`\n==============================================`);
   console.log(`Test Summary: ${passed} Passed, ${failed} Failed`);
   console.log(`==============================================\n`);
