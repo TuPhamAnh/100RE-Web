@@ -37,11 +37,9 @@
   --ws-radius-lg: 8px;
   --ws-radius-full: 9999px;
 
-  --ws-sidebar-width: 260px;
+  --ws-sidebar-width: 280px;
   --ws-topbar-height: 64px;
 
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --font-heading: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --font-heading: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'Fira Code', 'SF Mono', Consolas, Monaco, monospace;
@@ -123,7 +121,8 @@ code, pre, .ws-code, [style*="Fira Code"] {
   align-items: center;
   justify-content: center;
   padding: 10px 14px;
-  height: 80px;
+  height: 96px;
+  min-height: 96px;
   border-bottom: 1px solid var(--ws-border);
   background: #ffffff;
   width: 100%;
@@ -142,9 +141,9 @@ code, pre, .ws-code, [style*="Fira Code"] {
 
 .ws-brand-logo-rect {
   width: 100%;
-  max-width: 232px;
+  max-width: 254px;
   height: auto;
-  max-height: 64px;
+  max-height: 76px;
   object-fit: contain;
   display: block;
   margin: 0 auto;
