@@ -240,6 +240,28 @@ export default {
           }
         }
 
+        // Check custom users created dynamically by Supervisor
+        if (!userProfile && env && env.MEMBERS_KV) {
+          try {
+            const customCredRaw = await env.MEMBERS_KV.get('user_cred_' + lowerUser);
+            if (customCredRaw) {
+              const cred = JSON.parse(customCredRaw);
+              if (cred && cred.password === password) {
+                userProfile = {
+                  id: cred.userId || cred.id,
+                  username: cred.username,
+                  name: cred.display_name || cred.name,
+                  display_name: cred.display_name || cred.name,
+                  email: cred.email,
+                  role: cred.role || 'researcher',
+                  permissions: cred.permissions || [],
+                  teams: cred.teams || []
+                };
+              }
+            }
+          } catch(e) {}
+        }
+
         if (userProfile) {
           const token = crypto.randomUUID();
           if (env && env.MEMBERS_KV) {
@@ -251,12 +273,13 @@ export default {
             user: userProfile.username,
             userId: userProfile.id,
             role: userProfile.role,
-            display_name: userProfile.display_name
+            display_name: userProfile.display_name,
+            permissions: userProfile.permissions || []
           }, 200, corsHeaders);
         } else {
           return jsonResponse({
             success: false,
-            error: 'Sai tên đăng nhập hoặc mật khẩu! (Hỗ trợ 3 tài khoản: supervisor / teamleader / researcher — Mật khẩu: 100re)'
+            error: 'Sai tên đăng nhập hoặc mật khẩu!'
           }, 401, corsHeaders);
         }
       } catch (e) {

@@ -1,10 +1,6 @@
 /**
  * 100RE LAB WORKSPACE — Public Members (KV) & Workspace Users (D1) Handler
- * 
- * Strict Architecture Separation:
- * - Public Members: Cloudflare KV is Source of Truth (Public Website profiles)
- * - Workspace Users: Cloudflare D1 is Source of Truth (Workspace auth, RBAC, teams, projects)
- * - Linking: users.member_key (D1) -> Member Profile Key (KV)
+ * Supports Granular Permissions Matrix and Dynamic Account Creation
  */
 
 import { RBAC } from '../rbac.js';
@@ -12,9 +8,7 @@ import { logActivity } from '../activity.js';
 
 export async function handlePublicMembers(request, env) {
   const method = request.method;
-  const url = new URL(request.url);
 
-  // Default initial members list if KV is not populated yet
   const DEFAULT_MEMBERS = [
     { id: "pv-1", name: "Ngô Trí Đức", team: "pv", teamName: "PV Team", role: "PV Team", image: "assets/images/ngo_tri_duc.png", bio: "Researcher in the PV Team at 100RE Laboratory. Focusing on photovoltaic systems modeling, performance analysis, and optimization." },
     { id: "pv-2", name: "Bui Quang Minh", team: "pv", teamName: "PV Team", role: "PV Team", image: "assets/images/bui_quang_minh.jpg", bio: "Researcher in the PV Team at 100RE Laboratory. Dedicated to solar irradiance modeling and high-efficiency photovoltaic integration." },
@@ -49,6 +43,31 @@ export async function handlePublicMembers(request, env) {
   return { error: 'Method Not Allowed' };
 }
 
+// Default permissions helper
+export function getDefaultPermissionsForRole(role) {
+  if (role === 'supervisor') {
+    return [
+      'perm_news', 'perm_journey', 'perm_research', 'perm_projects', 'perm_pubs', 'perm_photos', 'perm_members',
+      'perm_ws_all_teams', 'perm_ws_projects', 'perm_ws_tasks_create', 'perm_ws_tasks_update',
+      'perm_ws_scinote_edit', 'perm_ws_scinote_signoff', 'perm_ws_datasets', 'perm_ws_documents', 'perm_ws_admin'
+    ];
+  } else if (role === 'team_leader') {
+    return [
+      'perm_news', 'perm_journey', 'perm_research', 'perm_projects', 'perm_pubs', 'perm_photos', 'perm_members',
+      'perm_ws_projects', 'perm_ws_tasks_create', 'perm_ws_tasks_update',
+      'perm_ws_scinote_edit', 'perm_ws_datasets', 'perm_ws_documents'
+    ];
+  } else if (role === 'researcher') {
+    return [
+      'perm_news', 'perm_journey', 'perm_research', 'perm_projects', 'perm_pubs', 'perm_photos',
+      'perm_ws_tasks_update', 'perm_ws_scinote_edit', 'perm_ws_datasets'
+    ];
+  } else {
+    // alumni / view only
+    return ['perm_ws_documents'];
+  }
+}
+
 export async function handleWorkspaceUsers(request, user, db, env) {
   const url = new URL(request.url);
   const method = request.method;
@@ -80,7 +99,7 @@ export async function handleWorkspaceUsers(request, user, db, env) {
     const teamMap = new Map(allTeams.map(t => [t.id, t]));
     const projMap = new Map(allProjects.map(p => [p.id, p]));
 
-    const enriched = allUsers.map(u => {
+    const enriched = await Promise.all(allUsers.map(async u => {
       const userTeams = allTeamMembers
         .filter(tm => tm.user_id === u.id)
         .map(tm => ({
@@ -98,8 +117,18 @@ export async function handleWorkspaceUsers(request, user, db, env) {
           project_role: pm.project_role
         }));
 
-      // Enrich from KV if linked
       const publicProfile = u.member_key ? publicMembersMap.get(u.member_key) || null : null;
+
+      // Fetch custom permissions from KV
+      let perms = getDefaultPermissionsForRole(u.role);
+      if (env && env.MEMBERS_KV) {
+        try {
+          const customPermsStr = await env.MEMBERS_KV.get('user_perms_' + u.id);
+          if (customPermsStr) {
+            perms = JSON.parse(customPermsStr);
+          }
+        } catch (e) {}
+      }
 
       return {
         id: u.id,
@@ -110,18 +139,19 @@ export async function handleWorkspaceUsers(request, user, db, env) {
         avatar_url: u.avatar_url || publicProfile?.image || 'assets/images/logo.jpg',
         role: u.role,
         status: u.status,
+        permissions: perms,
         teams: userTeams,
         projects: userProjects,
         public_profile: publicProfile,
         is_linked_to_public: !!u.member_key,
         canManage: RBAC.canManageUsers(user)
       };
-    });
+    }));
 
     return { success: true, members: enriched, users: enriched };
   }
 
-  // 2. POST /api/members (Create Workspace User - Supervisor only)
+  // 2. POST /api/members (Create Workspace User with Granular Permissions - Supervisor only)
   if (!targetId && method === 'POST') {
     if (!RBAC.canManageUsers(user)) {
       return { error: 'Forbidden: Chỉ Supervisor mới có quyền tạo User mới.', status: 403 };
@@ -130,10 +160,13 @@ export async function handleWorkspaceUsers(request, user, db, env) {
     const body = await request.json();
     const email = (body.email || '').trim().toLowerCase();
     const display_name = (body.display_name || body.name || '').trim();
+    const username = (body.username || email.split('@')[0] || '').trim().toLowerCase();
+    const password = body.password || '100re';
     const role = body.role || 'researcher';
     const member_key = body.member_key ? body.member_key.trim() : null;
     const avatar_url = body.avatar_url || 'assets/images/logo.jpg';
-    const team_id = body.team_id || null;
+    const teams = Array.isArray(body.teams) ? body.teams : (body.team_id ? [body.team_id] : []);
+    const permissions = Array.isArray(body.permissions) ? body.permissions : getDefaultPermissionsForRole(role);
 
     if (!email || !display_name) {
       return { error: 'Email và Tên hiển thị là bắt buộc.', status: 400 };
@@ -147,11 +180,37 @@ export async function handleWorkspaceUsers(request, user, db, env) {
       [id, email, display_name, member_key, avatar_url, role, 'active', now, now]
     );
 
-    if (team_id) {
-      await db.run(
-        'INSERT INTO team_members (id, team_id, user_id, team_role, joined_at) VALUES (?, ?, ?, ?, ?)',
-        [`tm-${Date.now()}`, team_id, id, 'member', now]
-      );
+    // Save Teams
+    for (const tid of teams) {
+      if (tid) {
+        await db.run(
+          'INSERT OR IGNORE INTO team_members (id, team_id, user_id, team_role, joined_at) VALUES (?, ?, ?, ?, ?)',
+          [`tm-${Date.now()}-${Math.random().toString(36).slice(2, 5)}`, tid, id, role === 'team_leader' ? 'leader' : 'member', now]
+        );
+      }
+    }
+
+    // Save Permissions and Credentials in KV
+    if (env && env.MEMBERS_KV) {
+      try {
+        await env.MEMBERS_KV.put('user_perms_' + id, JSON.stringify(permissions));
+        if (username) {
+          const cred = {
+            userId: id,
+            id,
+            username,
+            password,
+            display_name,
+            email,
+            role,
+            permissions,
+            teams
+          };
+          await env.MEMBERS_KV.put('user_cred_' + username, JSON.stringify(cred));
+        }
+      } catch (e) {
+        console.error('Error storing KV user permissions / credentials', e);
+      }
     }
 
     await logActivity(db, {
@@ -159,13 +218,16 @@ export async function handleWorkspaceUsers(request, user, db, env) {
       entityType: 'user',
       entityId: id,
       action: 'create_user',
-      metadata: { display_name, email, role, member_key }
+      metadata: { display_name, email, username, role, member_key, permissionsCount: permissions.length }
     });
 
-    return { success: true, user: { id, email, display_name, role, member_key, status: 'active', avatar_url } };
+    return {
+      success: true,
+      user: { id, username, email, display_name, role, member_key, status: 'active', avatar_url, permissions, teams }
+    };
   }
 
-  // 3. PATCH /api/members/:id (Update Workspace User - Supervisor only)
+  // 3. PATCH /api/members/:id (Update Workspace User & Granular Permissions - Supervisor only)
   if (targetId && !subAction && method === 'PATCH') {
     if (!RBAC.canManageUsers(user)) {
       return { error: 'Forbidden: Chỉ Supervisor mới có quyền cập nhật User.', status: 403 };
@@ -180,6 +242,9 @@ export async function handleWorkspaceUsers(request, user, db, env) {
     const status = body.status || targetUser.status;
     const member_key = body.member_key !== undefined ? (body.member_key ? body.member_key.trim() : null) : targetUser.member_key;
     const avatar_url = body.avatar_url || targetUser.avatar_url;
+    const permissions = Array.isArray(body.permissions) ? body.permissions : null;
+    const password = body.password || null;
+    const teams = Array.isArray(body.teams) ? body.teams : null;
     const now = Math.floor(Date.now() / 1000);
 
     await db.run(
@@ -187,15 +252,57 @@ export async function handleWorkspaceUsers(request, user, db, env) {
       [display_name, role, status, member_key, avatar_url, now, targetUser.id]
     );
 
+    // Update Teams if provided
+    if (teams !== null) {
+      await db.run('DELETE FROM team_members WHERE user_id = ?', [targetUser.id]);
+      for (const tid of teams) {
+        if (tid) {
+          await db.run(
+            'INSERT OR IGNORE INTO team_members (id, team_id, user_id, team_role, joined_at) VALUES (?, ?, ?, ?, ?)',
+            [`tm-${Date.now()}-${Math.random().toString(36).slice(2, 5)}`, tid, targetUser.id, role === 'team_leader' ? 'leader' : 'member', now]
+          );
+        }
+      }
+    }
+
+    // Update KV permissions and credentials
+    if (env && env.MEMBERS_KV) {
+      try {
+        if (permissions !== null) {
+          await env.MEMBERS_KV.put('user_perms_' + targetUser.id, JSON.stringify(permissions));
+        }
+        if (body.username || password) {
+          const username = (body.username || targetUser.email.split('@')[0] || '').trim().toLowerCase();
+          const cred = {
+            userId: targetUser.id,
+            id: targetUser.id,
+            username,
+            password: password || '100re',
+            display_name,
+            email: targetUser.email,
+            role,
+            permissions: permissions || getDefaultPermissionsForRole(role),
+            teams: teams || []
+          };
+          await env.MEMBERS_KV.put('user_cred_' + username, JSON.stringify(cred));
+        }
+      } catch (e) {
+        console.error('Error updating KV user permissions', e);
+      }
+    }
+
     await logActivity(db, {
       userId: user.id,
       entityType: 'user',
       entityId: targetUser.id,
       action: 'update_user_role',
-      metadata: { target_name: display_name, new_role: role, new_status: status, member_key }
+      metadata: { target_name: display_name, new_role: role, new_status: status, member_key, permissionsCount: permissions ? permissions.length : undefined }
     });
 
-    return { success: true, user: { ...targetUser, display_name, name: display_name, role, status, member_key, avatar_url, updated_at: now } };
+    return {
+      success: true,
+      user: { ...targetUser, display_name, name: display_name, role, status, member_key, avatar_url, permissions, updated_at: now }
+    };
   }
 
   // 4. POST /api/members/:id/teams (Assign User to Team)
@@ -227,6 +334,23 @@ export async function handleWorkspaceUsers(request, user, db, env) {
 
     await db.run('DELETE FROM team_members WHERE team_id = ? AND user_id = ?', [subActionParam, targetId]);
     return { success: true, message: 'Đã xóa thành viên khỏi Team.' };
+  }
+
+  // 6. DELETE /api/members/:id (Delete User - Supervisor only)
+  if (targetId && !subAction && method === 'DELETE') {
+    if (!RBAC.canManageUsers(user)) {
+      return { error: 'Forbidden: Chỉ Supervisor mới có quyền xóa User.', status: 403 };
+    }
+
+    await db.run('DELETE FROM users WHERE id = ?', [targetId]);
+    await db.run('DELETE FROM team_members WHERE user_id = ?', [targetId]);
+    await db.run('DELETE FROM project_members WHERE user_id = ?', [targetId]);
+    if (env && env.MEMBERS_KV) {
+      try {
+        await env.MEMBERS_KV.delete('user_perms_' + targetId);
+      } catch (e) {}
+    }
+    return { success: true, message: 'Đã xóa người dùng thành công.' };
   }
 
   return { error: 'Method Not Allowed', status: 405 };

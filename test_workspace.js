@@ -280,6 +280,39 @@ async function runTests() {
     }
   });
 
+  await test('Supervisor Dynamic User Creation & Granular Permissions Checklist', async () => {
+    // 1. Supervisor creates custom user with specific permissions checklist
+    const newUserData = {
+      username: 'hai_smartgrid',
+      password: '100re_custom_pass',
+      display_name: 'Eng. Duong Minh Hai',
+      email: 'hai.smartgrid@100relab.hust.edu.vn',
+      role: 'researcher',
+      teams: ['team-smartgrid'],
+      permissions: ['perm_news', 'perm_ws_tasks_create', 'perm_ws_tasks_update', 'perm_ws_scinote_edit']
+    };
+
+    const createReq = makeReq('/api/members', 'POST', newUserData, { 'X-Dev-User-Id': 'usr-sup-01' });
+    const createRes = await worker.fetch(createReq, mockEnv);
+    const createData = await createRes.json();
+    if (!createData.success || !createData.user) {
+      throw new Error(`Expected user creation success, got ${JSON.stringify(createData)}`);
+    }
+
+    // 2. Custom user logs in with new credentials
+    const loginReq = makeReq('/api/login', 'POST', { username: 'hai_smartgrid', password: '100re_custom_pass' });
+    const loginRes = await worker.fetch(loginReq, mockEnv);
+    const loginData = await loginRes.json();
+    if (!loginData.success || loginData.user !== 'hai_smartgrid') {
+      throw new Error(`Expected dynamic user login success, got ${JSON.stringify(loginData)}`);
+    }
+
+    // 3. Verify permissions returned
+    if (!Array.isArray(loginData.permissions) || !loginData.permissions.includes('perm_news') || !loginData.permissions.includes('perm_ws_scinote_edit')) {
+      throw new Error(`Expected permissions array with perm_news & perm_ws_scinote_edit, got ${JSON.stringify(loginData.permissions)}`);
+    }
+  });
+
   console.log(`\n==============================================`);
   console.log(`Test Summary: ${passed} Passed, ${failed} Failed`);
   console.log(`==============================================\n`);
