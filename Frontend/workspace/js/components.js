@@ -63,12 +63,12 @@ export function formatBytes(bytes, decimals = 1) {
 }
 
 export function renderPriorityBadge(priority) {
-  const p = (priority || 'medium').toLowerCase();
+  const p = String(priority || 'medium').toLowerCase();
   return `<span class="ws-badge ws-badge-${p}">${p.toUpperCase()}</span>`;
 }
 
 export function renderStatusBadge(status) {
-  const s = (status || 'todo').toLowerCase();
+  const s = String(status || 'todo').toLowerCase();
   const label = s === 'in_progress' ? 'IN PROGRESS' : s.toUpperCase();
   return `<span class="ws-badge ws-badge-${s}">${label}</span>`;
 }

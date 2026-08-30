@@ -76,7 +76,7 @@ export async function renderMembers(container) {
                     <h3 style="font-size:1rem; font-weight:700; color:var(--ws-dark);">${escapeHtml(name)}</h3>
                     <span style="font-size:0.775rem; color:var(--ws-text-muted);">${escapeHtml(u.email)}</span>
                     <div style="margin-top:4px;">
-                      <span class="ws-badge ${badgeClass}">${u.role.replace('_', ' ').toUpperCase()}</span>
+                      <span class="ws-badge ${badgeClass}">${String(u.role || 'researcher').replace('_', ' ').toUpperCase()}</span>
                       ${u.status === 'inactive' ? '<span class="ws-badge ws-badge-urgent">INACTIVE</span>' : ''}
                     </div>
                   </div>

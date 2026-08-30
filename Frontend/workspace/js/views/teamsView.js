@@ -49,7 +49,7 @@ export async function renderTeams(container, teamIdOrSlug = null) {
             <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
               <div style="display:flex; align-items:center; gap:10px;">
                 <div style="width:38px; height:38px; background:var(--ws-primary-light); color:var(--ws-primary); border-radius:var(--ws-radius-md); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.9rem;">
-                  ${(t.slug || 'TM').toUpperCase().slice(0, 3)}
+                  ${String(t.slug || 'TM').toUpperCase().slice(0, 3)}
                 </div>
                 <div>
                   <h3 style="font-size:1.05rem; font-weight:700; color:var(--ws-dark);">${escapeHtml(t.name)}</h3>
@@ -134,7 +134,7 @@ async function renderTeamDetail(container, teamIdOrSlug) {
         <div class="ws-page-title-group">
           <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
             <a href="#teams" class="btn-ws-ghost btn-ws-sm"><i class="fa-solid fa-arrow-left"></i> All Teams</a>
-            <span class="ws-badge ws-badge-in_progress">TEAM / ${escapeHtml(team.slug.toUpperCase())}</span>
+            <span class="ws-badge ws-badge-in_progress">TEAM / ${escapeHtml(String(team.slug || '').toUpperCase())}</span>
             ${isLeader ? '<span class="ws-badge ws-badge-done">YOU ARE LEADER</span>' : ''}
           </div>
           <h1>${escapeHtml(team.name)}</h1>
@@ -309,7 +309,7 @@ async function renderTeamDetail(container, teamIdOrSlug) {
                   <strong style="font-size:0.95rem; display:block; color:var(--ws-dark);">${escapeHtml(m.name)}</strong>
                   <span style="font-size:0.75rem; color:var(--ws-text-muted);">${escapeHtml(m.email)}</span>
                   <div style="margin-top:4px;">
-                    <span class="ws-badge ${m.team_role === 'leader' ? 'ws-badge-done' : 'ws-badge-low'}">${m.team_role.toUpperCase()}</span>
+                    <span class="ws-badge ${m.team_role === 'leader' ? 'ws-badge-done' : 'ws-badge-low'}">${String(m.team_role || 'member').toUpperCase()}</span>
                   </div>
                 </div>
               </div>

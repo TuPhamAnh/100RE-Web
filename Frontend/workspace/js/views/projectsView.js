@@ -270,7 +270,7 @@ async function renderProjectDetail(container, projectId) {
                   <strong style="font-size:0.9rem; display:block; color:var(--ws-dark);">${escapeHtml(m.name)}</strong>
                   <span style="font-size:0.75rem; color:var(--ws-text-muted);">${escapeHtml(m.email)}</span>
                   <div style="margin-top:4px;">
-                    <span class="ws-badge ws-badge-in_progress">${m.project_role.toUpperCase()}</span>
+                    <span class="ws-badge ws-badge-in_progress">${String(m.project_role || 'member').toUpperCase()}</span>
                   </div>
                 </div>
               </div>

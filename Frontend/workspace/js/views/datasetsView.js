@@ -125,7 +125,7 @@ export async function renderDatasets(container) {
       const f = formatFilter.value;
       const filtered = datasets.filter(ds => {
         const matchesQuery = ds.name.toLowerCase().includes(q) || (ds.source && ds.source.toLowerCase().includes(q)) || (ds.tags && ds.tags.toLowerCase().includes(q));
-        const matchesFormat = !f || ds.format.toUpperCase() === f.toUpperCase();
+        const matchesFormat = !f || String(ds.format || '').toUpperCase() === String(f || '').toUpperCase();
         return matchesQuery && matchesFormat;
       });
       displayDatasets(filtered);

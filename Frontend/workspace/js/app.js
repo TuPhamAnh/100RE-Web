@@ -117,9 +117,9 @@ function updateNav(rootRoute, paramId) {
   // Update breadcrumb
   const crumb = document.getElementById('wsCrumbCurrent');
   if (crumb) {
-    let title = rootRoute.toUpperCase();
+    let title = String(rootRoute || '').toUpperCase();
     if (rootRoute === 'dashboard') title = 'Dashboard';
-    if (rootRoute === 'teams') title = paramId ? `Team: ${paramId.toUpperCase()}` : 'Research Teams';
+    if (rootRoute === 'teams') title = paramId ? `Team: ${String(paramId).toUpperCase()}` : 'Research Teams';
     if (rootRoute === 'projects') title = paramId ? `Project Details` : 'Projects';
     if (rootRoute === 'tasks') title = window.location.hash.includes('filter=me') ? 'My Tasks' : 'All Tasks / Kanban';
     if (rootRoute === 'datasets') title = 'Research Data (Google Drive)';
@@ -356,11 +356,11 @@ window.openTaskDetailModal = async function(taskId) {
     const priorityBadge = document.getElementById('taskDetailPriorityBadge');
     if (statusBadge) {
       statusBadge.className = `ws-badge ws-badge-${task.status}`;
-      statusBadge.textContent = task.status === 'in_progress' ? 'IN PROGRESS' : task.status.toUpperCase();
+      statusBadge.textContent = task.status === 'in_progress' ? 'IN PROGRESS' : String(task.status || 'todo').toUpperCase();
     }
     if (priorityBadge) {
-      priorityBadge.className = `ws-badge ws-badge-${task.priority}`;
-      priorityBadge.textContent = task.priority.toUpperCase();
+      priorityBadge.className = `ws-badge ws-badge-${task.priority || 'medium'}`;
+      priorityBadge.textContent = String(task.priority || 'medium').toUpperCase();
     }
 
     // Title & Meta
