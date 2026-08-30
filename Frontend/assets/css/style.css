@@ -1230,78 +1230,101 @@ body.admin-mode .btn-team-add-member {
 }
 
 
-/* Admin Status Bar */
+/* Admin Status Bar - Hidden (Moved to user dropdown) */
 .admin-topbar {
-  background: #0f172a;
-  color: #ffffff;
-  padding: 10px 0;
-  font-size: 0.875rem;
-  border-bottom: 2px solid #16a34a;
-  display: none;
-  position: sticky;
-  top: 0;
-  z-index: 1100;
+  display: none !important;
 }
 
-.admin-topbar.active {
+/* Modern User Profile Dropdown attached to Login button */
+.nav-item {
+  position: relative;
+}
+
+.user-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 220px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.08);
+  padding: 6px 0;
+  display: none;
+  z-index: 1200;
+  animation: fadeInDropdown 0.15s ease-out;
+}
+
+.user-dropdown-menu.show {
   display: block;
 }
 
-.admin-topbar .container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
+@keyframes fadeInDropdown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.admin-badge-info {
+.user-dropdown-header {
+  padding: 10px 14px 8px;
   display: flex;
   align-items: center;
   gap: 10px;
-  font-weight: 600;
-  color: #4ade80;
+  border-bottom: 1px solid #f1f5f9;
 }
 
-.admin-badge-info i {
-  color: #10b981;
+.user-dropdown-header i {
+  font-size: 1.6rem;
+  color: #16a34a;
 }
 
-.admin-actions {
+.user-dropdown-header strong {
+  display: block;
+  font-size: 0.9rem;
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.user-dropdown-header small {
+  display: block;
+  font-size: 0.725rem;
+  color: #64748b;
+}
+
+.user-dropdown-item {
   display: flex;
   align-items: center;
   gap: 10px;
-}
-
-.btn-admin {
-  padding: 6px 14px;
-  font-size: 0.825rem;
-  font-weight: 600;
-  border: 1px solid transparent;
+  padding: 9px 14px;
+  font-size: 0.84rem;
+  font-weight: 500;
+  color: #334155;
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
   cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  transition: var(--transition);
-  border-radius: 0px;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 
-.btn-admin-add {
-  background: #10b981;
-  color: #ffffff;
-  border-color: #059669;
-}
-.btn-admin-add:hover {
-  background: #059669;
+.user-dropdown-item:hover {
+  background: #f8fafc;
+  color: #16a34a;
 }
 
-.btn-admin-logout {
-  background: #ef4444;
-  color: #ffffff;
-  border-color: #dc2626;
+.user-dropdown-item.text-danger {
+  color: #ef4444;
 }
-.btn-admin-logout:hover {
-  background: #dc2626;
+
+.user-dropdown-item.text-danger:hover {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.user-dropdown-divider {
+  height: 1px;
+  background: #f1f5f9;
+  margin: 4px 0;
 }
 
 /* Nav Login Button */

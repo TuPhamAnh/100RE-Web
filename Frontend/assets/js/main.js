@@ -117,20 +117,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function setAdminState(isAdmin, username = '100re') {
     const wsLink = document.getElementById('navWorkspaceLink');
+    const dropdown = ensureUserDropdown();
     if (isAdmin) {
       document.body.classList.add('admin-mode');
-      if (adminTopbar) adminTopbar.classList.add('active');
       if (adminUsername) adminUsername.textContent = username;
+      const dropName = document.getElementById('dropdownUserName');
+      if (dropName) dropName.textContent = username;
       if (navLoginBtn) {
-        navLoginBtn.innerHTML = `<i class="fa-solid fa-user-shield"></i> ${username}`;
+        navLoginBtn.innerHTML = `<i class="fa-solid fa-user-shield"></i> ${username} <i class="fa-solid fa-chevron-down" style="font-size:0.7rem; margin-left:4px;"></i>`;
+        navLoginBtn.setAttribute('title', `Tài khoản: ${username} (Bấm để mở menu / Đăng xuất)`);
       }
       if (wsLink) wsLink.style.display = 'block';
     } else {
       document.body.classList.remove('admin-mode');
-      if (adminTopbar) adminTopbar.classList.remove('active');
       if (navLoginBtn) {
         navLoginBtn.innerHTML = `<i class="fa-solid fa-lock"></i> Login`;
+        navLoginBtn.removeAttribute('title');
       }
+      if (dropdown) dropdown.classList.remove('show');
       if (wsLink) wsLink.style.display = 'none';
     }
   }
@@ -270,11 +274,70 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.style.overflow = '';
   }
 
-  // Login Modal Events
+  function ensureUserDropdown() {
+    const loginItem = document.getElementById('loginNavItem');
+    if (!loginItem) return null;
+    let dropdown = document.getElementById('userDropdownMenu');
+    if (!dropdown) {
+      dropdown = document.createElement('div');
+      dropdown.className = 'user-dropdown-menu';
+      dropdown.id = 'userDropdownMenu';
+      dropdown.innerHTML = `
+        <div class="user-dropdown-header">
+          <i class="fa-solid fa-circle-user"></i>
+          <div>
+            <strong id="dropdownUserName">100re</strong>
+            <small>Quản trị viên (Supervisor)</small>
+          </div>
+        </div>
+        <a href="workspace/index.html" class="user-dropdown-item">
+          <i class="fa-solid fa-flask-vial" style="color:#16a34a;"></i> 100RE Workspace
+        </a>
+        <a href="members.html" class="user-dropdown-item">
+          <i class="fa-solid fa-users" style="color:#0284c7;"></i> Quản lý Thành viên
+        </a>
+        <div class="user-dropdown-divider"></div>
+        <button class="user-dropdown-item text-danger" id="userDropdownLogoutBtn" type="button">
+          <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất (Logout)
+        </button>
+      `;
+      loginItem.appendChild(dropdown);
+
+      const logoutBtn = dropdown.querySelector('#userDropdownLogoutBtn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          dropdown.classList.remove('show');
+          await handleLogout();
+        });
+      }
+    }
+    return dropdown;
+  }
+
+  async function handleLogout() {
+    try {
+      if (currentAuthToken) {
+        await fetch(`${API_BASE}/api/logout`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${currentAuthToken}` }
+        });
+      }
+    } catch (e) {}
+
+    localStorage.removeItem('100re_token');
+    currentAuthToken = null;
+    setAdminState(false);
+    showToast('Đã đăng xuất khỏi tài khoản.');
+  }
+
+  // Login Modal Events & User Dropdown Toggle
   if (navLoginBtn) {
-    navLoginBtn.addEventListener('click', () => {
+    navLoginBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
       if (document.body.classList.contains('admin-mode')) {
-        showToast('Bạn đang đăng nhập với quyền Quản trị viên (100re).');
+        const dropdown = ensureUserDropdown();
+        if (dropdown) dropdown.classList.toggle('show');
       } else {
         if (loginErrorAlert) loginErrorAlert.style.display = 'none';
         if (loginForm) loginForm.reset();
@@ -282,6 +345,16 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
+  // Close dropdown on outside click
+  document.addEventListener('click', (e) => {
+    const dropdown = document.getElementById('userDropdownMenu');
+    if (dropdown && dropdown.classList.contains('show')) {
+      if (!dropdown.contains(e.target) && e.target !== navLoginBtn && !navLoginBtn.contains(e.target)) {
+        dropdown.classList.remove('show');
+      }
+    }
+  });
 
   if (loginModalCloseBtn) {
     loginModalCloseBtn.addEventListener('click', () => closeModal(loginModal));
@@ -334,23 +407,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Logout Event
+  // Legacy Logout Button (if present)
   if (btnAdminLogout) {
-    btnAdminLogout.addEventListener('click', async () => {
-      try {
-        if (currentAuthToken) {
-          await fetch(`${API_BASE}/api/logout`, {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${currentAuthToken}` }
-          });
-        }
-      } catch (e) {}
-
-      localStorage.removeItem('100re_token');
-      currentAuthToken = null;
-      setAdminState(false);
-      showToast('Đã đăng xuất khỏi phiên làm việc.');
-    });
+    btnAdminLogout.addEventListener('click', handleLogout);
   }
 
   // ==========================================
