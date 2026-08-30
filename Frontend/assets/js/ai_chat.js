@@ -17,8 +17,8 @@
       <!-- Floating Button -->
       <div class="ai-chat-launcher" id="aiLauncher">
         <span class="ai-pulse-ring"></span>
-        <div class="ai-launcher-tooltip hide-mobile">Hỏi đáp AI 100RE Lab</div>
-        <button class="btn-ai-launcher" id="btnToggleAiChat" title="Mở Trợ lý AI 100RE Lab" aria-label="Mở Trợ lý AI 100RE Lab">
+        <div class="ai-launcher-tooltip hide-mobile">100RE Lab AI Assistant</div>
+        <button class="btn-ai-launcher" id="btnToggleAiChat" title="100RE Lab AI Assistant" aria-label="100RE Lab AI Assistant">
           <i class="fa-solid fa-robot"></i>
         </button>
       </div>
@@ -44,8 +44,8 @@
           <!-- Welcome Message -->
           <div class="ai-msg ai-msg-assistant">
             <div class="ai-bubble">
-              👋 Xin chào! Tôi là **Trợ lý AI của 100RE Lab** (Đại học Bách Khoa Hà Nội).<br><br>
-              Bạn có thể hỏi tôi bất cứ điều gì về các nhóm nghiên cứu, đề tài, bài báo khoa học hay hướng dẫn sử dụng Workspace!
+              👋 Xin chào! Tôi là **100RE Lab AI Assistant** (Trợ lý Trí tuệ Nhân tạo của 100RE Laboratory - Đại học Bách Khoa Hà Nội).<br><br>
+              Bạn có thể hỏi tôi bất cứ điều gì về các nhóm nghiên cứu, đề tài, bài báo khoa học hay hướng dẫn sử dụng hệ thống!
               <div class="ai-quick-prompts">
                 <button class="btn-quick-prompt" data-q="Giới thiệu tổng quan về 100RE Lab">📌 Giới thiệu về 100RE Lab</button>
                 <button class="btn-quick-prompt" data-q="Phòng Lab gồm những nhóm nghiên cứu nào?">🔬 9 Nhóm nghiên cứu gồm những gì?</button>
@@ -58,7 +58,7 @@
 
         <!-- Footer Input Bar -->
         <form class="ai-chat-footer" id="aiChatForm">
-          <input type="text" id="aiChatInput" class="ai-input" placeholder="Nhập câu hỏi cho AI..." autocomplete="off" required>
+          <input type="text" id="aiChatInput" class="ai-input" placeholder="Hỏi 100RE Lab AI Assistant..." autocomplete="off" required>
           <button type="submit" id="btnAiSend" class="btn-ai-send" title="Gửi câu hỏi">
             <i class="fa-solid fa-paper-plane"></i>
           </button>
