@@ -97,7 +97,7 @@ export async function renderAdmin(container) {
 
               <div class="form-group" style="margin-bottom:12px;">
                 <label style="display:block; font-size:0.8rem; font-weight:700; color:#475569; margin-bottom:4px;">Tên Đăng Nhập (Username) *</label>
-                <input type="text" id="permUsername" class="ws-search-input" style="width:100%; border-radius:6px;" placeholder="ví dụ: duc_pv, tuan_grid..." required>
+                <input type="text" id="permUsername" class="ws-search-input" style="width:100%; border-radius:6px;" placeholder="ví dụ: hai.duongminh, duc_pv..." required>
               </div>
 
               <div class="form-group" style="margin-bottom:12px;">
@@ -107,12 +107,12 @@ export async function renderAdmin(container) {
 
               <div class="form-group" style="margin-bottom:12px;">
                 <label style="display:block; font-size:0.8rem; font-weight:700; color:#475569; margin-bottom:4px;">Họ Và Tên (Display Name) *</label>
-                <input type="text" id="permDisplayName" class="ws-search-input" style="width:100%; border-radius:6px;" placeholder="ví dụ: Dr. Ngo Tri Duc" required>
+                <input type="text" id="permDisplayName" class="ws-search-input" style="width:100%; border-radius:6px;" placeholder="ví dụ: Dương Minh Hải" required>
               </div>
 
               <div class="form-group" style="margin-bottom:12px;">
-                <label style="display:block; font-size:0.8rem; font-weight:700; color:#475569; margin-bottom:4px;">Email *</label>
-                <input type="email" id="permEmail" class="ws-search-input" style="width:100%; border-radius:6px;" placeholder="ví dụ: leader.pv@100relab.hust.edu.vn" required>
+                <label style="display:block; font-size:0.8rem; font-weight:700; color:#475569; margin-bottom:4px;">Email</label>
+                <input type="text" id="permEmail" class="ws-search-input" style="width:100%; border-radius:6px;" placeholder="ví dụ: hai.duongminh@100relab.hust.edu.vn">
               </div>
 
               <div class="form-group" style="margin-bottom:14px;">
@@ -265,6 +265,20 @@ export async function renderAdmin(container) {
       console.warn('API members fetch error, using local state:', e);
     }
 
+    // Default Seed Members if empty
+    if (!members || members.length === 0) {
+      members = [
+        { id: 'usr-sup-01', username: 'supervisor', display_name: 'Assoc. Prof. Nguyen Duc Tuyen', name: 'Assoc. Prof. Nguyen Duc Tuyen', email: 'supervisor@100relab.hust.edu.vn', role: 'supervisor', status: 'active', teams: [], permissions: [] },
+        { id: 'usr-ldr-01', username: 'leader.pv', display_name: 'Dr. Ngo Tri Duc', name: 'Dr. Ngo Tri Duc', email: 'leader.pv@100relab.hust.edu.vn', role: 'team_leader', status: 'active', teams: ['team-pv'], permissions: [] },
+        { id: 'usr-ldr-02', username: 'leader.bess', display_name: 'Dr. Trinh Minh Phuong', name: 'Dr. Trinh Minh Phuong', email: 'leader.bess@100relab.hust.edu.vn', role: 'team_leader', status: 'active', teams: ['team-bess'], permissions: [] },
+        { id: 'usr-res-01', username: 'hai.ai', display_name: 'Bui Quang Hai', name: 'Bui Quang Hai', email: 'hai.ai@100relab.hust.edu.vn', role: 'researcher', status: 'active', teams: ['team-ai', 'team-pv'], permissions: [] },
+        { id: 'usr-res-02', username: 'anh.grid', display_name: 'Nguyen Tuan Anh', name: 'Nguyen Tuan Anh', email: 'anh.grid@100relab.hust.edu.vn', role: 'researcher', status: 'active', teams: ['team-smartgrid', 'team-uc'], permissions: [] },
+        { id: 'usr-res-03', username: 'nam.wind', display_name: 'Nguyen Hoang Nam', name: 'Nguyen Hoang Nam', email: 'nam.wind@100relab.hust.edu.vn', role: 'researcher', status: 'active', teams: ['team-wind'], permissions: [] },
+        { id: 'usr-res-04', username: 'cuong.ev', display_name: 'Le The Cuong', name: 'Le The Cuong', email: 'cuong.ev@100relab.hust.edu.vn', role: 'researcher', status: 'active', teams: ['team-ev'], permissions: [] },
+        { id: 'usr-res-05', username: 'hai.duongminh', display_name: 'Duong Minh Hai', name: 'Duong Minh Hai', email: 'hai.duongminh@100relab.hust.edu.vn', role: 'researcher', status: 'active', teams: ['team-smartgrid'], permissions: [] }
+      ];
+    }
+
     // Fetch teams
     try {
       const teamsRes = await API.get('/api/teams');
@@ -276,23 +290,34 @@ export async function renderAdmin(container) {
     // Filter out deleted users from API list
     members = members.filter(m => !deletedUserIds.includes(m.id) && !deletedUserIds.includes(m.username) && !deletedUserIds.includes(m.email));
 
-    // Merge with LocalStorage created users
-    const localUsersStr = localStorage.getItem('100re_custom_users');
-    if (localUsersStr) {
+    // Helper functions for user storage
+    function getStoredCreatedUsers() {
       try {
-        const localUsers = JSON.parse(localUsersStr);
-        localUsers.forEach(lu => {
-          if (!deletedUserIds.includes(lu.id) && !deletedUserIds.includes(lu.username) && !deletedUserIds.includes(lu.email)) {
-            const idx = members.findIndex(m => m.id === lu.id || (m.username && m.username === lu.username) || (m.email && m.email === lu.email));
-            if (idx >= 0) {
-              members[idx] = { ...members[idx], ...lu };
-            } else {
-              members.push(lu);
-            }
-          }
-        });
+        return JSON.parse(localStorage.getItem('100re_created_users') || localStorage.getItem('100re_custom_users') || '[]');
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveStoredCreatedUsers(userList) {
+      try {
+        localStorage.setItem('100re_created_users', JSON.stringify(userList));
+        localStorage.setItem('100re_custom_users', JSON.stringify(userList));
       } catch (e) {}
     }
+
+    // Merge with LocalStorage created users (and put user-created ones at the top!)
+    const storedCreated = getStoredCreatedUsers();
+    storedCreated.forEach(cu => {
+      if (!deletedUserIds.includes(cu.id) && !deletedUserIds.includes(cu.username) && !deletedUserIds.includes(cu.email)) {
+        const idx = members.findIndex(m => m.id === cu.id || (m.username && m.username === cu.username) || (m.email && m.email === cu.email));
+        if (idx >= 0) {
+          members[idx] = { ...members[idx], ...cu };
+        } else {
+          members.unshift(cu);
+        }
+      }
+    });
 
     const tableContainer = container.querySelector('#adminUsersTableContainer');
     const modal = container.querySelector('#modalUserPermissions');
@@ -308,22 +333,16 @@ export async function renderAdmin(container) {
       `).join('');
     } else if (teamsContainer) {
       teamsContainer.innerHTML = `
-        <label style="font-size:0.775rem; color:#334155; display:flex; align-items:center; gap:6px;"><input type="checkbox" value="team-pv" class="perm-team-cb" checked> Photovoltaic (PV)</label>
+        <label style="font-size:0.775rem; color:#334155; display:flex; align-items:center; gap:6px;"><input type="checkbox" value="team-smartgrid" class="perm-team-cb" checked> Smart Grid</label>
+        <label style="font-size:0.775rem; color:#334155; display:flex; align-items:center; gap:6px;"><input type="checkbox" value="team-pv" class="perm-team-cb"> Photovoltaic (PV)</label>
         <label style="font-size:0.775rem; color:#334155; display:flex; align-items:center; gap:6px;"><input type="checkbox" value="team-bess" class="perm-team-cb"> Battery Storage (BESS)</label>
         <label style="font-size:0.775rem; color:#334155; display:flex; align-items:center; gap:6px;"><input type="checkbox" value="team-ai" class="perm-team-cb"> Artificial Intelligence (AI)</label>
-        <label style="font-size:0.775rem; color:#334155; display:flex; align-items:center; gap:6px;"><input type="checkbox" value="team-smartgrid" class="perm-team-cb"> Smart Grid</label>
         <label style="font-size:0.775rem; color:#334155; display:flex; align-items:center; gap:6px;"><input type="checkbox" value="team-wind" class="perm-team-cb"> Wind Energy</label>
         <label style="font-size:0.775rem; color:#334155; display:flex; align-items:center; gap:6px;"><input type="checkbox" value="team-ev" class="perm-team-cb"> Electric Vehicle (EV)</label>
         <label style="font-size:0.775rem; color:#334155; display:flex; align-items:center; gap:6px;"><input type="checkbox" value="team-hydrogen" class="perm-team-cb"> Hydrogen Team</label>
         <label style="font-size:0.775rem; color:#334155; display:flex; align-items:center; gap:6px;"><input type="checkbox" value="team-dr" class="perm-team-cb"> Demand Response (DR)</label>
         <label style="font-size:0.775rem; color:#334155; display:flex; align-items:center; gap:6px;"><input type="checkbox" value="team-uc" class="perm-team-cb"> Unit Commitment (UC)</label>
       `;
-    }
-
-    function saveCustomUsersToLocalStorage() {
-      try {
-        localStorage.setItem('100re_custom_users', JSON.stringify(members));
-      } catch (e) {}
     }
 
     function renderUserTable() {
@@ -348,7 +367,7 @@ export async function renderAdmin(container) {
             <tbody>
               ${members.map(u => {
                 const name = u.display_name || u.name;
-                const permsCount = Array.isArray(u.permissions) ? u.permissions.length : (u.role === 'supervisor' ? 16 : 9);
+                const permsCount = Array.isArray(u.permissions) && u.permissions.length > 0 ? u.permissions.length : (u.role === 'supervisor' ? 16 : 9);
                 const roleBadge = u.role === 'supervisor' ? '<span class="ws-badge ws-badge-done">👑 SUPERVISOR</span>' :
                                   u.role === 'team_leader' ? '<span class="ws-badge ws-badge-in_progress">🛡️ TEAM LEADER</span>' :
                                   u.role === 'researcher' ? '<span class="ws-badge ws-badge-todo">🔬 RESEARCHER</span>' :
@@ -356,7 +375,7 @@ export async function renderAdmin(container) {
 
                 let teamLabels = 'Tất cả (Global)';
                 if (u.teams && u.teams.length > 0) {
-                  teamLabels = u.teams.map(t => typeof t === 'string' ? t : (t.team_name || t.team_id)).join(', ');
+                  teamLabels = u.teams.map(t => typeof t === 'string' ? t.replace('team-', '').toUpperCase() : (t.team_name || t.team_id)).join(', ');
                 }
 
                 return `
@@ -366,7 +385,7 @@ export async function renderAdmin(container) {
                         <img src="${u.avatar_url || 'assets/images/logo.jpg'}" style="width:36px; height:36px; border-radius:50%; object-fit:cover; border:1px solid var(--ws-border);" alt="${escapeHtml(name)}">
                         <div>
                           <strong style="color:var(--ws-dark); font-size:0.9rem; display:block;">${escapeHtml(name)}</strong>
-                          <span style="font-size:0.775rem; color:var(--ws-text-muted);">${escapeHtml(u.email || u.username + '@100relab.hust.edu.vn')}</span>
+                          <span style="font-size:0.775rem; color:var(--ws-text-muted);">${escapeHtml(u.email || (u.username ? u.username + '@100relab.hust.edu.vn' : ''))}</span>
                         </div>
                       </div>
                     </td>
@@ -436,7 +455,9 @@ export async function renderAdmin(container) {
 
             // Instant remove from state
             members = members.filter(m => m.id !== uid);
-            saveCustomUsersToLocalStorage();
+            const curCreated = getStoredCreatedUsers().filter(u => u.id !== uid);
+            saveStoredCreatedUsers(curCreated);
+
             renderUserTable();
             showToast(`Đã xóa tài khoản "${uname}" thành công.`);
 
@@ -474,7 +495,7 @@ export async function renderAdmin(container) {
       });
 
       // Set Permissions Checkboxes
-      const userPerms = isEdit && Array.isArray(user.permissions) ? user.permissions : (
+      const userPerms = isEdit && Array.isArray(user.permissions) && user.permissions.length > 0 ? user.permissions : (
         user ? (user.role === 'supervisor' ? [
           'perm_news', 'perm_journey', 'perm_research', 'perm_projects', 'perm_pubs', 'perm_photos', 'perm_members',
           'perm_ws_all_teams', 'perm_ws_projects', 'perm_ws_tasks_create', 'perm_ws_tasks_update',
@@ -492,17 +513,21 @@ export async function renderAdmin(container) {
         cb.checked = userPerms.includes(cb.value);
       });
 
-      modal.classList.add('show');
-      modal.style.display = 'flex';
-      modal.style.opacity = '1';
-      modal.style.pointerEvents = 'auto';
+      if (modal) {
+        modal.classList.add('show');
+        modal.style.display = 'flex';
+        modal.style.opacity = '1';
+        modal.style.pointerEvents = 'auto';
+      }
     }
 
     function closeUserModal() {
-      modal.classList.remove('show');
-      modal.style.display = 'none';
-      modal.style.opacity = '0';
-      modal.style.pointerEvents = 'none';
+      if (modal) {
+        modal.classList.remove('show');
+        modal.style.display = 'none';
+        modal.style.opacity = '0';
+        modal.style.pointerEvents = 'none';
+      }
     }
 
     container.querySelector('#btnOpenCreateUserModal')?.addEventListener('click', (e) => {
@@ -553,11 +578,21 @@ export async function renderAdmin(container) {
     container.querySelector('#formUserWithPerms')?.addEventListener('submit', async (e) => {
       e.preventDefault();
       const uid = container.querySelector('#permUserId').value;
-      const username = container.querySelector('#permUsername').value.trim();
-      const password = container.querySelector('#permPassword').value.trim();
+      let username = container.querySelector('#permUsername').value.trim().toLowerCase();
+      const password = container.querySelector('#permPassword').value.trim() || '100re';
       const display_name = container.querySelector('#permDisplayName').value.trim();
-      const email = container.querySelector('#permEmail').value.trim().toLowerCase() || `${username}@100relab.hust.edu.vn`;
+      let email = container.querySelector('#permEmail').value.trim().toLowerCase();
       const role = container.querySelector('#permRole').value;
+
+      if (!email) {
+        email = `${username}@100relab.hust.edu.vn`;
+      } else if (!email.includes('@')) {
+        email = `${email}@100relab.hust.edu.vn`;
+      }
+
+      if (!username) {
+        username = email.split('@')[0];
+      }
 
       const selectedTeams = Array.from(container.querySelectorAll('.perm-team-cb:checked')).map(cb => cb.value);
       const selectedPerms = Array.from(container.querySelectorAll('.perm-cb:checked')).map(cb => cb.value);
@@ -578,23 +613,40 @@ export async function renderAdmin(container) {
         email,
         role,
         status: 'active',
-        teams: selectedTeams,
-        permissions: selectedPerms,
+        teams: selectedTeams.length > 0 ? selectedTeams : ['team-smartgrid'],
+        permissions: selectedPerms.length > 0 ? selectedPerms : [
+          'perm_news', 'perm_journey', 'perm_research', 'perm_projects', 'perm_pubs', 'perm_photos',
+          'perm_ws_tasks_update', 'perm_ws_scinote_edit', 'perm_ws_datasets'
+        ],
         created_at: Math.floor(Date.now() / 1000)
       };
 
+      // Update Local Created Store
+      const curCreated = getStoredCreatedUsers();
+      const createIdx = curCreated.findIndex(u => u.id === targetId || (u.username && u.username === username) || (u.email && u.email === email));
+      if (createIdx >= 0) {
+        curCreated[createIdx] = userObj;
+      } else {
+        curCreated.unshift(userObj);
+      }
+      saveStoredCreatedUsers(curCreated);
+
       if (uid) {
-        // Update local state
+        // Update local state in-memory
         const idx = members.findIndex(m => m.id === uid);
         if (idx >= 0) members[idx] = { ...members[idx], ...userObj };
         showToast(`Đã cập nhật quyền hạn cho "${display_name}" thành công!`);
       } else {
-        // Add new user to local state
-        members.unshift(userObj);
-        showToast(`Tạo tài khoản "${username}" thành công với ${selectedPerms.length} quyền hạn!`);
+        // Add new user to local state in-memory at top
+        const existingIdx = members.findIndex(m => m.username === username || m.email === email);
+        if (existingIdx >= 0) {
+          members[existingIdx] = userObj;
+        } else {
+          members.unshift(userObj);
+        }
+        showToast(`Tạo tài khoản "${username}" thành công với ${userObj.permissions.length} quyền hạn!`);
       }
 
-      saveCustomUsersToLocalStorage();
       renderUserTable();
       closeUserModal();
 
