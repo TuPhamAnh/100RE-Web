@@ -5,6 +5,7 @@
 
 import { API } from './api.js';
 import { Auth } from './auth.js';
+import { i18n } from './i18n.js';
 import { openModal, closeModal, showToast, formatDate, formatBytes, renderPriorityBadge, renderStatusBadge, escapeHtml } from './components.js';
 
 import { renderDashboard } from './views/dashboardView.js';
@@ -33,8 +34,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function initApp() {
-  // 1. Initialize Auth
+  // 1. Initialize Auth & i18n Engine
   await Auth.init();
+  i18n.init();
 
   // 2. Cache Teams & Users for dropdowns
   try {
@@ -46,8 +48,14 @@ async function initApp() {
     console.warn('Initial cache fetch warning:', e);
   }
 
-  // 3. Bind Global Navigation & Routing
+  // 3. Bind Global Navigation, Routing & Language events
   window.addEventListener('hashchange', handleRouting);
+  window.addEventListener('workspace-lang-change', (e) => {
+    i18n.applyToDOM();
+    updateNav(window.location.hash.slice(1).split('?')[0].split('/')[0] || 'dashboard');
+    handleRouting();
+  });
+
   bindGlobalEvents();
   populateDevSwitcher();
 
@@ -126,21 +134,22 @@ function handleRouting() {
 function updateNav(route, paramId) {
   const crumb = document.getElementById('wsCrumbCurrent');
   if (crumb) {
+    const isVi = i18n.getLanguage() === 'vi';
     const titles = {
-      'dashboard': 'Dashboard',
-      'experiments': 'Projects & Experiments',
-      'workflows': 'Visual Workflows',
-      'protocols': 'Protocols & SOPs',
-      'inventory': 'Lab Inventory & Instruments',
-      'signoffs': 'Sign-offs & Approvals',
-      'teams': paramId ? `Team: ${paramId.toUpperCase()}` : 'Research Teams',
-      'projects': paramId ? `Project: ${paramId}` : 'Projects',
-      'tasks': 'Tasks & Protocols',
-      'datasets': '100RE Database Datasets',
-      'documents': '100RE Database Documents',
-      'members': 'Members & Users',
-      'activity': 'Audit Trail',
-      'admin': 'Administration'
+      'dashboard': isVi ? 'Bảng Điều Khiển' : 'Dashboard',
+      'experiments': isVi ? 'Đề Tài & Thí Nghiệm' : 'Projects & Experiments',
+      'workflows': isVi ? 'Quy Trình Trực Quan' : 'Visual Workflows',
+      'protocols': isVi ? 'Quy Trình Chuẩn (SOPs)' : 'Protocols & SOPs',
+      'inventory': isVi ? 'Thiết Bị Phòng Lab' : 'Lab Inventory & Instruments',
+      'signoffs': isVi ? 'Ký Duyệt & Phê Chuẩn' : 'Sign-offs & Approvals',
+      'teams': paramId ? (isVi ? `Nhóm: ${paramId.toUpperCase()}` : `Team: ${paramId.toUpperCase()}`) : (isVi ? '9 Nhóm Nghiên Cứu' : 'Research Teams'),
+      'projects': paramId ? `Project: ${paramId}` : (isVi ? 'Đề Tài Nghiên Cứu' : 'Projects'),
+      'tasks': isVi ? 'Nhiệm Vụ & Thí Nghiệm' : 'Tasks & Experiments',
+      'datasets': isVi ? 'Bộ Dữ Liệu (100RE Database)' : '100RE Database Datasets',
+      'documents': isVi ? 'Tài Liệu & Báo Cáo' : '100RE Database Documents',
+      'members': isVi ? 'Thành Viên & Hồ Sơ' : 'Members & Profiles',
+      'activity': isVi ? 'Nhật Ký Hoạt Động' : 'Audit Trail',
+      'admin': isVi ? 'Quản Trị & Phân Quyền' : 'Administration'
     };
     crumb.textContent = titles[route] || 'Workspace';
   }
@@ -156,6 +165,22 @@ function updateNav(route, paramId) {
 }
 
 function bindGlobalEvents() {
+  // Language Switcher buttons
+  const btnLangVi = document.getElementById('btnLangVi');
+  const btnLangEn = document.getElementById('btnLangEn');
+  if (btnLangVi) {
+    btnLangVi.addEventListener('click', () => {
+      i18n.setLanguage('vi');
+      showToast('Đã chuyển ngôn ngữ sang Tiếng Việt 🇻🇳');
+    });
+  }
+  if (btnLangEn) {
+    btnLangEn.addEventListener('click', () => {
+      i18n.setLanguage('en');
+      showToast('Language switched to English 🇬🇧');
+    });
+  }
+
   // Mobile sidebar toggle
   document.getElementById('wsMobileToggle')?.addEventListener('click', () => {
     document.getElementById('wsSidebar')?.classList.toggle('open');

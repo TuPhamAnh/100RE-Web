@@ -445,6 +445,53 @@ code, pre, .ws-code, [style*="Fira Code"] {
   padding: 4px 0;
 }
 
+/* Language Switcher */
+.ws-lang-switcher {
+  display: inline-flex;
+  align-items: center;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: var(--ws-radius-md);
+  padding: 2px;
+  gap: 2px;
+}
+
+.btn-ws-lang {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: none;
+  background: transparent;
+  padding: 4px 9px;
+  font-size: 0.775rem;
+  font-weight: 600;
+  color: #64748b;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-ws-lang:hover {
+  color: #0f172a;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.btn-ws-lang.active {
+  background: #ffffff;
+  color: var(--ws-primary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  font-weight: 700;
+}
+
+.btn-ws-lang .lang-flag {
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+.btn-ws-lang .lang-text {
+  letter-spacing: 0.5px;
+}
+
 /* BUTTONS */
 .btn-ws-primary {
   background-color: var(--ws-primary);

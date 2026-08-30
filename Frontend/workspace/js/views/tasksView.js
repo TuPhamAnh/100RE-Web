@@ -7,39 +7,47 @@ import { Auth } from '../auth.js';
 import { renderPriorityBadge, renderStatusBadge, formatDate, escapeHtml, renderEmptyState } from '../components.js';
 
 export async function renderTasks(container, initialFilter = null) {
+  const isVi = (window.i18n ? window.i18n.getLanguage() : 'vi') === 'vi';
   let viewMode = 'kanban'; // 'kanban' | 'list'
+
+  const titleText = initialFilter === 'me' 
+    ? (isVi ? 'Nhiệm Vụ Của Tôi' : 'My Assigned Tasks')
+    : (isVi ? 'Quản Lý Nhiệm Vụ & Tiến Độ Đề Tài' : 'Tasks & Research Deliverables');
+  const subtitleText = isVi 
+    ? 'Theo dõi quy trình thực nghiệm, mốc bài báo, báo cáo tiến độ và nghiệm thu kỹ thuật.'
+    : 'Manage workflows, experimental protocols, paper milestones and technical deliverables.';
 
   container.innerHTML = `
     <div class="ws-page-header">
       <div class="ws-page-title-group">
-        <h1>${initialFilter === 'me' ? 'My Assigned Tasks' : 'Tasks &amp; Research Deliverables'}</h1>
-        <p>Manage workflows, experimental protocols, paper milestones and technical deliverables.</p>
+        <h1>${titleText}</h1>
+        <p>${subtitleText}</p>
       </div>
       <div class="ws-page-actions">
         <div style="display:flex; background:#ffffff; border:1px solid var(--ws-border); border-radius:var(--ws-radius-md); overflow:hidden;">
           <button class="btn-ws-ghost btn-ws-sm ${viewMode === 'kanban' ? 'active' : ''}" id="btnViewKanban" style="border:none;"><i class="fa-solid fa-table-columns"></i> Kanban</button>
-          <button class="btn-ws-ghost btn-ws-sm ${viewMode === 'list' ? 'active' : ''}" id="btnViewList" style="border:none;"><i class="fa-solid fa-list"></i> List</button>
+          <button class="btn-ws-ghost btn-ws-sm ${viewMode === 'list' ? 'active' : ''}" id="btnViewList" style="border:none;"><i class="fa-solid fa-list"></i> ${isVi ? 'Danh Sách' : 'List'}</button>
         </div>
-        <button class="btn-ws-primary" id="btnTaskViewNew"><i class="fa-solid fa-plus"></i> New Task</button>
+        <button class="btn-ws-primary" id="btnTaskViewNew"><i class="fa-solid fa-plus"></i> ${isVi ? '+ Nhiệm Vụ Mới' : '+ New Task'}</button>
       </div>
     </div>
 
     <!-- Filter Bar -->
     <div class="ws-filter-bar">
-      <input type="text" id="taskSearchInput" class="ws-search-input" placeholder="Search tasks by title or keyword...">
+      <input type="text" id="taskSearchInput" class="ws-search-input" placeholder="${isVi ? 'Tìm kiếm task theo tiêu đề hoặc từ khóa...' : 'Search tasks by title or keyword...'}">
       <select id="taskTeamFilter" class="ws-select-filter">
-        <option value="">All Teams</option>
+        <option value="">${isVi ? 'Tất Cả Nhóm' : 'All Teams'}</option>
       </select>
       <select id="taskPriorityFilter" class="ws-select-filter">
-        <option value="">All Priorities</option>
-        <option value="urgent">Urgent</option>
-        <option value="high">High</option>
-        <option value="medium">Medium</option>
-        <option value="low">Low</option>
+        <option value="">${isVi ? 'Tất Cả Mức Ưu Tiên' : 'All Priorities'}</option>
+        <option value="urgent">${isVi ? 'Khẩn Cấp' : 'Urgent'}</option>
+        <option value="high">${isVi ? 'Cao' : 'High'}</option>
+        <option value="medium">${isVi ? 'Trung Bình' : 'Medium'}</option>
+        <option value="low">${isVi ? 'Thấp' : 'Low'}</option>
       </select>
       <select id="taskAssigneeFilter" class="ws-select-filter">
-        <option value="">All Assignees</option>
-        <option value="me" ${initialFilter === 'me' ? 'selected' : ''}>Assigned to Me</option>
+        <option value="">${isVi ? 'Tất Cả Người Thực Hiện' : 'All Assignees'}</option>
+        <option value="me" ${initialFilter === 'me' ? 'selected' : ''}>${isVi ? 'Giao Cho Tôi' : 'Assigned to Me'}</option>
       </select>
     </div>
 
@@ -62,153 +70,163 @@ export async function renderTasks(container, initialFilter = null) {
     }
 
     const tasksRes = await API.get('/api/tasks');
-    let allTasks = tasksRes.tasks || [];
+    const allTasks = tasksRes.tasks || [];
+
     const viewport = container.querySelector('#tasksViewport');
 
-    function applyFilterAndRender() {
-      const q = container.querySelector('#taskSearchInput').value.toLowerCase();
-      const tFilter = container.querySelector('#taskTeamFilter').value;
-      const pFilter = container.querySelector('#taskPriorityFilter').value;
-      const aFilter = container.querySelector('#taskAssigneeFilter').value;
+    function applyFilters() {
+      const q = container.querySelector('#taskSearchInput').value.toLowerCase().trim();
+      const teamId = container.querySelector('#taskTeamFilter').value;
+      const prio = container.querySelector('#taskPriorityFilter').value;
+      const assignee = container.querySelector('#taskAssigneeFilter').value;
       const user = Auth.getUser();
 
-      let filtered = allTasks.filter(t => {
-        const matchesQuery = t.title.toLowerCase().includes(q) || (t.description && t.description.toLowerCase().includes(q));
-        const matchesTeam = !tFilter || t.team_id === tFilter;
-        const matchesPriority = !pFilter || t.priority === pFilter;
-        const matchesAssignee = !aFilter || (aFilter === 'me' ? (user && t.assigned_to === user.id) : t.assigned_to === aFilter);
-        return matchesQuery && matchesTeam && matchesPriority && matchesAssignee;
+      return allTasks.filter(t => {
+        if (q && !t.title.toLowerCase().includes(q) && !(t.description && t.description.toLowerCase().includes(q))) return false;
+        if (teamId && t.team_id !== teamId) return false;
+        if (prio && t.priority !== prio) return false;
+        if (assignee === 'me' && user && t.assigned_to !== user.id) return false;
+        return true;
       });
+    }
 
+    function renderKanban(filteredTasks) {
+      const statuses = [
+        { id: 'todo', title: isVi ? 'CẦN LÀM' : 'TO DO', badgeClass: 'todo' },
+        { id: 'in_progress', title: isVi ? 'ĐANG LÀM' : 'IN PROGRESS', badgeClass: 'in_progress' },
+        { id: 'review', title: isVi ? 'CHỜ DUYỆT' : 'REVIEW', badgeClass: 'review' },
+        { id: 'done', title: isVi ? 'HOÀN THÀNH' : 'DONE', badgeClass: 'done' }
+      ];
+
+      viewport.innerHTML = `
+        <div class="ws-kanban-board">
+          ${statuses.map(s => {
+            const colTasks = filteredTasks.filter(t => (t.status || 'todo') === s.id);
+            return `
+              <div class="ws-kanban-column" data-status="${s.id}">
+                <div class="ws-kanban-column-header">
+                  <div class="ws-kanban-column-title">
+                    <span class="ws-kanban-dot dot-${s.badgeClass}"></span>
+                    <span>${s.title}</span>
+                    <span class="ws-kanban-count">${colTasks.length}</span>
+                  </div>
+                </div>
+                <div class="ws-kanban-cards">
+                  ${colTasks.map(task => `
+                    <div class="ws-kanban-card" data-task-id="${task.id}" onclick="window.openTaskDetail('${task.id}')">
+                      <div class="ws-kanban-card-meta">
+                        <span class="ws-tag-team">${escapeHtml(task.team?.name || task.team_id || (isVi ? 'Nhóm' : 'Team'))}</span>
+                        ${renderPriorityBadge(task.priority)}
+                      </div>
+                      <h4 class="ws-kanban-card-title">${escapeHtml(task.title)}</h4>
+                      <div class="ws-kanban-card-footer">
+                        <div class="ws-kanban-assignee">
+                          <i class="fa-regular fa-user"></i>
+                          <span>${escapeHtml(task.assignee?.display_name || task.assignee?.name || (isVi ? 'Chưa giao' : 'Unassigned'))}</span>
+                        </div>
+                        <div class="ws-kanban-date">
+                          <i class="fa-regular fa-calendar"></i>
+                          <span>${formatDate(task.due_date)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  `).join('')}
+                  ${colTasks.length === 0 ? `<div class="ws-kanban-empty">${isVi ? 'Không có task nào' : 'No tasks in this stage'}</div>` : ''}
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+    }
+
+    function renderList(filteredTasks) {
+      if (filteredTasks.length === 0) {
+        viewport.innerHTML = renderEmptyState(isVi ? 'Không tìm thấy nhiệm vụ nào phù hợp' : 'No tasks match the selected filters');
+        return;
+      }
+
+      viewport.innerHTML = `
+        <div class="ws-card">
+          <div class="ws-table-container">
+            <table class="ws-table">
+              <thead>
+                <tr>
+                  <th>${isVi ? 'Tiêu Đề Nhiệm Vụ' : 'Task Title'}</th>
+                  <th>${isVi ? 'Nhóm Nghiên Cứu' : 'Team'}</th>
+                  <th>${isVi ? 'Đề Tài' : 'Project'}</th>
+                  <th>${isVi ? 'Mức Ưu Tiên' : 'Priority'}</th>
+                  <th>${isVi ? 'Trạng Thái' : 'Status'}</th>
+                  <th>${isVi ? 'Người Phụ Trách' : 'Assignee'}</th>
+                  <th>${isVi ? 'Hạn Chót' : 'Due Date'}</th>
+                  <th>${isVi ? 'Thao Tác' : 'Action'}</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${filteredTasks.map(t => `
+                  <tr>
+                    <td>
+                      <a href="javascript:void(0)" onclick="window.openTaskDetail('${t.id}')" style="font-weight:600; color:var(--ws-primary); text-decoration:none;">
+                        ${escapeHtml(t.title)}
+                      </a>
+                    </td>
+                    <td><span class="ws-badge ws-badge-subtle">${escapeHtml(t.team?.name || t.team_id || '-')}</span></td>
+                    <td><small style="color:var(--ws-text-muted);">${escapeHtml(t.project?.name || '-')}</small></td>
+                    <td>${renderPriorityBadge(t.priority)}</td>
+                    <td>${renderStatusBadge(t.status)}</td>
+                    <td><small>${escapeHtml(t.assignee?.display_name || t.assignee?.name || '-')}</small></td>
+                    <td><small>${formatDate(t.due_date)}</small></td>
+                    <td>
+                      <button class="btn-ws-ghost btn-ws-sm" onclick="window.openTaskDetail('${t.id}')" title="${isVi ? 'Xem Chi Tiết' : 'View Details'}">
+                        <i class="fa-solid fa-eye"></i>
+                      </button>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderView() {
+      const filtered = applyFilters();
       if (viewMode === 'kanban') {
-        renderKanban(viewport, filtered);
+        renderKanban(filtered);
       } else {
-        renderList(viewport, filtered);
+        renderList(filtered);
       }
     }
 
-    applyFilterAndRender();
+    renderView();
 
-    container.querySelector('#taskSearchInput').addEventListener('input', applyFilterAndRender);
-    container.querySelector('#taskTeamFilter').addEventListener('change', applyFilterAndRender);
-    container.querySelector('#taskPriorityFilter').addEventListener('change', applyFilterAndRender);
-    container.querySelector('#taskAssigneeFilter').addEventListener('change', applyFilterAndRender);
+    // Event listeners
+    container.querySelector('#taskSearchInput').addEventListener('input', renderView);
+    container.querySelector('#taskTeamFilter').addEventListener('change', renderView);
+    container.querySelector('#taskPriorityFilter').addEventListener('change', renderView);
+    container.querySelector('#taskAssigneeFilter').addEventListener('change', renderView);
 
-    const btnKanban = container.querySelector('#btnViewKanban');
-    const btnList = container.querySelector('#btnViewList');
-
-    btnKanban.addEventListener('click', () => {
+    container.querySelector('#btnViewKanban').addEventListener('click', () => {
       viewMode = 'kanban';
-      btnKanban.style.background = 'var(--ws-bg-subtle)';
-      btnList.style.background = 'transparent';
-      applyFilterAndRender();
+      container.querySelector('#btnViewKanban').classList.add('active');
+      container.querySelector('#btnViewList').classList.remove('active');
+      renderView();
     });
 
-    btnList.addEventListener('click', () => {
+    container.querySelector('#btnViewList').addEventListener('click', () => {
       viewMode = 'list';
-      btnList.style.background = 'var(--ws-bg-subtle)';
-      btnKanban.style.background = 'transparent';
-      applyFilterAndRender();
+      container.querySelector('#btnViewList').classList.add('active');
+      container.querySelector('#btnViewKanban').classList.remove('active');
+      renderView();
     });
 
-    container.querySelector('#btnTaskViewNew').addEventListener('click', () => window.openNewTaskModal());
+    container.querySelector('#btnTaskViewNew').addEventListener('click', () => {
+      window.openNewTaskModal();
+    });
 
   } catch (err) {
-    container.innerHTML = `<div class="ws-empty-state"><i class="fa-solid fa-triangle-exclamation"></i><h3>Error</h3><p>${escapeHtml(err.message)}</p></div>`;
+    console.error('Error rendering tasks:', err);
+    container.querySelector('#tasksViewport').innerHTML = `<div class="ws-empty-state"><i class="fa-solid fa-triangle-exclamation"></i><h3>Error</h3><p>${escapeHtml(err.message)}</p></div>`;
   }
-}
-
-function renderKanban(viewport, tasks) {
-  const columns = [
-    { id: 'todo', title: 'To Do', accent: 'col-accent-todo' },
-    { id: 'in_progress', title: 'In Progress', accent: 'col-accent-in_progress' },
-    { id: 'review', title: 'Review', accent: 'col-accent-review' },
-    { id: 'done', title: 'Done', accent: 'col-accent-done' }
-  ];
-
-  viewport.innerHTML = `
-    <div class="ws-kanban-board">
-      ${columns.map(col => {
-        const colTasks = tasks.filter(t => t.status === col.id);
-        return `
-          <div class="ws-kanban-col ${col.accent}">
-            <div class="ws-kanban-col-header">
-              <span class="ws-kanban-title">${col.title}</span>
-              <span class="ws-kanban-count">${colTasks.length}</span>
-            </div>
-            <div class="ws-kanban-list" data-status="${col.id}">
-              ${colTasks.length === 0 ? '<div style="text-align:center; padding:20px; color:var(--ws-text-light); font-size:0.8rem;">No tasks</div>' : colTasks.map(t => {
-                const isOverdue = t.due_date && new Date(t.due_date) < new Date() && t.status !== 'done';
-                return `
-                  <div class="ws-kanban-card" onclick="window.openTaskDetailModal('${t.id}')">
-                    <div class="ws-kanban-card-top">
-                      <span style="font-size:0.7rem; font-weight:700; color:var(--ws-primary); text-transform:uppercase;">
-                        ${t.team ? escapeHtml(t.team.slug) : 'GEN'}
-                      </span>
-                      ${renderPriorityBadge(t.priority)}
-                    </div>
-                    <div class="ws-kanban-card-title">${escapeHtml(t.title)}</div>
-                    ${t.description ? `<div class="ws-kanban-card-desc">${escapeHtml(t.description)}</div>` : ''}
-                    <div class="ws-kanban-card-footer">
-                      <div class="ws-kanban-due ${isOverdue ? 'overdue' : ''}">
-                        <i class="fa-regular fa-calendar"></i>
-                        <span>${t.due_date ? formatDate(t.due_date) : 'No date'}</span>
-                      </div>
-                      <img src="${t.assignee?.avatar_url || '../assets/images/logo.jpg'}" class="ws-kanban-assignee" title="${escapeHtml(t.assignee?.name || 'Unassigned')}" alt="Avatar">
-                    </div>
-                  </div>
-                `;
-              }).join('')}
-            </div>
-          </div>
-        `;
-      }).join('')}
-    </div>
-  `;
-}
-
-function renderList(viewport, tasks) {
-  if (tasks.length === 0) {
-    viewport.innerHTML = renderEmptyState('No tasks match your filter');
-    return;
-  }
-
-  viewport.innerHTML = `
-    <div class="ws-card">
-      <div class="ws-table-container">
-        <table class="ws-table">
-          <thead>
-            <tr>
-              <th>Task Title</th>
-              <th>Team / Project</th>
-              <th>Assignee</th>
-              <th>Priority</th>
-              <th>Deadline</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${tasks.map(t => {
-              const isOverdue = t.due_date && new Date(t.due_date) < new Date() && t.status !== 'done';
-              return `
-                <tr class="clickable-task-row" data-task-id="${t.id}" style="cursor:pointer;" onclick="window.openTaskDetailModal('${t.id}')">
-                  <td><strong>${escapeHtml(t.title)}</strong></td>
-                  <td><span style="font-size:0.8rem; color:var(--ws-text-muted);">${t.team ? escapeHtml(t.team.name) : 'General'}</span></td>
-                  <td>
-                    <div style="display:flex; align-items:center; gap:6px;">
-                      <img src="${t.assignee?.avatar_url || '../assets/images/logo.jpg'}" style="width:22px; height:22px; border-radius:50%; object-fit:cover;" alt="Avatar">
-                      <span style="font-size:0.825rem;">${escapeHtml(t.assignee?.name || 'Unassigned')}</span>
-                    </div>
-                  </td>
-                  <td>${renderPriorityBadge(t.priority)}</td>
-                  <td><span style="${isOverdue ? 'color:#dc2626; font-weight:700;' : ''}">${t.due_date ? formatDate(t.due_date) : 'N/A'}</span></td>
-                  <td>${renderStatusBadge(t.status)}</td>
-                </tr>
-              `;
-            }).join('')}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  `;
 }
