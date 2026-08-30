@@ -122,12 +122,13 @@ code, pre, .ws-code, [style*="Fira Code"] {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 12px 16px;
-  min-height: 82px;
+  padding: 10px 14px;
+  height: 80px;
   border-bottom: 1px solid var(--ws-border);
   background: #ffffff;
   width: 100%;
   position: relative;
+  box-sizing: border-box;
 }
 
 .ws-brand-link {
@@ -140,12 +141,13 @@ code, pre, .ws-code, [style*="Fira Code"] {
 }
 
 .ws-brand-logo-rect {
-  max-width: 226px;
   width: 100%;
-  max-height: 60px;
+  max-width: 232px;
   height: auto;
+  max-height: 64px;
   object-fit: contain;
   display: block;
+  margin: 0 auto;
   transition: transform 0.2s ease;
 }
 
