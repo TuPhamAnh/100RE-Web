@@ -208,14 +208,25 @@ export default {
 
         let userProfile = null;
         if (password === '100re') {
-          if (lowerUser === 'supervisor' || lowerUser === '100re') {
+          if (lowerUser === '100re' || lowerUser === 'admin') {
+            userProfile = {
+              id: 'usr-admin-01',
+              username: '100re',
+              name: 'System Developer & Super Admin',
+              display_name: 'System Admin (100RE)',
+              email: 'admin@100relab.com',
+              role: 'admin',
+              isSystemAdmin: true
+            };
+          } else if (lowerUser === 'supervisor') {
             userProfile = {
               id: 'usr-sup-01',
               username: 'supervisor',
               name: 'Assoc. Prof. Nguyen Duc Tuyen',
               display_name: 'Assoc. Prof. Nguyen Duc Tuyen (Supervisor)',
               email: 'supervisor@100relab.hust.edu.vn',
-              role: 'supervisor'
+              role: 'supervisor',
+              isSystemAdmin: false
             };
           } else if (lowerUser === 'teamleader' || lowerUser === 'leader') {
             userProfile = {
@@ -225,7 +236,8 @@ export default {
               display_name: 'Dr. Ngo Tri Duc (Leader PV)',
               email: 'leader.pv@100relab.hust.edu.vn',
               role: 'team_leader',
-              team: 'team-pv'
+              team: 'team-pv',
+              isSystemAdmin: false
             };
           } else if (lowerUser === 'researcher') {
             userProfile = {
@@ -235,7 +247,8 @@ export default {
               display_name: 'Bui Quang Hai (Researcher PV)',
               email: 'hai.ai@100relab.hust.edu.vn',
               role: 'researcher',
-              team: 'team-pv'
+              team: 'team-pv',
+              isSystemAdmin: false
             };
           }
         }
@@ -255,7 +268,8 @@ export default {
                   email: cred.email,
                   role: cred.role || 'researcher',
                   permissions: cred.permissions || [],
-                  teams: cred.teams || []
+                  teams: cred.teams || [],
+                  isSystemAdmin: false
                 };
               }
             }
@@ -274,6 +288,7 @@ export default {
             userId: userProfile.id,
             role: userProfile.role,
             display_name: userProfile.display_name,
+            isSystemAdmin: !!userProfile.isSystemAdmin,
             permissions: userProfile.permissions || []
           }, 200, corsHeaders);
         } else {

@@ -206,11 +206,12 @@
         </div>
 
         <div class="ws-topbar-right">
-          <!-- Dev Role Switcher (Visible in Development Mode) -->
-          <div class="ws-dev-switcher" id="wsDevSwitcher" title="Development Identity Switcher">
+          <!-- Dev Role Switcher (Visible ONLY for 100re Admin) -->
+          <div class="ws-dev-switcher" id="wsDevSwitcher" style="display: none;" title="Development Identity Switcher (100RE Admin Only)">
             <span class="ws-dev-badge"><i class="fa-solid fa-flask-vial"></i> DEV ROLE:</span>
             <select class="ws-dev-select" id="devRoleSelect">
-              <option value="usr-sup-01">supervisor — Assoc. Prof. Nguyen Duc Tuyen (Toàn Quyền / Supervisor)</option>
+              <option value="usr-admin-01">100re — System Developer &amp; Super Admin</option>
+              <option value="usr-sup-01">supervisor — Assoc. Prof. Nguyen Duc Tuyen (Supervisor)</option>
               <option value="usr-ldr-01">teamleader — Dr. Ngo Tri Duc (Leader PV Team)</option>
               <option value="usr-res-01">researcher — Bui Quang Hai (Researcher PV Team)</option>
               <option value="usr-ldr-02">Dr. Trinh Minh Phuong (BESS Leader)</option>

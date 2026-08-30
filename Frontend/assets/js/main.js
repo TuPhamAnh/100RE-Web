@@ -379,6 +379,11 @@ document.addEventListener('DOMContentLoaded', () => {
           localStorage.setItem('100re_token', data.token);
           if (data.userId) localStorage.setItem('ws_dev_user_id', data.userId);
           if (data.role) localStorage.setItem('100re_user_role', data.role);
+          if (data.user === '100re' || data.isSystemAdmin) {
+            localStorage.setItem('100re_is_admin', 'true');
+          } else {
+            localStorage.removeItem('100re_is_admin');
+          }
           setAdminState(true, data.display_name || data.user);
           closeModal(loginModal);
           showToast(`Đăng nhập thành công: ${data.display_name || data.user}!`);
@@ -401,14 +406,22 @@ document.addEventListener('DOMContentLoaded', () => {
           let uId = 'usr-sup-01';
           let dispName = 'Assoc. Prof. Nguyen Duc Tuyen (Supervisor)';
 
-          if (lowerUser === 'teamleader') {
-            role = 'team_leader';
-            uId = 'usr-ldr-01';
-            dispName = 'Dr. Ngo Tri Duc (Leader PV)';
-          } else if (lowerUser === 'researcher') {
-            role = 'researcher';
-            uId = 'usr-res-01';
-            dispName = 'Bui Quang Hai (Researcher PV)';
+          if (lowerUser === '100re' || lowerUser === 'admin') {
+            role = 'admin';
+            uId = 'usr-admin-01';
+            dispName = 'System Admin (100RE)';
+            localStorage.setItem('100re_is_admin', 'true');
+          } else {
+            localStorage.removeItem('100re_is_admin');
+            if (lowerUser === 'teamleader') {
+              role = 'team_leader';
+              uId = 'usr-ldr-01';
+              dispName = 'Dr. Ngo Tri Duc (Leader PV)';
+            } else if (lowerUser === 'researcher') {
+              role = 'researcher';
+              uId = 'usr-res-01';
+              dispName = 'Bui Quang Hai (Researcher PV)';
+            }
           }
 
           localStorage.setItem('ws_dev_user_id', uId);
@@ -419,7 +432,7 @@ document.addEventListener('DOMContentLoaded', () => {
           await loadMembers();
         } else {
           if (loginErrorAlert) {
-            loginErrorAlert.innerHTML = 'Sai tên đăng nhập hoặc mật khẩu!<br><small style="font-size:0.75rem; color:#64748b;">(Tài khoản: supervisor / teamleader / researcher — Mật khẩu: 100re)</small>';
+            loginErrorAlert.innerHTML = 'Sai tên đăng nhập hoặc mật khẩu!<br><small style="font-size:0.75rem; color:#64748b;">(Tài khoản: 100re / supervisor / teamleader / researcher — Mật khẩu: 100re)</small>';
             loginErrorAlert.style.display = 'block';
           }
         }

@@ -38,12 +38,31 @@ export const Auth = {
     }
 
     // Local role resolution
-    if (userId === 'usr-ldr-01' || userId === 'teamleader') {
+    if (userId === 'usr-admin-01' || userId === '100re') {
+      this.currentUser = {
+        id: 'usr-admin-01',
+        name: 'System Developer & Super Admin',
+        display_name: 'System Admin (100RE)',
+        username: '100re',
+        role: 'admin',
+        isSystemAdmin: true,
+        status: 'active',
+        avatar_url: 'assets/images/logo.jpg',
+        isSupervisor: true,
+        isLeader: true,
+        teams: [],
+        teamRoles: {},
+        projects: []
+      };
+      localStorage.setItem('100re_is_admin', 'true');
+    } else if (userId === 'usr-ldr-01' || userId === 'teamleader') {
       this.currentUser = {
         id: 'usr-ldr-01',
         name: 'Dr. Ngo Tri Duc',
         display_name: 'Dr. Ngo Tri Duc (Leader PV)',
+        username: 'teamleader',
         role: 'team_leader',
+        isSystemAdmin: false,
         status: 'active',
         avatar_url: 'assets/images/ngo_tri_duc.png',
         isSupervisor: false,
@@ -57,7 +76,9 @@ export const Auth = {
         id: 'usr-res-01',
         name: 'Bui Quang Hai',
         display_name: 'Bui Quang Hai (Researcher PV)',
+        username: 'researcher',
         role: 'researcher',
+        isSystemAdmin: false,
         status: 'active',
         avatar_url: 'assets/images/bui_quang_hai.jpg',
         isSupervisor: false,
@@ -71,7 +92,9 @@ export const Auth = {
         id: 'usr-sup-01',
         name: 'Assoc. Prof. Nguyen Duc Tuyen',
         display_name: 'Assoc. Prof. Nguyen Duc Tuyen (Supervisor)',
+        username: 'supervisor',
         role: 'supervisor',
+        isSystemAdmin: false,
         status: 'active',
         avatar_url: 'assets/images/logo.jpg',
         isSupervisor: true,
@@ -90,11 +113,22 @@ export const Auth = {
   },
 
   isSupervisor() {
-    return !this.currentUser || this.currentUser.role === 'supervisor';
+    if (!this.currentUser) return true;
+    return this.currentUser.role === 'supervisor' || this.currentUser.role === 'admin';
+  },
+
+  isSystemAdmin() {
+    if (!this.currentUser) {
+      return localStorage.getItem('100re_is_admin') === 'true';
+    }
+    return this.currentUser.username === '100re' ||
+           this.currentUser.role === 'admin' ||
+           !!this.currentUser.isSystemAdmin ||
+           localStorage.getItem('100re_is_admin') === 'true';
   },
 
   isTeamLeader() {
-    return this.currentUser && (this.currentUser.role === 'team_leader' || this.currentUser.role === 'supervisor');
+    return this.currentUser && (this.currentUser.role === 'team_leader' || this.currentUser.role === 'supervisor' || this.currentUser.role === 'admin');
   },
 
   isAlumni() {
@@ -128,7 +162,7 @@ export const Auth = {
       avatarEl.onerror = () => { avatarEl.src = '/assets/images/logo.jpg'; };
     }
 
-    // Show or hide Admin section
+    // Show or hide Admin section (Accessible to supervisor and 100re admin)
     if (adminSecLabel && adminNavGroup) {
       if (this.isSupervisor()) {
         adminSecLabel.style.display = 'block';
@@ -136,6 +170,16 @@ export const Auth = {
       } else {
         adminSecLabel.style.display = 'none';
         adminNavGroup.style.display = 'none';
+      }
+    }
+
+    // Show or hide Dev Role Switcher bar (STRICTLY restricted to 100re Admin account)
+    const devSwitcher = document.getElementById('wsDevSwitcher');
+    if (devSwitcher) {
+      if (this.isSystemAdmin()) {
+        devSwitcher.style.display = 'inline-flex';
+      } else {
+        devSwitcher.style.display = 'none';
       }
     }
 

@@ -247,29 +247,37 @@ async function runTests() {
     }
   });
 
-  await test('Multi-Account Login & RBAC: supervisor, teamleader, researcher authentication', async () => {
+  await test('Multi-Account Login & RBAC: 100re admin, supervisor, teamleader, researcher authentication', async () => {
+    // 0. 100re System Super Admin login
+    const adminLoginReq = makeReq('/api/login', 'POST', { username: '100re', password: '100re' });
+    const adminLoginRes = await worker.fetch(adminLoginReq, mockEnv);
+    const adminData = await adminLoginRes.json();
+    if (!adminData.success || adminData.role !== 'admin' || !adminData.isSystemAdmin) {
+      throw new Error(`Expected 100re admin login success with isSystemAdmin=true, got ${JSON.stringify(adminData)}`);
+    }
+
     // 1. Supervisor login
     const supLoginReq = makeReq('/api/login', 'POST', { username: 'supervisor', password: '100re' });
     const supLoginRes = await worker.fetch(supLoginReq, mockEnv);
     const supData = await supLoginRes.json();
-    if (!supData.success || supData.role !== 'supervisor') {
-      throw new Error(`Expected supervisor login success, got ${JSON.stringify(supData)}`);
+    if (!supData.success || supData.role !== 'supervisor' || supData.isSystemAdmin === true) {
+      throw new Error(`Expected supervisor login success with isSystemAdmin=false, got ${JSON.stringify(supData)}`);
     }
 
     // 2. Teamleader login
     const ldrLoginReq = makeReq('/api/login', 'POST', { username: 'teamleader', password: '100re' });
     const ldrLoginRes = await worker.fetch(ldrLoginReq, mockEnv);
     const ldrData = await ldrLoginRes.json();
-    if (!ldrData.success || ldrData.role !== 'team_leader') {
-      throw new Error(`Expected teamleader login success, got ${JSON.stringify(ldrData)}`);
+    if (!ldrData.success || ldrData.role !== 'team_leader' || ldrData.isSystemAdmin === true) {
+      throw new Error(`Expected teamleader login success with isSystemAdmin=false, got ${JSON.stringify(ldrData)}`);
     }
 
     // 3. Researcher login
     const resLoginReq = makeReq('/api/login', 'POST', { username: 'researcher', password: '100re' });
     const resLoginRes = await worker.fetch(resLoginReq, mockEnv);
     const resData = await resLoginRes.json();
-    if (!resData.success || resData.role !== 'researcher') {
-      throw new Error(`Expected researcher login success, got ${JSON.stringify(resData)}`);
+    if (!resData.success || resData.role !== 'researcher' || resData.isSystemAdmin === true) {
+      throw new Error(`Expected researcher login success with isSystemAdmin=false, got ${JSON.stringify(resData)}`);
     }
 
     // 4. Verify Teamleader PV cannot access BESS private dataset
