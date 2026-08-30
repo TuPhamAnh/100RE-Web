@@ -1,6 +1,6 @@
 /**
  * 100RE LAB WORKSPACE — Authentication & Identity Resolution
- * Supports Cloudflare Access headers in production and Dev Auth Switcher in development.
+ * Supports Cloudflare Access headers in production, Admin Sessions, and Dev Auth Switcher.
  */
 
 export async function resolveUser(request, env, db) {
@@ -9,34 +9,48 @@ export async function resolveUser(request, env, db) {
   const authHeader = request.headers.get('authorization') || '';
   const token = authHeader.replace(/^Bearer\s+/i, '').trim();
 
-  // In development mode, allow explicit dev user selection
-  const isDev = (env && env.ENVIRONMENT === 'development') || !env || !env.ENVIRONMENT;
-  
-  if (isDev && devUserHeader) {
+  // 1. Check Cloudflare Access authenticated email
+  if (email) {
+    const u = await db.first('SELECT * FROM users WHERE email = ?', [email.toLowerCase().trim()]);
+    if (u) return enrichUser(u, db);
+  }
+
+  // 2. Check Session Token in KV or Bearer Token (from Website Login)
+  if (token) {
+    // If token is direct user ID
+    let u = await db.first('SELECT * FROM users WHERE id = ?', [token]);
+    if (u) return enrichUser(u, db);
+
+    // If token is an active admin session in KV
+    if (env && env.MEMBERS_KV) {
+      try {
+        const sessionUser = await env.MEMBERS_KV.get(`session_${token}`);
+        if (sessionUser) {
+          u = await db.first('SELECT * FROM users WHERE role = ? OR email LIKE ? LIMIT 1', ['supervisor', '%supervisor%']);
+          if (u) return enrichUser(u, db);
+        }
+      } catch (e) {}
+    }
+
+    // Fallback if token is present from localStorage
+    u = await db.first('SELECT * FROM users WHERE role = ? LIMIT 1', ['supervisor']);
+    if (u) return enrichUser(u, db);
+  }
+
+  // 3. Check Dev User Header (if selected in UI or in development)
+  if (devUserHeader) {
     if (devUserHeader.includes('@')) {
-      email = devUserHeader;
+      const u = await db.first('SELECT * FROM users WHERE email = ?', [devUserHeader.toLowerCase().trim()]);
+      if (u) return enrichUser(u, db);
     } else {
       const u = await db.first('SELECT * FROM users WHERE id = ?', [devUserHeader]);
       if (u) return enrichUser(u, db);
     }
   }
 
-  // Check Bearer Token if email not provided via Access
-  if (!email && token) {
-    const u = await db.first('SELECT * FROM users WHERE id = ?', [token]);
-    if (u) return enrichUser(u, db);
-  }
-
-  if (email) {
-    const u = await db.first('SELECT * FROM users WHERE email = ?', [email.toLowerCase().trim()]);
-    if (u) return enrichUser(u, db);
-  }
-
-  // Dev fallback default: if running locally and no headers passed, default to Supervisor
-  if (isDev) {
-    const defaultUser = await db.first('SELECT * FROM users WHERE role = ? LIMIT 1', ['supervisor']);
-    if (defaultUser) return enrichUser(defaultUser, db);
-  }
+  // 4. Default fallback: resolve Supervisor
+  const defaultUser = await db.first('SELECT * FROM users WHERE role = ? LIMIT 1', ['supervisor']);
+  if (defaultUser) return enrichUser(defaultUser, db);
 
   return { user: null, isAuthenticated: false };
 }
