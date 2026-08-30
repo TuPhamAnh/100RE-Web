@@ -101,12 +101,12 @@ export async function renderProjects(container, projectId = null) {
       displayProjects(filtered);
     }
 
-    if (searchInput) searchInput.addEventListener('input', applyFilter);
-    if (statusFilter) statusFilter.addEventListener('change', applyFilter);
+    if (searchInput) searchInput?.addEventListener('input', applyFilter);
+    if (statusFilter) statusFilter?.addEventListener('change', applyFilter);
 
     const btnNew = container.querySelector('#btnNewProject');
     if (btnNew) {
-      btnNew.addEventListener('click', () => window.openNewProjectModal());
+      btnNew?.addEventListener('click', () => window.openNewProjectModal());
     }
 
   } catch (err) {

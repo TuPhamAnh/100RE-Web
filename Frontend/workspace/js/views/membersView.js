@@ -202,13 +202,13 @@ export async function renderMembers(container) {
       displayUsers(filtered);
     }
 
-    if (searchInput) searchInput.addEventListener('input', applyFilter);
-    if (roleFilter) roleFilter.addEventListener('change', applyFilter);
-    if (profileFilter) profileFilter.addEventListener('change', applyFilter);
+    if (searchInput) searchInput?.addEventListener('input', applyFilter);
+    if (roleFilter) roleFilter?.addEventListener('change', applyFilter);
+    if (profileFilter) profileFilter?.addEventListener('change', applyFilter);
 
     const btnAdd = container.querySelector('#btnAdminAddUser');
     if (btnAdd) {
-      btnAdd.addEventListener('click', async () => {
+      btnAdd?.addEventListener('click', async () => {
         const name = prompt('Nhập Họ và Tên (display_name):');
         if (!name || !name.trim()) return;
         const email = prompt('Nhập Email:');

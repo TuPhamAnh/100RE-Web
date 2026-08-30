@@ -96,7 +96,7 @@ export async function renderTeams(container, teamIdOrSlug = null) {
 
     const searchInput = container.querySelector('#teamSearchInput');
     if (searchInput) {
-      searchInput.addEventListener('input', (e) => {
+      searchInput?.addEventListener('input', (e) => {
         const val = e.target.value.toLowerCase();
         const filtered = teams.filter(t => t.name.toLowerCase().includes(val) || (t.description && t.description.toLowerCase().includes(val)));
         displayTeams(filtered);
@@ -105,7 +105,7 @@ export async function renderTeams(container, teamIdOrSlug = null) {
 
     const btnNewTeam = container.querySelector('#btnNewTeam');
     if (btnNewTeam) {
-      btnNewTeam.addEventListener('click', () => {
+      btnNewTeam?.addEventListener('click', () => {
         const name = prompt('Nhập tên Research Team mới:');
         if (name && name.trim()) {
           API.post('/api/teams', { name: name.trim() })
@@ -353,11 +353,11 @@ async function renderTeamDetail(container, teamIdOrSlug) {
     // Quick action buttons
     const btnNewProj = container.querySelector('#btnTeamActionNewProject');
     if (btnNewProj) {
-      btnNewProj.addEventListener('click', () => window.openNewProjectModal(team.id));
+      btnNewProj?.addEventListener('click', () => window.openNewProjectModal(team.id));
     }
     const btnNewTsk = container.querySelector('#btnTeamActionNewTask');
     if (btnNewTsk) {
-      btnNewTsk.addEventListener('click', () => window.openNewTaskModal(team.id));
+      btnNewTsk?.addEventListener('click', () => window.openNewTaskModal(team.id));
     }
 
     container.querySelectorAll('.clickable-task-row').forEach(row => {

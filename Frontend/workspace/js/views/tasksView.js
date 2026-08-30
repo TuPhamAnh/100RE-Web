@@ -202,26 +202,26 @@ export async function renderTasks(container, initialFilter = null) {
     renderView();
 
     // Event listeners
-    container.querySelector('#taskSearchInput').addEventListener('input', renderView);
-    container.querySelector('#taskTeamFilter').addEventListener('change', renderView);
-    container.querySelector('#taskPriorityFilter').addEventListener('change', renderView);
-    container.querySelector('#taskAssigneeFilter').addEventListener('change', renderView);
+    container.querySelector('#taskSearchInput')?.addEventListener('input', renderView);
+    container.querySelector('#taskTeamFilter')?.addEventListener('change', renderView);
+    container.querySelector('#taskPriorityFilter')?.addEventListener('change', renderView);
+    container.querySelector('#taskAssigneeFilter')?.addEventListener('change', renderView);
 
-    container.querySelector('#btnViewKanban').addEventListener('click', () => {
+    container.querySelector('#btnViewKanban')?.addEventListener('click', () => {
       viewMode = 'kanban';
       container.querySelector('#btnViewKanban').classList.add('active');
       container.querySelector('#btnViewList').classList.remove('active');
       renderView();
     });
 
-    container.querySelector('#btnViewList').addEventListener('click', () => {
+    container.querySelector('#btnViewList')?.addEventListener('click', () => {
       viewMode = 'list';
       container.querySelector('#btnViewList').classList.add('active');
       container.querySelector('#btnViewKanban').classList.remove('active');
       renderView();
     });
 
-    container.querySelector('#btnTaskViewNew').addEventListener('click', () => {
+    container.querySelector('#btnTaskViewNew')?.addEventListener('click', () => {
       window.openNewTaskModal();
     });
 

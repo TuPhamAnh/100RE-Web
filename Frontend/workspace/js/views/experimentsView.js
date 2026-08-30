@@ -122,7 +122,7 @@ export async function renderExperiments(container) {
 
     const btnNewProj = container.querySelector('#btnNewProject');
     if (btnNewProj) {
-      btnNewProj.addEventListener('click', () => window.openProjectModal());
+      btnNewProj?.addEventListener('click', () => window.openProjectModal());
     }
 
   } catch (err) {

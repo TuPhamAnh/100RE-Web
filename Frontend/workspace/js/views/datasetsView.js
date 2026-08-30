@@ -133,12 +133,12 @@ export async function renderDatasets(container) {
       displayDatasets(filtered);
     }
 
-    searchInput.addEventListener('input', filterData);
-    formatFilter.addEventListener('change', filterData);
+    searchInput?.addEventListener('input', filterData);
+    formatFilter?.addEventListener('change', filterData);
 
     const btnUpload = container.querySelector('#btnUploadDataset');
     if (btnUpload) {
-      btnUpload.addEventListener('click', () => {
+      btnUpload?.addEventListener('click', () => {
         window.openUploadDatasetModal();
       });
     }

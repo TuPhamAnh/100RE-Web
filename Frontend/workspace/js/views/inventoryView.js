@@ -104,7 +104,7 @@ export async function renderInventory(container) {
 
     const btnRefresh = container.querySelector('#btnRefreshInventory');
     if (btnRefresh) {
-      btnRefresh.addEventListener('click', () => renderInventory(container));
+      btnRefresh?.addEventListener('click', () => renderInventory(container));
     }
 
   } catch (err) {

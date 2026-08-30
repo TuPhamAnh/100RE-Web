@@ -512,7 +512,7 @@ export async function renderAdmin(container) {
 
     container.querySelector('#btnCloseUserPermModal')?.addEventListener('click', closeUserModal);
     container.querySelector('#btnCancelUserPermModal')?.addEventListener('click', closeUserModal);
-    modal.addEventListener('click', (e) => {
+    modal?.addEventListener('click', (e) => {
       if (e.target === modal) closeUserModal();
     });
 

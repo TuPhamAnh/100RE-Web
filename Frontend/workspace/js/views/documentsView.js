@@ -131,12 +131,12 @@ export async function renderDocuments(container) {
       displayDocs(filtered);
     }
 
-    searchInput.addEventListener('input', filterDocs);
-    typeFilter.addEventListener('change', filterDocs);
+    searchInput?.addEventListener('input', filterDocs);
+    typeFilter?.addEventListener('change', filterDocs);
 
     const btnUpload = container.querySelector('#btnUploadDoc');
     if (btnUpload) {
-      btnUpload.addEventListener('click', () => {
+      btnUpload?.addEventListener('click', () => {
         window.openUploadDocModal();
       });
     }
