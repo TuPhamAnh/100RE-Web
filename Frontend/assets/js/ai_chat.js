@@ -45,12 +45,12 @@
           <div class="ai-msg ai-msg-assistant">
             <div class="ai-bubble">
               👋 Xin chào! Tôi là **100RE Lab AI Assistant** (Trợ lý Trí tuệ Nhân tạo của 100RE Laboratory - Đại học Bách Khoa Hà Nội).<br><br>
-              Bạn có thể hỏi tôi bất cứ điều gì về các nhóm nghiên cứu, đề tài, bài báo khoa học hay hướng dẫn sử dụng hệ thống!
+              Bạn có thể hỏi tôi bất cứ điều gì bằng <strong>Tiếng Việt</strong> hoặc <strong>English</strong>! Dưới đây là một số câu hỏi gợi ý:
               <div class="ai-quick-prompts">
-                <button class="btn-quick-prompt" data-q="Giới thiệu tổng quan về 100RE Lab">📌 Giới thiệu về 100RE Lab</button>
-                <button class="btn-quick-prompt" data-q="Phòng Lab gồm những nhóm nghiên cứu nào?">🔬 9 Nhóm nghiên cứu gồm những gì?</button>
-                <button class="btn-quick-prompt" data-q="Giới thiệu về Thầy PGS. TS. Nguyễn Đức Tuyên">👨‍🏫 Thầy Nguyễn Đức Tuyên là ai?</button>
-                <button class="btn-quick-prompt" data-q="Làm thế nào để tham gia nghiên cứu tại 100RE Lab?">🤝 Cách tham gia nghiên cứu tại Lab</button>
+                <button class="btn-quick-prompt" data-q="Give me an overview of 100RE Laboratory and its mission.">📌 Overview of 100RE Laboratory &amp; Mission</button>
+                <button class="btn-quick-prompt" data-q="What are the 9 specialized research teams at 100RE Lab?">🔬 What are the 9 specialized research teams?</button>
+                <button class="btn-quick-prompt" data-q="Who is Assoc. Prof. Nguyen Duc Tuyen?">👨‍🏫 Who is Assoc. Prof. Nguyen Duc Tuyen?</button>
+                <button class="btn-quick-prompt" data-q="How can students or partners join and collaborate with 100RE Lab?">🤝 How to join &amp; collaborate with 100RE Lab?</button>
               </div>
             </div>
           </div>
@@ -58,7 +58,7 @@
 
         <!-- Footer Input Bar -->
         <form class="ai-chat-footer" id="aiChatForm">
-          <input type="text" id="aiChatInput" class="ai-input" placeholder="Hỏi 100RE Lab AI Assistant..." autocomplete="off" required>
+          <input type="text" id="aiChatInput" class="ai-input" placeholder="Ask 100RE Lab AI Assistant anything (Tiếng Việt / English)..." autocomplete="off" required>
           <button type="submit" id="btnAiSend" class="btn-ai-send" title="Gửi câu hỏi">
             <i class="fa-solid fa-paper-plane"></i>
           </button>

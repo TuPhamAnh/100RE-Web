@@ -103,17 +103,39 @@ export async function handleAiChat(request, env) {
 
 function getSmartFallbackAnswer(query) {
   const q = query.toLowerCase();
-  if (q.includes('nhóm') || q.includes('team') || q.includes('lĩnh vực') || q.includes('nghiên cứu')) {
+  const isEnglish = /^[a-zA-Z0-9\s\?.,!\-':;"]+$/.test(query.trim()) && (q.includes('what') || q.includes('who') || q.includes('how') || q.includes('give') || q.includes('tell') || q.includes('is') || q.includes('are') || q.includes('lab'));
+
+  if (q.includes('nhóm') || q.includes('team') || q.includes('lĩnh vực') || q.includes('research')) {
+    if (isEnglish) {
+      return `**100RE Laboratory** features **9 Specialized Research Teams**:\n1. ☀️ **PV Team** (Photovoltaic Systems & Perovskite Tandem Cells)\n2. 🔋 **BESS Team** (Battery Energy Storage Systems, SoC/SoH & Degradation)\n3. 🤖 **AI Team** (Deep Learning & AI in Renewable Power Grid Forecasting)\n4. 💨 **Wind Team** (Wind Turbine Aerodynamics & Wake Effects)\n5. 🌐 **Smart Grid Team** (Real-time SCADA, Inverter Controls & Microgrid Stability)\n6. 🚗 **Electric Vehicle Team** (V2G Integration & Smart Charging Protocols)\n7. 💧 **Hydrogen Team** (Green Hydrogen Electrolysis & Fuel Cell Storage)\n8. ⚖️ **Demand Response Team** (Dynamic Electricity Tariffs & Peak Shaving)\n9. ⚙️ **Unit Commitment Team** (Optimal Power Dispatch & High-Renewable Scheduling)`;
+    }
     return `Phòng thí nghiệm 100RE Lab gồm **9 Nhóm Nghiên cứu Chuyên sâu**:\n1. ☀️ **PV Team** (Quang điện mặt trời)\n2. 🔋 **BESS Team** (Lưu trữ năng lượng pin)\n3. 🤖 **AI Team** (Trí tuệ nhân tạo trong Năng lượng)\n4. 💨 **Wind Team** (Năng lượng gió)\n5. 🌐 **Smart Grid Team** (Lưới điện thông minh)\n6. 🚗 **Electric Vehicle Team** (Xe điện & V2G)\n7. 💧 **Hydrogen Team** (Hydro xanh)\n8. ⚖️ **Demand Response Team** (Đáp ứng phụ tải)\n9. ⚙️ **Unit Commitment Team** (Tối ưu hóa khởi động tổ máy)`;
   }
-  if (q.includes('tuyên') || q.includes('thầy') || q.includes('chủ nhiệm') || q.includes('supervisor')) {
+
+  if (q.includes('tuyên') || q.includes('thầy') || q.includes('chủ nhiệm') || q.includes('supervisor') || q.includes('who is')) {
+    if (isEnglish) {
+      return `**Assoc. Prof. Nguyen Duc Tuyen** is the Head and Principal Investigator of **100RE Laboratory** at Hanoi University of Science and Technology (HUST). He is a leading expert in renewable energy integration, microgrids, battery energy management systems (BEMS), and clean energy policy. Email: \`tuyen.nguyenduc@hust.edu.vn\`.`;
+    }
     return `**PGS. TS. Nguyễn Đức Tuyên** là Chủ nhiệm & Trưởng phòng thí nghiệm **100RE Laboratory** tại Đại học Bách Khoa Hà Nội. Thầy là chuyên gia đầu ngành về tích hợp năng lượng tái tạo, lưới điện vi mô (Microgrid) và quản lý lưu trữ năng lượng pin BESS. Email: \`tuyen.nguyenduc@hust.edu.vn\`.`;
   }
-  if (q.includes('địa chỉ') || q.includes('ở đâu') || q.includes('liên hệ') || q.includes('contact') || q.includes('office')) {
+
+  if (q.includes('địa chỉ') || q.includes('ở đâu') || q.includes('liên hệ') || q.includes('contact') || q.includes('office') || q.includes('where')) {
+    if (isEnglish) {
+      return `📍 **100RE Laboratory Offices:**\n- Rooms **D9-300** & **C7-503**, Hanoi University of Science and Technology (HUST)\n- Address: No. 1 Dai Co Viet, Hai Ba Trung, Hanoi, Vietnam\n- Website: [www.100relab.com](https://www.100relab.com)\n- Email: \`tuyen.nguyenduc@hust.edu.vn\``;
+    }
     return `📍 **Văn phòng Phòng Thí nghiệm 100RE Lab:**\n- Phòng **D9-300** & **C7-503**, Đại học Bách Khoa Hà Nội (HUST)\n- Địa chỉ: Số 1 Đại Cồ Việt, Hai Bà Trưng, Hà Nội, Việt Nam\n- Website: [www.100relab.com](https://www.100relab.com)\n- Email: \`tuyen.nguyenduc@hust.edu.vn\``;
   }
-  if (q.includes('giới thiệu') || q.includes('là gì') || q.includes('about') || q.includes('100re') || q.includes('lab')) {
+
+  if (q.includes('giới thiệu') || q.includes('là gì') || q.includes('about') || q.includes('100re') || q.includes('overview') || q.includes('mission')) {
+    if (isEnglish) {
+      return `**100RE LABORATORY (Toward 100% Renewable Energy)** is a pioneering energy research lab at **Hanoi University of Science and Technology (HUST)**, led by **Assoc. Prof. Nguyen Duc Tuyen**.\n\nThe Lab develops cutting-edge technologies to accelerate the clean energy transition, supporting Vietnam's Net-Zero 2050 target and global 100% renewable power systems.`;
+    }
     return `**100RE LABORATORY (Toward 100% Renewable Energy)** là Phòng Thí nghiệm Tiên phong về Năng lượng Tái tạo thuộc **Đại học Bách Khoa Hà Nội (HUST)**, do **PGS. TS. Nguyễn Đức Tuyên** làm Trưởng phòng.\n\nPhòng Lab tập trung nghiên cứu các giải pháp công nghệ toàn diện hướng tới mục tiêu phát thải ròng bằng 0 (Net-Zero 2050) và tích hợp 100% năng lượng tái tạo vào hệ thống điện quốc gia.`;
   }
-  return `Chào bạn! Tôi là **100RE Lab AI Assistant** (Trợ lý Trí tuệ Nhân tạo của Phòng Thí nghiệm Năng lượng Tái tạo 100% - Đại học Bách Khoa Hà Nội).\n\nTôi có thể hỗ trợ bạn tìm hiểu về:\n- ☀️ 9 Nhóm nghiên cứu chuyên sâu (PV, BESS, AI, Wind, Smart Grid, EV, Hydrogen...)\n- 📚 Các bài báo khoa học và công bố quốc tế\n- 🔬 Hoạt động thực nghiệm và thiết bị phòng thí nghiệm\n- 🤝 Cơ hội tham gia nghiên cứu và hợp tác với Lab.\n\nBạn muốn tìm hiểu thông tin gì về 100RE Lab?`;
+
+  if (isEnglish) {
+    return `Hello! I am the **100RE Lab AI Assistant** (Artificial Intelligence Assistant for 100RE Laboratory at HUST).\n\nI can help you explore:\n- ☀️ 9 Specialized research teams (PV, BESS, AI, Wind, Smart Grid, EV, Hydrogen...)\n- 📚 Scientific publications and international journals\n- 🔬 Experimental testbeds and hardware facilities\n- 🤝 Student research opportunities and academic collaborations.\n\nFeel free to ask me anything in English or Vietnamese!`;
+  }
+
+  return `Chào bạn! Tôi là **100RE Lab AI Assistant** (Trợ lý Trí tuệ Nhân tạo của Phòng Thí nghiệm Năng lượng Tái tạo 100% - Đại học Bách Khoa Hà Nội).\n\nTôi có thể hỗ trợ bạn tìm hiểu về:\n- ☀️ 9 Nhóm nghiên cứu chuyên sâu (PV, BESS, AI, Wind, Smart Grid, EV, Hydrogen...)\n- 📚 Các bài báo khoa học và công bố quốc tế\n- 🔬 Hoạt động thực nghiệm và thiết bị phòng thí nghiệm\n- 🤝 Cơ hội tham gia nghiên cứu và hợp tác với Lab.\n\nBạn có thể đặt câu hỏi bằng cả Tiếng Việt hoặc Tiếng Anh!`;
 }

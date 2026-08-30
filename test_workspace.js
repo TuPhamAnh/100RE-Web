@@ -355,12 +355,21 @@ async function runTests() {
     }
   });
 
-  await test('AI Chat Assistant Gateway: POST /api/chat responds with 100RE Lab knowledge', async () => {
-    const chatReq = makeReq('/api/chat', 'POST', { message: 'Phòng Lab 100RE có những nhóm nghiên cứu nào?' });
-    const chatRes = await worker.fetch(chatReq, mockEnv);
-    const chatData = await chatRes.json();
-    if (!chatData.success || !chatData.answer || !chatData.answer.includes('PV')) {
-      throw new Error(`Expected AI Chat response with PV/teams, got ${JSON.stringify(chatData)}`);
+  await test('AI Chat Assistant Gateway: POST /api/chat responds with 100RE Lab knowledge (Vietnamese & English)', async () => {
+    // 1. Vietnamese prompt
+    const chatReqVi = makeReq('/api/chat', 'POST', { message: 'Phòng Lab 100RE có những nhóm nghiên cứu nào?' });
+    const chatResVi = await worker.fetch(chatReqVi, mockEnv);
+    const chatDataVi = await chatResVi.json();
+    if (!chatDataVi.success || !chatDataVi.answer || !chatDataVi.answer.includes('PV')) {
+      throw new Error(`Expected AI Chat response with PV/teams in VI, got ${JSON.stringify(chatDataVi)}`);
+    }
+
+    // 2. English prompt
+    const chatReqEn = makeReq('/api/chat', 'POST', { message: 'What are the 9 specialized research teams at 100RE Lab?' });
+    const chatResEn = await worker.fetch(chatReqEn, mockEnv);
+    const chatDataEn = await chatResEn.json();
+    if (!chatDataEn.success || !chatDataEn.answer || !chatDataEn.answer.includes('PV Team')) {
+      throw new Error(`Expected AI Chat response with PV Team in EN, got ${JSON.stringify(chatDataEn)}`);
     }
   });
 
