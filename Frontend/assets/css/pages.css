@@ -18,6 +18,10 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  margin-bottom: 12px;
+  color: #ffffff;
+}
+
 .page-hero-title.home-hero-title {
   font-size: clamp(1.8rem, 3.5vw, 3.4rem);
   line-height: 1.2;
