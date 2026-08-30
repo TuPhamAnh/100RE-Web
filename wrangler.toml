@@ -19,10 +19,8 @@ database_name = "100re-workspace-db"
 database_id = "local-dev-db"
 migrations_dir = "migrations"
 
-# 3. ENVIRONMENT & GOOGLE DRIVE CONFIGURATION
+# 3. ENVIRONMENT CONFIGURATION (5 TB Google Drive Cloud Storage)
 [vars]
 ADMIN_USERNAME = "100re"
-ADMIN_PASSWORD = "100re"
 ENVIRONMENT = "development"
-GOOGLE_DRIVE_ROOT_FOLDER_ID = "100RE_LAB_DRIVE_ROOT_FOLDER_ID"
-GOOGLE_CLIENT_ID = "mock-google-client-id"
+GOOGLE_DRIVE_ROOT_FOLDER_ID = "1tQJ4m10OxogcFfihoTzVAvbNamLhx4yq"

@@ -14,3 +14,10 @@ $RECYCLE.BIN/
 
 # Temporary scratch files
 scratch/
+
+# Cloudflare & Secrets
+.dev.vars
+.dev.vars.local
+*.secret
+node_modules/
+.wrangler/
