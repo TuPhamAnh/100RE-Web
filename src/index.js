@@ -197,26 +197,70 @@ export default {
     }
 
     // =========================================================================
-    // C. LEGACY ADMIN & AUTH (Public Website Member editing)
+    // =========================================================================
+    // C. USER AUTHENTICATION & LOGIN (Supervisor, Team Leader, Researcher)
     // =========================================================================
     if (path === '/api/login' && request.method === 'POST') {
       try {
         const body = await request.json();
         const { username, password } = body;
-        const validUser = env?.ADMIN_USERNAME || '100re';
-        const validPass = env?.ADMIN_PASSWORD || '100re';
+        const lowerUser = (username || '').toLowerCase().trim();
 
-        if (username === validUser && password === validPass) {
+        let userProfile = null;
+        if (password === '100re') {
+          if (lowerUser === 'supervisor' || lowerUser === '100re') {
+            userProfile = {
+              id: 'usr-sup-01',
+              username: 'supervisor',
+              name: 'Assoc. Prof. Nguyen Duc Tuyen',
+              display_name: 'Assoc. Prof. Nguyen Duc Tuyen (Supervisor)',
+              email: 'supervisor@100relab.hust.edu.vn',
+              role: 'supervisor'
+            };
+          } else if (lowerUser === 'teamleader' || lowerUser === 'leader') {
+            userProfile = {
+              id: 'usr-ldr-01',
+              username: 'teamleader',
+              name: 'Dr. Ngo Tri Duc',
+              display_name: 'Dr. Ngo Tri Duc (Leader PV)',
+              email: 'leader.pv@100relab.hust.edu.vn',
+              role: 'team_leader',
+              team: 'team-pv'
+            };
+          } else if (lowerUser === 'researcher') {
+            userProfile = {
+              id: 'usr-res-01',
+              username: 'researcher',
+              name: 'Bui Quang Hai',
+              display_name: 'Bui Quang Hai (Researcher PV)',
+              email: 'hai.ai@100relab.hust.edu.vn',
+              role: 'researcher',
+              team: 'team-pv'
+            };
+          }
+        }
+
+        if (userProfile) {
           const token = crypto.randomUUID();
           if (env && env.MEMBERS_KV) {
-            await env.MEMBERS_KV.put(`session_${token}`, username, { expirationTtl: 86400 * 7 });
+            await env.MEMBERS_KV.put(`session_${token}`, JSON.stringify(userProfile), { expirationTtl: 86400 * 7 });
           }
-          return jsonResponse({ success: true, token, user: username }, 200, corsHeaders);
+          return jsonResponse({
+            success: true,
+            token,
+            user: userProfile.username,
+            userId: userProfile.id,
+            role: userProfile.role,
+            display_name: userProfile.display_name
+          }, 200, corsHeaders);
         } else {
-          return jsonResponse({ success: false, error: 'Sai tên đăng nhập hoặc mật khẩu!' }, 401, corsHeaders);
+          return jsonResponse({
+            success: false,
+            error: 'Sai tên đăng nhập hoặc mật khẩu! (Hỗ trợ 3 tài khoản: supervisor / teamleader / researcher — Mật khẩu: 100re)'
+          }, 401, corsHeaders);
         }
       } catch (e) {
-        return jsonResponse({ success: false, error: 'Bad request' }, 400, corsHeaders);
+        return jsonResponse({ success: false, error: 'Bad request: ' + e.message }, 400, corsHeaders);
       }
     }
 
@@ -228,10 +272,17 @@ export default {
         return jsonResponse({ authenticated: false }, 200, corsHeaders);
       }
       if (env && env.MEMBERS_KV) {
-        const user = await env.MEMBERS_KV.get(`session_${token}`);
-        if (user) return jsonResponse({ authenticated: true, user }, 200, corsHeaders);
+        const sessionRaw = await env.MEMBERS_KV.get(`session_${token}`);
+        if (sessionRaw) {
+          try {
+            const parsed = JSON.parse(sessionRaw);
+            return jsonResponse({ authenticated: true, user: parsed.display_name || parsed.username || 'supervisor', role: parsed.role, userId: parsed.id }, 200, corsHeaders);
+          } catch(e) {
+            return jsonResponse({ authenticated: true, user: sessionRaw, role: 'supervisor', userId: 'usr-sup-01' }, 200, corsHeaders);
+          }
+        }
       }
-      return jsonResponse({ authenticated: true, user: '100re' }, 200, corsHeaders);
+      return jsonResponse({ authenticated: true, user: 'Assoc. Prof. Nguyen Duc Tuyen', role: 'supervisor', userId: 'usr-sup-01' }, 200, corsHeaders);
     }
 
     if (path === '/api/logout' && request.method === 'POST') {

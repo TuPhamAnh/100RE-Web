@@ -20,17 +20,67 @@ export const Auth = {
     }
 
     // Active session fallback for smooth workspace entry
-    this.currentUser = {
-      id: localStorage.getItem('ws_dev_user_id') || 'usr-sup-01',
-      name: 'Assoc. Prof. Nguyen Duc Tuyen',
-      display_name: 'Assoc. Prof. Nguyen Duc Tuyen',
-      role: 'supervisor',
-      status: 'active',
-      avatar_url: 'assets/images/logo.jpg',
-      isSupervisor: true,
-      teams: [],
-      projects: []
-    };
+    const savedUserId = localStorage.getItem('ws_dev_user_id') || 'usr-sup-01';
+    return this.switchDevUser(savedUserId);
+  },
+
+  async switchDevUser(userId) {
+    localStorage.setItem('ws_dev_user_id', userId);
+    try {
+      const data = await API.get('/api/me');
+      if (data.authenticated && data.user) {
+        this.currentUser = data.user;
+        this.updateUI();
+        return this.currentUser;
+      }
+    } catch (e) {
+      console.warn('API /api/me lookup warning:', e);
+    }
+
+    // Local role resolution
+    if (userId === 'usr-ldr-01' || userId === 'teamleader') {
+      this.currentUser = {
+        id: 'usr-ldr-01',
+        name: 'Dr. Ngo Tri Duc',
+        display_name: 'Dr. Ngo Tri Duc (Leader PV)',
+        role: 'team_leader',
+        status: 'active',
+        avatar_url: 'assets/images/ngo_tri_duc.png',
+        isSupervisor: false,
+        isLeader: true,
+        teams: ['team-pv'],
+        teamRoles: { 'team-pv': 'leader' },
+        projects: ['proj-pv-01']
+      };
+    } else if (userId === 'usr-res-01' || userId === 'researcher') {
+      this.currentUser = {
+        id: 'usr-res-01',
+        name: 'Bui Quang Hai',
+        display_name: 'Bui Quang Hai (Researcher PV)',
+        role: 'researcher',
+        status: 'active',
+        avatar_url: 'assets/images/bui_quang_hai.jpg',
+        isSupervisor: false,
+        isLeader: false,
+        teams: ['team-pv', 'team-ai'],
+        teamRoles: { 'team-pv': 'member', 'team-ai': 'member' },
+        projects: ['proj-pv-01']
+      };
+    } else {
+      this.currentUser = {
+        id: 'usr-sup-01',
+        name: 'Assoc. Prof. Nguyen Duc Tuyen',
+        display_name: 'Assoc. Prof. Nguyen Duc Tuyen (Supervisor)',
+        role: 'supervisor',
+        status: 'active',
+        avatar_url: 'assets/images/logo.jpg',
+        isSupervisor: true,
+        isLeader: true,
+        teams: [],
+        teamRoles: {},
+        projects: []
+      };
+    }
     this.updateUI();
     return this.currentUser;
   },

@@ -377,9 +377,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (data.success && data.token) {
           currentAuthToken = data.token;
           localStorage.setItem('100re_token', data.token);
-          setAdminState(true, data.user);
+          if (data.userId) localStorage.setItem('ws_dev_user_id', data.userId);
+          if (data.role) localStorage.setItem('100re_user_role', data.role);
+          setAdminState(true, data.display_name || data.user);
           closeModal(loginModal);
-          showToast(`Đăng nhập thành công! Token UUID đã được cấp.`);
+          showToast(`Đăng nhập thành công: ${data.display_name || data.user}!`);
           await loadMembers();
         } else {
           if (loginErrorAlert) {
@@ -389,17 +391,35 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       } catch (err) {
         // Fallback for offline / direct file opening
-        if (username === '100re' && password === '100re') {
+        const lowerUser = (username || '').toLowerCase().trim();
+        if (password === '100re' && (lowerUser === 'supervisor' || lowerUser === 'teamleader' || lowerUser === 'researcher' || lowerUser === '100re')) {
           const fallbackToken = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : ('uuid_' + Date.now());
           currentAuthToken = fallbackToken;
           localStorage.setItem('100re_token', fallbackToken);
-          setAdminState(true, '100re');
+
+          let role = 'supervisor';
+          let uId = 'usr-sup-01';
+          let dispName = 'Assoc. Prof. Nguyen Duc Tuyen (Supervisor)';
+
+          if (lowerUser === 'teamleader') {
+            role = 'team_leader';
+            uId = 'usr-ldr-01';
+            dispName = 'Dr. Ngo Tri Duc (Leader PV)';
+          } else if (lowerUser === 'researcher') {
+            role = 'researcher';
+            uId = 'usr-res-01';
+            dispName = 'Bui Quang Hai (Researcher PV)';
+          }
+
+          localStorage.setItem('ws_dev_user_id', uId);
+          localStorage.setItem('100re_user_role', role);
+          setAdminState(true, dispName);
           closeModal(loginModal);
-          showToast('Đăng nhập thành công (Chế độ Quản trị)!');
+          showToast(`Đăng nhập thành công: ${dispName}!`);
           await loadMembers();
         } else {
           if (loginErrorAlert) {
-            loginErrorAlert.innerHTML = 'Sai tên đăng nhập hoặc mật khẩu!<br><small style="font-size:0.75rem; color:#64748b;">(Tài khoản: 100re / Mật khẩu: 100re)</small>';
+            loginErrorAlert.innerHTML = 'Sai tên đăng nhập hoặc mật khẩu!<br><small style="font-size:0.75rem; color:#64748b;">(Tài khoản: supervisor / teamleader / researcher — Mật khẩu: 100re)</small>';
             loginErrorAlert.style.display = 'block';
           }
         }

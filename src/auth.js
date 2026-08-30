@@ -21,13 +21,27 @@ export async function resolveUser(request, env, db) {
     let u = await db.first('SELECT * FROM users WHERE id = ?', [token]);
     if (u) return enrichUser(u, db);
 
-    // If token is an active admin session in KV
+    // If token is an active session in KV
     if (env && env.MEMBERS_KV) {
       try {
-        const sessionUser = await env.MEMBERS_KV.get(`session_${token}`);
-        if (sessionUser) {
-          u = await db.first('SELECT * FROM users WHERE role = ? OR email LIKE ? LIMIT 1', ['supervisor', '%supervisor%']);
-          if (u) return enrichUser(u, db);
+        const sessionRaw = await env.MEMBERS_KV.get(`session_${token}`);
+        if (sessionRaw) {
+          let sessionUser = null;
+          try { sessionUser = JSON.parse(sessionRaw); } catch(e) { sessionUser = { username: sessionRaw }; }
+
+          if (sessionUser && sessionUser.id) {
+            u = await db.first('SELECT * FROM users WHERE id = ?', [sessionUser.id]);
+            if (u) return enrichUser(u, db);
+          } else if (sessionUser && sessionUser.username) {
+            if (sessionUser.username === 'teamleader') {
+              u = await db.first('SELECT * FROM users WHERE id = ?', ['usr-ldr-01']);
+            } else if (sessionUser.username === 'researcher') {
+              u = await db.first('SELECT * FROM users WHERE id = ?', ['usr-res-01']);
+            } else {
+              u = await db.first('SELECT * FROM users WHERE id = ?', ['usr-sup-01']);
+            }
+            if (u) return enrichUser(u, db);
+          }
         }
       } catch (e) {}
     }
