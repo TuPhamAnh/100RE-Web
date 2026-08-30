@@ -42,6 +42,8 @@
 
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --font-heading: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-heading: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'Fira Code', 'SF Mono', Consolas, Monaco, monospace;
 }
 
@@ -49,11 +51,10 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: inherit;
 }
 
 html, body, .ws-body, .workspace-body {
-  font-family: var(--font-sans) !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
   background-color: var(--ws-bg-page);
   color: var(--ws-text-main);
   line-height: 1.5;
@@ -61,6 +62,15 @@ html, body, .ws-body, .workspace-body {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* FontAwesome Icons must always use Font Awesome family */
+.fa, .fas, .far, .fal, .fab, .fa-solid, .fa-regular, .fa-brands, [class^="fa-"], [class*=" fa-"] {
+  font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands" !important;
+  font-style: normal;
+}
+.fa-brands, .fab {
+  font-family: "Font Awesome 6 Brands" !important;
 }
 
 h1, h2, h3, h4, h5, h6,
@@ -72,16 +82,16 @@ h1, h2, h3, h4, h5, h6,
 .ws-stat-val,
 .ws-crumb-root,
 .ws-crumb-current {
-  font-family: var(--font-heading) !important;
+  font-family: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
   letter-spacing: -0.015em;
 }
 
 button, input, select, textarea, .form-control, .btn-ws-primary, .btn-ws-ghost, .btn-ws-secondary, .btn-ws-danger, .btn-ws-sm {
-  font-family: var(--font-sans) !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
 }
 
 code, pre, .ws-code, [style*="Fira Code"] {
-  font-family: var(--font-mono) !important;
+  font-family: 'Fira Code', 'SF Mono', Consolas, Monaco, monospace !important;
 }
 
 /* ==========================================================
@@ -108,50 +118,61 @@ code, pre, .ws-code, [style*="Fira Code"] {
   transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.ws-sidebar-header {
-  height: var(--ws-topbar-height);
-  padding: 0 16px;
+.ws-brand {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 14px 18px;
+  min-height: 72px;
   border-bottom: 1px solid var(--ws-border);
+  background: #ffffff;
+  width: 100%;
 }
 
-.ws-brand {
+.ws-brand-link {
   display: flex;
   align-items: center;
   gap: 12px;
   text-decoration: none;
   color: inherit;
+  flex: 1;
 }
 
 .ws-brand-logo {
-  width: 38px;
-  height: 38px;
-  object-fit: cover;
-  border-radius: var(--ws-radius-sm);
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  border-radius: 8px;
   border: 1px solid var(--ws-border);
+  background: #ffffff;
+  padding: 2px;
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
 .ws-brand-text {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  line-height: 1.15;
 }
 
 .ws-brand-title {
-  font-family: var(--font-heading);
-  font-size: 1.1rem;
-  font-weight: 700;
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  font-size: 1.2rem;
+  font-weight: 800;
   color: var(--ws-dark);
   letter-spacing: 0.5px;
 }
 
 .ws-brand-subtitle {
-  font-size: 0.725rem;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  font-size: 0.65rem;
   color: var(--ws-primary);
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.6px;
+  margin-top: 2px;
 }
 
 .ws-sidebar-close-btn {

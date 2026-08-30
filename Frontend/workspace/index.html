@@ -5,16 +5,36 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>100RE LAB WORKSPACE — Electronic Lab Notebook &amp; Research Workspace</title>
   
-  <!-- FontAwesome 6 Pro CDN -->
+  <!-- FontAwesome 6 Free CDN -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
-  <!-- Google Fonts: Inter & Outfit -->
+  <!-- Google Fonts: Inter, Outfit, Fira Code -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <!-- Workspace Modular Styles -->
   <link rel="stylesheet" href="css/workspace.css">
+
+  <style>
+    /* Absolute Font Enforcement - Guarantee zero Times New Roman */
+    *, html, body, div, span, applet, object, iframe, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video, button, input, select, textarea {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+    }
+    h1, h2, h3, h4, h5, h6, .ws-brand-title, .ws-modal-title, .ws-card-title, .ws-stat-number, .ws-stat-val, .ws-page-title-group h1 {
+      font-family: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    }
+    code, pre, .ws-code, kbd {
+      font-family: 'Fira Code', 'SF Mono', Consolas, monospace !important;
+    }
+    .fa, .fas, .far, .fal, .fab, .fa-solid, .fa-regular, .fa-brands, [class^="fa-"], [class*=" fa-"], [class^="fa-"]::before, [class*=" fa-"]::before {
+      font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands" !important;
+      font-style: normal !important;
+    }
+    .fa-brands, .fab, .fa-brands::before, .fab::before {
+      font-family: "Font Awesome 6 Brands" !important;
+    }
+  </style>
 </head>
 <body class="ws-body">
 
@@ -26,7 +46,7 @@
       <!-- Workspace Brand -->
       <div class="ws-brand">
         <a href="#dashboard" class="ws-brand-link">
-          <img src="../assets/images/logo.jpg" alt="100RE Logo" class="ws-brand-logo">
+          <img src="/assets/images/logo.jpg" alt="100RE Logo" class="ws-brand-logo" onerror="this.onerror=null; this.src='../assets/images/logo.jpg';">
           <div class="ws-brand-text">
             <span class="ws-brand-title">100RE LAB</span>
             <span class="ws-brand-subtitle">SciNote ELN Workspace</span>
@@ -43,7 +63,7 @@
         <ul class="ws-nav-group">
           <li class="ws-nav-item">
             <a href="#dashboard" class="ws-nav-link active" data-route="dashboard">
-              <i class="fa-solid fa-house-chimney"></i>
+              <i class="fa-solid fa-house"></i>
               <span>Dashboard</span>
             </a>
           </li>
@@ -54,7 +74,7 @@
         <ul class="ws-nav-group">
           <li class="ws-nav-item">
             <a href="#experiments" class="ws-nav-link" data-route="experiments">
-              <i class="fa-solid fa-folder-tree"></i>
+              <i class="fa-solid fa-sitemap"></i>
               <span>Projects &amp; Experiments</span>
             </a>
           </li>
@@ -66,7 +86,7 @@
           </li>
           <li class="ws-nav-item">
             <a href="#protocols" class="ws-nav-link" data-route="protocols">
-              <i class="fa-solid fa-book-medical"></i>
+              <i class="fa-solid fa-book-bookmark"></i>
               <span>Protocols &amp; SOPs</span>
             </a>
           </li>
@@ -78,7 +98,7 @@
           </li>
           <li class="ws-nav-item">
             <a href="#signoffs" class="ws-nav-link" data-route="signoffs">
-              <i class="fa-solid fa-file-signature"></i>
+              <i class="fa-solid fa-signature"></i>
               <span>Sign-offs &amp; Approvals</span>
             </a>
           </li>
@@ -102,7 +122,7 @@
           </li>
           <li class="ws-nav-item">
             <a href="#teams" class="ws-nav-link" data-route="teams">
-              <i class="fa-solid fa-people-group"></i>
+              <i class="fa-solid fa-users"></i>
               <span>Research Teams</span>
               <span class="ws-nav-badge" id="badgeTeamCount">9</span>
             </a>
@@ -131,7 +151,7 @@
         <ul class="ws-nav-group">
           <li class="ws-nav-item">
             <a href="#members" class="ws-nav-link" data-route="members">
-              <i class="fa-solid fa-users"></i>
+              <i class="fa-solid fa-id-card"></i>
               <span>Members &amp; Profiles</span>
             </a>
           </li>
@@ -158,7 +178,7 @@
       <!-- Sidebar Footer User Profile -->
       <div class="ws-sidebar-footer">
         <div class="ws-user-card" id="wsUserCard">
-          <img src="../assets/images/logo.jpg" alt="User Avatar" class="ws-user-avatar" id="sidebarUserAvatar">
+          <img src="/assets/images/logo.jpg" alt="User Avatar" class="ws-user-avatar" id="sidebarUserAvatar" onerror="this.onerror=null; this.src='../assets/images/logo.jpg';">
           <div class="ws-user-info">
             <div class="ws-user-name" id="sidebarUserName">Assoc. Prof. Nguyen Duc Tuyen</div>
             <div class="ws-user-role-badge" id="sidebarUserRole">SUPERVISOR</div>

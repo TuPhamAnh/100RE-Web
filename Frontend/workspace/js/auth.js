@@ -68,7 +68,15 @@ export const Auth = {
 
     if (nameEl) nameEl.textContent = this.currentUser.display_name || this.currentUser.name || 'Assoc. Prof. Nguyen Duc Tuyen';
     if (roleEl) roleEl.textContent = (this.currentUser.role || 'supervisor').replace('_', ' ').toUpperCase();
-    if (avatarEl) avatarEl.src = this.currentUser.avatar_url || 'assets/images/logo.jpg';
+    
+    let avatar = this.currentUser.avatar_url || '/assets/images/logo.jpg';
+    if (!avatar.startsWith('/') && !avatar.startsWith('http') && !avatar.startsWith('data:')) {
+      avatar = '/' + avatar;
+    }
+    if (avatarEl) {
+      avatarEl.src = avatar;
+      avatarEl.onerror = () => { avatarEl.src = '/assets/images/logo.jpg'; };
+    }
 
     // Show or hide Admin section
     if (adminSecLabel && adminNavGroup) {
