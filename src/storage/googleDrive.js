@@ -4,11 +4,11 @@
  * Provides unified interface for uploading, downloading, organizing, and 
  * managing research files, datasets, papers, and reports on Google Drive.
  * 
- * Features:
- * - Direct Google Drive REST v3 API integration
- * - Service Account / OAuth2 token support
- * - Automatic folder organization by Team and Project
- * - Built-in offline development store for zero-config local testing
+ * Authentication modes supported:
+ * 1. Google Cloud Service Account (client_email + private_key from JSON file)
+ * 2. OAuth2 Refresh Token (client_id + client_secret + refresh_token)
+ * 3. Direct Access Token (GOOGLE_ACCESS_TOKEN)
+ * 4. Local Development Mock fallback
  */
 
 // In-memory persistent dev store for local development simulation
@@ -16,6 +16,10 @@ const devDriveStore = new Map();
 const devFolderStore = new Map([
   ['100RE_LAB_DRIVE_ROOT_FOLDER_ID', { name: '100RE LAB', parent: null }]
 ]);
+
+// Cached token in memory to avoid requesting JWT on every request
+let cachedToken = null;
+let cachedTokenExpiry = 0;
 
 export class GoogleDriveService {
   /**
@@ -216,12 +220,34 @@ export class GoogleDriveService {
   }
 
   /**
-   * Helper to resolve Google OAuth Access Token
+   * Helper to resolve Google OAuth Access Token (Service Account & OAuth2)
    */
   static async getAccessToken(env = {}) {
+    const now = Math.floor(Date.now() / 1000);
+    if (cachedToken && cachedTokenExpiry > now + 60) {
+      return cachedToken;
+    }
+
     if (env.GOOGLE_ACCESS_TOKEN) return env.GOOGLE_ACCESS_TOKEN;
 
-    // Refresh token flow if client credentials provided
+    // 1. Service Account Flow (client_email + private_key)
+    const saEmail = env.GOOGLE_SERVICE_ACCOUNT_EMAIL || env.GOOGLE_CLIENT_EMAIL;
+    const saKey = env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY || env.GOOGLE_PRIVATE_KEY;
+
+    if (saEmail && saKey) {
+      try {
+        const token = await this.getServiceAccountToken(saEmail, saKey);
+        if (token) {
+          cachedToken = token;
+          cachedTokenExpiry = now + 3500;
+          return token;
+        }
+      } catch (e) {
+        console.warn('Service Account token error:', e);
+      }
+    }
+
+    // 2. OAuth2 Refresh Token flow
     if (env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET && env.GOOGLE_REFRESH_TOKEN) {
       try {
         const res = await fetch('https://oauth2.googleapis.com/token', {
@@ -236,6 +262,8 @@ export class GoogleDriveService {
         });
         if (res.ok) {
           const tokenData = await res.json();
+          cachedToken = tokenData.access_token;
+          cachedTokenExpiry = now + (tokenData.expires_in || 3600);
           return tokenData.access_token;
         }
       } catch (e) {
@@ -244,5 +272,90 @@ export class GoogleDriveService {
     }
 
     return null;
+  }
+
+  /**
+   * Generate JWT and request OAuth2 token for Service Account (Web Crypto RS256)
+   */
+  static async getServiceAccountToken(clientEmail, privateKeyPem) {
+    const now = Math.floor(Date.now() / 1000);
+    
+    // Header & Claim Set
+    const header = { alg: 'RS256', typ: 'JWT' };
+    const claimSet = {
+      iss: clientEmail,
+      scope: 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.file',
+      aud: 'https://oauth2.googleapis.com/token',
+      exp: now + 3600,
+      iat: now
+    };
+
+    const b64UrlHeader = this.base64UrlEncode(JSON.stringify(header));
+    const b64UrlClaim = this.base64UrlEncode(JSON.stringify(claimSet));
+    const signingInput = `${b64UrlHeader}.${b64UrlClaim}`;
+
+    // Import RSA Private Key
+    const keyData = this.pemToArrayBuffer(privateKeyPem);
+    const cryptoKey = await crypto.subtle.importKey(
+      'pkcs8',
+      keyData,
+      { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
+      false,
+      ['sign']
+    );
+
+    const enc = new TextEncoder();
+    const signature = await crypto.subtle.sign(
+      'RSASSA-PKCS1-v1_5',
+      cryptoKey,
+      enc.encode(signingInput)
+    );
+
+    const b64UrlSignature = this.base64UrlEncodeBytes(new Uint8Array(signature));
+    const jwt = `${signingInput}.${b64UrlSignature}`;
+
+    const res = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+        assertion: jwt
+      })
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      return data.access_token;
+    }
+    return null;
+  }
+
+  static base64UrlEncode(str) {
+    const enc = new TextEncoder();
+    return this.base64UrlEncodeBytes(enc.encode(str));
+  }
+
+  static base64UrlEncodeBytes(bytes) {
+    let binary = '';
+    for (let i = 0; i < bytes.byteLength; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary)
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
+  }
+
+  static pemToArrayBuffer(pem) {
+    const cleanPem = pem
+      .replace(/-----BEGIN[A-Z\s]+PRIVATE KEY-----/g, '')
+      .replace(/-----END[A-Z\s]+PRIVATE KEY-----/g, '')
+      .replace(/[\r\n\s]/g, '');
+    const binary = atob(cleanPem);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+      bytes[i] = binary.charCodeAt(i);
+    }
+    return bytes.buffer;
   }
 }
