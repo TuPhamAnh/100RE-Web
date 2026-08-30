@@ -213,6 +213,47 @@ export async function handleWorkspaceUsers(request, user, db, env) {
       };
     }));
 
+    // Synchronize and include all public lab researchers into the member pool
+    let publicList = Array.from(publicMembersMap.values());
+    if (publicList.length === 0) publicList = DEFAULT_MEMBERS;
+
+    for (const pm of publicList) {
+      const alreadyInEnriched = enriched.some(u => 
+        u.member_key === pm.id || 
+        (u.name && u.name.toLowerCase() === pm.name.toLowerCase()) || 
+        (u.display_name && u.display_name.toLowerCase() === pm.name.toLowerCase())
+      );
+
+      if (!alreadyInEnriched) {
+        const teamSlug = `team-${pm.team}`;
+        const teamObj = allTeams.find(t => t.slug === pm.team || t.id === teamSlug);
+        const teamName = teamObj?.name || pm.teamName || `${pm.team.toUpperCase()} Team`;
+        const emailSlug = pm.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '.');
+
+        enriched.push({
+          id: `usr-${pm.id}`,
+          email: `${emailSlug}@100relab.hust.edu.vn`,
+          display_name: pm.name,
+          name: pm.name,
+          member_key: pm.id,
+          avatar_url: pm.image || 'assets/images/logo.jpg',
+          role: pm.role && pm.role.toLowerCase().includes('leader') ? 'team_leader' : 'researcher',
+          status: 'active',
+          permissions: getDefaultPermissionsForRole('researcher'),
+          teams: [{
+            team_id: teamObj?.id || teamSlug,
+            team_name: teamName,
+            team_slug: pm.team,
+            team_role: 'member'
+          }],
+          projects: [],
+          public_profile: pm,
+          is_linked_to_public: true,
+          canManage: RBAC.canManageUsers(user)
+        });
+      }
+    }
+
     return { success: true, members: enriched, users: enriched };
   }
 
