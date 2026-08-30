@@ -143,13 +143,24 @@ function initDevStore() {
 
       // TEAM_MEMBERS
       if (q.includes('FROM TEAM_MEMBERS')) {
-        if (q.includes('WHERE USER_ID =') || q.includes('WHERE USER_ID=?')) {
+        if (q.includes('USER_ID =') || q.includes('USER_ID=?') || q.includes('USER_ID')) {
           return this.team_members.filter(tm => tm.user_id === params[0]);
         }
-        if (q.includes('WHERE TEAM_ID =') || q.includes('WHERE TEAM_ID=?')) {
+        if (q.includes('TEAM_ID =') || q.includes('TEAM_ID=?') || q.includes('TEAM_ID')) {
           return this.team_members.filter(tm => tm.team_id === params[0]);
         }
         return [...this.team_members];
+      }
+
+      // PROJECT_MEMBERS
+      if (q.includes('FROM PROJECT_MEMBERS')) {
+        if (q.includes('USER_ID =') || q.includes('USER_ID=?') || q.includes('USER_ID')) {
+          return this.project_members.filter(pm => pm.user_id === params[0]);
+        }
+        if (q.includes('PROJECT_ID =') || q.includes('PROJECT_ID=?') || q.includes('PROJECT_ID')) {
+          return this.project_members.filter(pm => pm.project_id === params[0]);
+        }
+        return [...this.project_members];
       }
 
       // PROJECTS

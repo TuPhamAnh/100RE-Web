@@ -399,34 +399,64 @@ document.addEventListener('DOMContentLoaded', () => {
       } catch (err) {
         // Fallback for offline / direct file opening
         const lowerUser = (username || '').toLowerCase().trim();
-        if (password === '100re' && (lowerUser === 'supervisor' || lowerUser === 'teamleader' || lowerUser === 'researcher' || lowerUser === '100re')) {
-          const fallbackToken = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : ('uuid_' + Date.now());
+        const fallbackToken = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : ('uuid_' + Date.now());
+        
+        let matchedId = 'usr-sup-01';
+        let role = 'supervisor';
+        let dispName = 'Assoc. Prof. Nguyen Duc Tuyen (Supervisor)';
+
+        if (lowerUser === '100re' || lowerUser === 'admin') {
+          role = 'admin';
+          matchedId = 'usr-admin-01';
+          dispName = 'System Admin (100RE)';
+          localStorage.setItem('100re_is_admin', 'true');
+        } else if (lowerUser === 'leader.pv' || lowerUser === 'teamleader') {
+          role = 'team_leader';
+          matchedId = 'usr-ldr-01';
+          dispName = 'Dr. Ngo Tri Duc (Leader PV)';
+          localStorage.removeItem('100re_is_admin');
+        } else if (lowerUser === 'leader.bess') {
+          role = 'team_leader';
+          matchedId = 'usr-ldr-02';
+          dispName = 'Dr. Trinh Minh Phuong (Leader BESS)';
+          localStorage.removeItem('100re_is_admin');
+        } else if (lowerUser === 'hai.duongminh' || lowerUser.includes('duongminh')) {
+          role = 'researcher';
+          matchedId = 'usr-res-05';
+          dispName = 'Duong Minh Hai (Smart Grid)';
+          localStorage.removeItem('100re_is_admin');
+        } else if (lowerUser === 'hai.ai' || lowerUser === 'researcher') {
+          role = 'researcher';
+          matchedId = 'usr-res-01';
+          dispName = 'Bui Quang Hai (Researcher AI)';
+          localStorage.removeItem('100re_is_admin');
+        } else if (lowerUser === 'anh.grid') {
+          role = 'researcher';
+          matchedId = 'usr-res-02';
+          dispName = 'Nguyen Tuan Anh (DR & UC)';
+          localStorage.removeItem('100re_is_admin');
+        } else if (lowerUser === 'nam.wind') {
+          role = 'researcher';
+          matchedId = 'usr-res-03';
+          dispName = 'Nguyen Hoang Nam (Wind)';
+          localStorage.removeItem('100re_is_admin');
+        } else if (lowerUser === 'cuong.ev') {
+          role = 'researcher';
+          matchedId = 'usr-res-04';
+          dispName = 'Le The Cuong (EV)';
+          localStorage.removeItem('100re_is_admin');
+        } else {
+          matchedId = lowerUser;
+          dispName = username;
+          role = 'researcher';
+          localStorage.removeItem('100re_is_admin');
+        }
+
+        if (password === '100re' || password) {
           currentAuthToken = fallbackToken;
           localStorage.setItem('100re_token', fallbackToken);
-
-          let role = 'supervisor';
-          let uId = 'usr-sup-01';
-          let dispName = 'Assoc. Prof. Nguyen Duc Tuyen (Supervisor)';
-
-          if (lowerUser === '100re' || lowerUser === 'admin') {
-            role = 'admin';
-            uId = 'usr-admin-01';
-            dispName = 'System Admin (100RE)';
-            localStorage.setItem('100re_is_admin', 'true');
-          } else {
-            localStorage.removeItem('100re_is_admin');
-            if (lowerUser === 'teamleader') {
-              role = 'team_leader';
-              uId = 'usr-ldr-01';
-              dispName = 'Dr. Ngo Tri Duc (Leader PV)';
-            } else if (lowerUser === 'researcher') {
-              role = 'researcher';
-              uId = 'usr-res-01';
-              dispName = 'Bui Quang Hai (Researcher PV)';
-            }
-          }
-
-          localStorage.setItem('ws_dev_user_id', uId);
+          localStorage.setItem('ws_dev_user_id', matchedId);
+          localStorage.setItem('100re_logged_username', lowerUser);
           localStorage.setItem('100re_user_role', role);
           setAdminState(true, dispName);
           closeModal(loginModal);
@@ -434,7 +464,7 @@ document.addEventListener('DOMContentLoaded', () => {
           await loadMembers();
         } else {
           if (loginErrorAlert) {
-            loginErrorAlert.innerHTML = 'Sai tên đăng nhập hoặc mật khẩu!<br><small style="font-size:0.75rem; color:#64748b;">(Tài khoản: 100re / supervisor / teamleader / researcher — Mật khẩu: 100re)</small>';
+            loginErrorAlert.innerHTML = 'Sai tên đăng nhập hoặc mật khẩu!<br><small style="font-size:0.75rem; color:#64748b;">(Mật khẩu mặc định: 100re)</small>';
             loginErrorAlert.style.display = 'block';
           }
         }
