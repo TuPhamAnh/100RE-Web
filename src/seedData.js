@@ -4,7 +4,7 @@
  */
 
 export const SEED_USERS = [
-  { id: 'usr-sup-01', email: 'supervisor@100relab.hust.edu.vn', display_name: 'Prof. Nguyen Duc Tuan', member_key: null, avatar_url: 'assets/images/logo.jpg', role: 'supervisor', status: 'active', created_at: 1704067200, updated_at: 1704067200 },
+  { id: 'usr-sup-01', email: 'supervisor@100relab.hust.edu.vn', display_name: 'Assoc. Prof. Nguyen Duc Tuyen', member_key: null, avatar_url: 'assets/images/logo.jpg', role: 'supervisor', status: 'active', created_at: 1704067200, updated_at: 1704067200 },
   { id: 'usr-ldr-01', email: 'leader.pv@100relab.hust.edu.vn', display_name: 'Dr. Ngo Tri Duc', member_key: 'pv-1', avatar_url: 'assets/images/ngo_tri_duc.png', role: 'team_leader', status: 'active', created_at: 1704153600, updated_at: 1704153600 },
   { id: 'usr-ldr-02', email: 'leader.bess@100relab.hust.edu.vn', display_name: 'Dr. Trinh Minh Phuong', member_key: 'bess-1', avatar_url: 'assets/images/trinh_minh_phuong.jpg', role: 'team_leader', status: 'active', created_at: 1704153600, updated_at: 1704153600 },
   { id: 'usr-res-01', email: 'hai.ai@100relab.hust.edu.vn', display_name: 'Bui Quang Hai', member_key: 'ai-1', avatar_url: 'assets/images/bui_quang_hai.jpg', role: 'researcher', status: 'active', created_at: 1704240000, updated_at: 1704240000 },

@@ -22,8 +22,8 @@ export const Auth = {
     // Active session fallback for smooth workspace entry
     this.currentUser = {
       id: localStorage.getItem('ws_dev_user_id') || 'usr-sup-01',
-      name: 'Prof. Nguyen Duc Tuan',
-      display_name: 'Prof. Nguyen Duc Tuan',
+      name: 'Assoc. Prof. Nguyen Duc Tuyen',
+      display_name: 'Assoc. Prof. Nguyen Duc Tuyen',
       role: 'supervisor',
       status: 'active',
       avatar_url: 'assets/images/logo.jpg',
@@ -66,7 +66,7 @@ export const Auth = {
     const adminSecLabel = document.getElementById('sectionAdminLabel');
     const adminNavGroup = document.getElementById('groupAdminNav');
 
-    if (nameEl) nameEl.textContent = this.currentUser.display_name || this.currentUser.name || 'Prof. Nguyen Duc Tuan';
+    if (nameEl) nameEl.textContent = this.currentUser.display_name || this.currentUser.name || 'Assoc. Prof. Nguyen Duc Tuyen';
     if (roleEl) roleEl.textContent = (this.currentUser.role || 'supervisor').replace('_', ' ').toUpperCase();
     if (avatarEl) avatarEl.src = this.currentUser.avatar_url || 'assets/images/logo.jpg';
 

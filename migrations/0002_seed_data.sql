@@ -7,7 +7,7 @@
 -- 1. WORKSPACE USERS (D1 is Source of Truth for Workspace Authentication & RBAC)
 -- Note: 'member_key' optionally links to the public member profile in Cloudflare KV
 INSERT OR IGNORE INTO users (id, email, display_name, member_key, avatar_url, role, status, created_at, updated_at) VALUES
-('usr-sup-01', 'supervisor@100relab.hust.edu.vn', 'Prof. Nguyen Duc Tuan', NULL, 'assets/images/logo.jpg', 'supervisor', 'active', 1704067200, 1704067200),
+('usr-sup-01', 'supervisor@100relab.hust.edu.vn', 'Assoc. Prof. Nguyen Duc Tuyen', NULL, 'assets/images/logo.jpg', 'supervisor', 'active', 1704067200, 1704067200),
 ('usr-ldr-01', 'leader.pv@100relab.hust.edu.vn', 'Dr. Ngo Tri Duc', 'pv-1', 'assets/images/ngo_tri_duc.png', 'team_leader', 'active', 1704153600, 1704153600),
 ('usr-ldr-02', 'leader.bess@100relab.hust.edu.vn', 'Dr. Trinh Minh Phuong', 'bess-1', 'assets/images/trinh_minh_phuong.jpg', 'team_leader', 'active', 1704153600, 1704153600),
 ('usr-res-01', 'hai.ai@100relab.hust.edu.vn', 'Bui Quang Hai', 'ai-1', 'assets/images/bui_quang_hai.jpg', 'researcher', 'active', 1704240000, 1704240000),
