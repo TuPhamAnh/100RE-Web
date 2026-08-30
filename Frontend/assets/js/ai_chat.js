@@ -31,11 +31,11 @@
             <div class="ai-avatar"><i class="fa-solid fa-robot"></i></div>
             <div>
               <div class="ai-title">100RE Lab AI Assistant</div>
-              <div class="ai-status"><span class="ai-status-dot"></span> Trực tuyến (Gemini AI)</div>
+              <div class="ai-status"><span class="ai-status-dot"></span> Online (Gemini AI)</div>
             </div>
           </div>
           <div class="ai-header-actions">
-            <button id="btnCloseAiChat" title="Đóng">&times;</button>
+            <button id="btnCloseAiChat" title="Close">&times;</button>
           </div>
         </div>
 
@@ -44,8 +44,8 @@
           <!-- Welcome Message -->
           <div class="ai-msg ai-msg-assistant">
             <div class="ai-bubble">
-              👋 Xin chào! Tôi là **100RE Lab AI Assistant** (Trợ lý Trí tuệ Nhân tạo của 100RE Laboratory - Đại học Bách Khoa Hà Nội).<br><br>
-              Bạn có thể hỏi tôi bất cứ điều gì bằng <strong>Tiếng Việt</strong> hoặc <strong>English</strong>! Dưới đây là một số câu hỏi gợi ý:
+              👋 Hello! I am **100RE Lab AI Assistant** (AI Research Assistant for 100RE Laboratory &mdash; Hanoi University of Science and Technology).<br><br>
+              Feel free to ask me anything in <strong>English</strong> or <strong>Tiếng Việt</strong>! Here are some suggested questions to get started:
               <div class="ai-quick-prompts">
                 <button class="btn-quick-prompt" data-q="Give me an overview of 100RE Laboratory and its mission.">📌 Overview of 100RE Laboratory &amp; Mission</button>
                 <button class="btn-quick-prompt" data-q="What are the 9 specialized research teams at 100RE Lab?">🔬 What are the 9 specialized research teams?</button>
@@ -58,8 +58,8 @@
 
         <!-- Footer Input Bar -->
         <form class="ai-chat-footer" id="aiChatForm">
-          <input type="text" id="aiChatInput" class="ai-input" placeholder="Ask 100RE Lab AI Assistant anything (Tiếng Việt / English)..." autocomplete="off" required>
-          <button type="submit" id="btnAiSend" class="btn-ai-send" title="Gửi câu hỏi">
+          <input type="text" id="aiChatInput" class="ai-input" placeholder="Ask 100RE Lab AI Assistant anything (English / Tiếng Việt)..." autocomplete="off" required>
+          <button type="submit" id="btnAiSend" class="btn-ai-send" title="Send message">
             <i class="fa-solid fa-paper-plane"></i>
           </button>
         </form>
