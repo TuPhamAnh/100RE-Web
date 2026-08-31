@@ -13,7 +13,7 @@ export async function handlePublicMembers(request, env) {
     { id: "pv-1", name: "Ngô Trí Đức", team: "pv", teamName: "PV Team", role: "PV Team", image: "assets/images/ngo_tri_duc.png", bio: "Researcher in the PV Team at 100RE Laboratory. Focusing on photovoltaic systems modeling, performance analysis, and optimization." },
     { id: "pv-2", name: "Bui Quang Minh", team: "pv", teamName: "PV Team", role: "PV Team", image: "assets/images/bui_quang_minh.jpg", bio: "Researcher in the PV Team at 100RE Laboratory. Dedicated to solar irradiance modeling and high-efficiency photovoltaic integration." },
     { id: "ai-1", name: "Bui Quang Hai", team: "ai", teamName: "AI Team", role: "AI Team", image: "assets/images/bui_quang_hai.jpg", bio: "Researcher in the AI Team at 100RE Laboratory. Specializing in Artificial Intelligence, Deep Learning, and Neural Network applications for renewable energy systems." },
-    { id: "dr_uc-1", name: "Nguyen Tuan Anh", team: "dr_uc", teamName: "Demand Response and Unit Commitment Team", role: "Unit Commitment Team", image: "assets/images/nguyen_tuan_anh.jpg", bio: "Researcher at 100RE Laboratory. Research focus: Unit commitment optimization, demand response mechanisms, power dispatch algorithms.\n\nContact: Tel: +84 974 812 546 | Email: anh.nt196322@sis.hust.edu.vn" },
+    { id: "dr_uc-1", name: "Nguyen Tuan Anh", team: "dr_uc", teamName: "Demand Response and Unit Commitment Team", role: "Unit Commitment Team", image: "assets/images/nguyen_tuan_anh.jpg", bio: "Researcher at 100RE Laboratory. Research focus: Unit commitment optimization, demand response mechanisms, power dispatch algorithms. Contact: Tel: +84 974 812 546 | Email: anh.nt196322@sis.hust.edu.vn" },
     { id: "dr_uc-2", name: "Le Anh Quan", team: "dr_uc", teamName: "Demand Response and Unit Commitment Team", role: "Unit Commitment Team", image: "assets/images/le_anh_quan.png", bio: "Researcher in Demand Response & Unit Commitment Team at 100RE Laboratory. Focusing on mathematical modeling, power system economic dispatch, and load curve optimization." },
     { id: "wind-1", name: "Nguyen Hoang Nam", team: "wind", teamName: "Wind Team", role: "Wind Team", image: "assets/images/nguyen_hoang_nam.jpg", bio: "Researcher in the Wind Energy Team at 100RE Laboratory. Researching wind turbine aerodynamics, power curve forecasting, and grid integration." },
     { id: "wind-2", name: "Nguyễn Như Tùng", team: "wind", teamName: "Wind Team", role: "Wind Team", image: "assets/images/nguyen_nhu_tung.png", bio: "Researcher in the Wind Team at 100RE Laboratory. Focusing on wind farm layout optimization and wake effect modeling." },
@@ -28,12 +28,26 @@ export async function handlePublicMembers(request, env) {
     { id: "bess-3", name: "Tran Thi Hong Vinh", team: "bess", teamName: "BESS Team", role: "BESS Team", image: "assets/images/tran_thi_hong_vinh.png", bio: "Researcher in the BESS Team at 100RE Laboratory. Specializing in battery degradation models, thermal management, and energy storage peak shaving strategies." }
   ];
 
+  // Helper to merge KV updates into default members ensuring all 8 teams always exist
+  function mergeMembers(customList) {
+    if (!Array.isArray(customList) || customList.length === 0) return DEFAULT_MEMBERS;
+    const map = new Map(DEFAULT_MEMBERS.map(m => [String(m.id), { ...m }]));
+    for (const cm of customList) {
+      if (cm && cm.id) {
+        const existing = map.get(String(cm.id)) || {};
+        map.set(String(cm.id), { ...existing, ...cm });
+      }
+    }
+    return Array.from(map.values());
+  }
+
   if (method === 'GET') {
     if (env && env.MEMBERS_KV) {
       const custom = (await env.MEMBERS_KV.get('members_list')) || (await env.MEMBERS_KV.get('members_data'));
       if (custom) {
         try {
-          return JSON.parse(custom);
+          const parsed = JSON.parse(custom);
+          return mergeMembers(parsed);
         } catch (e) {}
       }
     }
@@ -78,7 +92,7 @@ export async function handlePublicMembers(request, env) {
       if (env && env.MEMBERS_KV) {
         await env.MEMBERS_KV.put('members_list', JSON.stringify(current));
       }
-      return { success: true, member: savedMember, members: current };
+      return { success: true, member: savedMember, members: mergeMembers(current) };
     } catch (e) {
       return { error: 'Failed to update members: ' + e.message };
     }
