@@ -5,7 +5,7 @@
 import { RBAC } from '../rbac.js';
 import { logActivity } from '../activity.js';
 
-export async function handleTasks(request, user, db) {
+export async function handleTasks(request, user, db, env) {
   const url = new URL(request.url);
   const method = request.method;
   const pathParts = url.pathname.split('/').filter(Boolean); // ['api', 'tasks', ':id', 'comments'...]
@@ -21,7 +21,19 @@ export async function handleTasks(request, user, db) {
     const priorityFilter = url.searchParams.get('priority');
     const search = (url.searchParams.get('search') || '').toLowerCase();
 
-    let allTasks = await db.all('SELECT * FROM tasks ORDER BY due_date ASC, created_at DESC');
+        let allTasks = [];
+    if (env && env.MEMBERS_KV) {
+      try {
+        const kvTasksRaw = await env.MEMBERS_KV.get('tasks_dataset');
+        if (kvTasksRaw) {
+          allTasks = JSON.parse(kvTasksRaw);
+        }
+      } catch(e) {}
+    }
+
+    if (!allTasks || allTasks.length === 0) {
+      allTasks = await db.all('SELECT * FROM tasks ORDER BY due_date ASC, created_at DESC');
+    }
     let teams = await db.all('SELECT id, name, slug FROM teams');
     let projects = await db.all('SELECT id, name, slug FROM projects');
     let users = await db.all('SELECT id, name, email, avatar_url FROM users');
@@ -119,8 +131,38 @@ export async function handleTasks(request, user, db) {
     await db.run(
       `INSERT INTO tasks (id, team_id, project_id, title, description, status, priority, assigned_to, created_by, due_date, created_at, updated_at, completed_at)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [id, team_id, project_id, title, description, 'todo', priority, assigned_to, user.id, due_date, now, now, null]
+      [id, team_id, project_id, title, description, body.status || 'todo', priority, assigned_to, user.id, due_date, now, now, null]
     );
+    const newTaskObj = {
+      id,
+      team_id,
+      project_id,
+      title,
+      description,
+      status: body.status || 'todo',
+      priority,
+      assigned_to,
+      assignees: body.assignees || (assigned_to ? [assigned_to] : []),
+      assignee_names: body.assignee_names || [],
+      created_by: user.id,
+      due_date,
+      created_at: now,
+      updated_at: now,
+      completed_at: null
+    };
+
+    if (env && env.MEMBERS_KV) {
+      try {
+        let curList = [];
+        const kvRaw = await env.MEMBERS_KV.get('tasks_dataset');
+        if (kvRaw) curList = JSON.parse(kvRaw);
+        if (!curList || curList.length === 0) {
+          curList = await db.all('SELECT * FROM tasks ORDER BY due_date ASC, created_at DESC');
+        }
+        curList.unshift(newTaskObj);
+        await env.MEMBERS_KV.put('tasks_dataset', JSON.stringify(curList));
+      } catch(e) {}
+    }
 
     await logActivity(db, {
       userId: user.id,

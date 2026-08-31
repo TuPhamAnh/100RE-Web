@@ -125,7 +125,7 @@ export default {
       if (!isAuthenticated || !user) {
         return jsonResponse({ error: '401 Unauthorized.' }, 401, corsHeaders);
       }
-      const res = await handleTasks(request, user, db);
+      const res = await handleTasks(request, user, db, env);
       return jsonResponse(res, res.status || 200, corsHeaders);
     }
 

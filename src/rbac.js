@@ -70,7 +70,8 @@ export const RBAC = {
   canCreateTask(user, teamId) {
     if (!user) return false;
     if (this.isSuper(user)) return true;
-    return this.canManageTeam(user, teamId);
+    if (teamId === 'team-general' || teamId === 'general') return true;
+    return this.canAccessTeam(user, teamId);
   },
 
   canEditTask(user, task) {

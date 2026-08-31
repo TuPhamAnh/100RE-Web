@@ -177,8 +177,20 @@ export async function renderTasks(container, initialFilter = null) {
       labMembers = membersRes.members || membersRes.users || [];
     } catch (e) {}
 
-    const tasksRes = await API.get('/api/tasks');
+        const tasksRes = await API.get('/api/tasks');
     tasksData = tasksRes.tasks || [];
+
+    // Sync with persistent local storage
+    try {
+      const localCustom = JSON.parse(localStorage.getItem('100re_custom_tasks') || '[]');
+      if (Array.isArray(localCustom) && localCustom.length > 0) {
+        localCustom.forEach(ct => {
+          if (!tasksData.some(t => t.id === ct.id)) {
+            tasksData.unshift(ct);
+          }
+        });
+      }
+    } catch(e) {}
 
     // Fallback Seed Data if empty
     if (!tasksData || tasksData.length === 0) {
@@ -813,7 +825,12 @@ export async function renderTasks(container, initialFilter = null) {
         updated_at: Math.floor(Date.now() / 1000)
       };
 
-      tasksData.unshift(newTask);
+            tasksData.unshift(newTask);
+      try {
+        const localCustom = JSON.parse(localStorage.getItem('100re_custom_tasks') || '[]');
+        localCustom.unshift(newTask);
+        localStorage.setItem('100re_custom_tasks', JSON.stringify(localCustom));
+      } catch(e) {}
       renderCurrentView();
       closeModal();
       showToast(`Đã tạo nhiệm vụ "${title}" thành công!`);
