@@ -15,7 +15,7 @@ export const DICTIONARY = {
     nav_signoffs: "Ký Duyệt & Phê Chuẩn",
     nav_sec_work: "CÔNG VIỆC & NHIỆM VỤ",
     nav_all_tasks: "Tất Cả Nhiệm Vụ",
-    nav_teams: "9 Nhóm Nghiên Cứu",
+    nav_teams: "8 Nhóm Nghiên Cứu",
     nav_sec_database: "100RE DATABASE",
     nav_datasets: "Bộ Dữ Liệu Nghiên Cứu",
     nav_documents: "Tài Liệu & Báo Cáo",
@@ -103,7 +103,7 @@ export const DICTIONARY = {
     doc_upload_btn: "Tải Lên Tài Liệu",
 
     // Teams
-    teams_title: "9 Nhóm Nghiên Cứu Chuyên Sâu 100RE Lab",
+    teams_title: "8 Nhóm Nghiên Cứu Chuyên Sâu 100RE Lab",
     teams_subtitle: "Thông tin các nhóm đề tài, trưởng nhóm và danh sách thành viên",
 
     // Admin

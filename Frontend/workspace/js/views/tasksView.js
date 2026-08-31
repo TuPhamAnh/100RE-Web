@@ -48,7 +48,10 @@ export async function renderTasks(container, initialFilter = null) {
     'team-wind': { name: 'Wind Team Tasks', icon: '💨', slug: 'wind', vi: 'Nhiệm Vụ Nhóm Wind' },
     'team-ev': { name: 'Electric Vehicle Tasks', icon: '🚗', slug: 'ev', vi: 'Nhiệm Vụ Nhóm EV' },
     'team-hydrogen': { name: 'Hydrogen Team Tasks', icon: '💧', slug: 'hydrogen', vi: 'Nhiệm Vụ Nhóm Hydrogen' },
-    'team-dr_uc': { name: 'Demand Response & UC Tasks', icon: '📈', slug: 'dr_uc', vi: 'Nhiệm Vụ Nhóm DR & UC' },
+    'team-ucdr': { name: 'Unit Commitment & Demand Response Tasks', icon: '📈', slug: 'ucdr', vi: 'Nhiệm Vụ Nhóm UC & DR' },
+    'team-dr_uc': { name: 'Unit Commitment & Demand Response Tasks', icon: '📈', slug: 'ucdr', vi: 'Nhiệm Vụ Nhóm UC & DR' },
+    'team-uc': { name: 'Unit Commitment & Demand Response Tasks', icon: '📈', slug: 'ucdr', vi: 'Nhiệm Vụ Nhóm UC & DR' },
+    'team-dr': { name: 'Unit Commitment & Demand Response Tasks', icon: '📈', slug: 'ucdr', vi: 'Nhiệm Vụ Nhóm UC & DR' },
     'team-dr': { name: 'Demand Response Tasks', icon: '📈', slug: 'dr', vi: 'Nhiệm Vụ Nhóm DR & UC' },
     'team-general': { name: 'General & Personal Tasks', icon: '📋', slug: 'general', vi: 'Nhiệm Vụ Chung & Giao Cá Nhân' },
     'all': { name: 'All Lab Research Tasks', icon: '🌐', slug: 'all', vi: 'Toàn Bộ Nhiệm Vụ Phòng Lab' }
@@ -100,7 +103,7 @@ export async function renderTasks(container, initialFilter = null) {
               <option value="team-wind">💨 Wind Team</option>
               <option value="team-ev">🚗 Electric Vehicle Team</option>
               <option value="team-hydrogen">💧 Hydrogen Team</option>
-              <option value="team-dr_uc">📈 Demand Response & UC</option>
+              <option value="team-ucdr">📈 Unit Commitment & Demand Response (UCDR)</option>
               <option value="team-general">📋 ${isVi ? 'Nhiệm Vụ Chung' : 'General Tasks'}</option>
             </select>
           </div>
@@ -751,7 +754,7 @@ export async function renderTasks(container, initialFilter = null) {
                   <option value="team-wind" ${defaultTeamForCreate === 'team-wind' ? 'selected' : ''}>💨 Wind Team</option>
                   <option value="team-ev" ${defaultTeamForCreate === 'team-ev' ? 'selected' : ''}>🚗 Electric Vehicle Team</option>
                   <option value="team-hydrogen" ${defaultTeamForCreate === 'team-hydrogen' ? 'selected' : ''}>💧 Hydrogen Team</option>
-                  <option value="team-dr_uc" ${defaultTeamForCreate === 'team-dr_uc' ? 'selected' : ''}>📈 Demand Response & UC</option>
+                  <option value="team-ucdr" ${defaultTeamForCreate === 'team-ucdr' || defaultTeamForCreate === 'team-dr_uc' ? 'selected' : ''}>📈 Unit Commitment & Demand Response (UCDR)</option>
                   <option value="team-general" ${defaultTeamForCreate === 'team-general' ? 'selected' : ''}>📋 ${isVi ? 'Nhiệm Vụ Chung (Giao Cá Nhân)' : 'General (Personal Task)'}</option>
                 </select>
               </div>

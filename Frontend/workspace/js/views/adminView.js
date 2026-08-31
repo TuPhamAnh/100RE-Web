@@ -309,13 +309,13 @@ export async function renderAdmin(container) {
         { id: 'usr-ldr-02', username: 'phuong.trinhminh@100relab', password: '100re', display_name: 'Dr. Trinh Minh Phuong', name: 'Dr. Trinh Minh Phuong', email: 'phuong.trinhminh@100relab', role: 'team_leader', status: 'active', teams: ['team-bess'], permissions: [] },
         { id: 'usr-res-05', username: 'hai.duongminh@100relab', password: '100re', display_name: 'Duong Minh Hai', name: 'Duong Minh Hai', email: 'hai.duongminh@100relab', role: 'researcher', status: 'active', teams: ['team-smartgrid'], permissions: [] },
         { id: 'usr-res-01', username: 'hai.buiquang@100relab', password: '100re', display_name: 'Bui Quang Hai', name: 'Bui Quang Hai', email: 'hai.buiquang@100relab', role: 'researcher', status: 'active', teams: ['team-ai', 'team-pv'], permissions: [] },
-        { id: 'usr-res-02', username: 'anh.nguyentuan@100relab', password: '100re', display_name: 'Nguyen Tuan Anh', name: 'Nguyen Tuan Anh', email: 'anh.nguyentuan@100relab', role: 'researcher', status: 'active', teams: ['team-dr', 'team-uc'], permissions: [] },
+        { id: 'usr-res-02', username: 'anh.nguyentuan@100relab', password: '100re', display_name: 'Nguyen Tuan Anh', name: 'Nguyen Tuan Anh', email: 'anh.nguyentuan@100relab', role: 'researcher', status: 'active', teams: ['team-ucdr'], permissions: [] },
         { id: 'usr-res-03', username: 'nam.nguyenhoang@100relab', password: '100re', display_name: 'Nguyen Hoang Nam', name: 'Nguyen Hoang Nam', email: 'nam.nguyenhoang@100relab', role: 'researcher', status: 'active', teams: ['team-wind'], permissions: [] },
         { id: 'usr-res-04', username: 'cuong.lethe@100relab', password: '100re', display_name: 'Le The Cuong', name: 'Le The Cuong', email: 'cuong.lethe@100relab', role: 'researcher', status: 'active', teams: ['team-ev'], permissions: [] },
         { id: 'usr-res-06', username: 'dung.vutien@100relab', password: '100re', display_name: 'Vu Tien Dung', name: 'Vu Tien Dung', email: 'dung.vutien@100relab', role: 'researcher', status: 'active', teams: ['team-smartgrid'], permissions: [] },
         { id: 'usr-res-07', username: 'dung.lengoc@100relab', password: '100re', display_name: 'Le Ngoc Dung', name: 'Le Ngoc Dung', email: 'dung.lengoc@100relab', role: 'researcher', status: 'active', teams: ['team-smartgrid'], permissions: [] },
         { id: 'usr-res-08', username: 'minh.buiquang@100relab', password: '100re', display_name: 'Bui Quang Minh', name: 'Bui Quang Minh', email: 'minh.buiquang@100relab', role: 'researcher', status: 'active', teams: ['team-pv'], permissions: [] },
-        { id: 'usr-res-09', username: 'quan.leanh@100relab', password: '100re', display_name: 'Dr. Le Anh Quan', name: 'Dr. Le Anh Quan', email: 'quan.leanh@100relab', role: 'alumni', status: 'active', teams: ['team-dr', 'team-uc'], permissions: [] },
+        { id: 'usr-res-09', username: 'quan.leanh@100relab', password: '100re', display_name: 'Dr. Le Anh Quan', name: 'Dr. Le Anh Quan', email: 'quan.leanh@100relab', role: 'alumni', status: 'active', teams: ['team-ucdr'], permissions: [] },
         { id: 'usr-res-10', username: 'tung.nguyennhu@100relab', password: '100re', display_name: 'Nguyen Nhu Tung', name: 'Nguyen Nhu Tung', email: 'tung.nguyennhu@100relab', role: 'researcher', status: 'active', teams: ['team-wind'], permissions: [] },
         { id: 'usr-res-11', username: 'khanh.daoquoc@100relab', password: '100re', display_name: 'Dao Quoc Khanh', name: 'Dao Quoc Khanh', email: 'khanh.daoquoc@100relab', role: 'researcher', status: 'active', teams: ['team-ev'], permissions: [] },
         { id: 'usr-res-12', username: 'anh.nguyenhoang@100relab', password: '100re', display_name: 'Nguyen Hoang Anh', name: 'Nguyen Hoang Anh', email: 'anh.nguyenhoang@100relab', role: 'researcher', status: 'active', teams: ['team-hydrogen'], permissions: [] },
@@ -385,8 +385,7 @@ export async function renderAdmin(container) {
         <label style="font-size:0.775rem; color:#334155; display:flex; align-items:center; gap:6px;"><input type="checkbox" value="team-wind" class="perm-team-cb"> Wind Energy</label>
         <label style="font-size:0.775rem; color:#334155; display:flex; align-items:center; gap:6px;"><input type="checkbox" value="team-ev" class="perm-team-cb"> Electric Vehicle (EV)</label>
         <label style="font-size:0.775rem; color:#334155; display:flex; align-items:center; gap:6px;"><input type="checkbox" value="team-hydrogen" class="perm-team-cb"> Hydrogen Team</label>
-        <label style="font-size:0.775rem; color:#334155; display:flex; align-items:center; gap:6px;"><input type="checkbox" value="team-dr" class="perm-team-cb"> Demand Response (DR)</label>
-        <label style="font-size:0.775rem; color:#334155; display:flex; align-items:center; gap:6px;"><input type="checkbox" value="team-uc" class="perm-team-cb"> Unit Commitment (UC)</label>
+        <label style="font-size:0.775rem; color:#334155; display:flex; align-items:center; gap:6px;"><input type="checkbox" value="team-ucdr" class="perm-team-cb"> Unit Commitment & Demand Response (UCDR)</label>
       `;
     }
 

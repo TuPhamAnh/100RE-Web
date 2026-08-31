@@ -150,7 +150,7 @@ function updateNav(route, paramId) {
       'protocols': isVi ? 'Quy Trình Chuẩn (SOPs)' : 'Protocols & SOPs',
       'inventory': isVi ? 'Thiết Bị Phòng Lab' : 'Lab Inventory & Instruments',
       'signoffs': isVi ? 'Ký Duyệt & Phê Chuẩn' : 'Sign-offs & Approvals',
-      'teams': paramId ? (isVi ? `Nhóm: ${paramId.toUpperCase()}` : `Team: ${paramId.toUpperCase()}`) : (isVi ? '9 Nhóm Nghiên Cứu' : 'Research Teams'),
+      'teams': paramId ? (isVi ? `Nhóm: ${paramId.toUpperCase()}` : `Team: ${paramId.toUpperCase()}`) : (isVi ? '8 Nhóm Nghiên Cứu' : 'Research Teams'),
       'projects': paramId ? `Project: ${paramId}` : (isVi ? 'Đề Tài Nghiên Cứu' : 'Projects'),
       'tasks': isVi ? 'Nhiệm Vụ & Thí Nghiệm' : 'Tasks & Experiments',
       'datasets': isVi ? 'Bộ Dữ Liệu (100RE Database)' : '100RE Database Datasets',

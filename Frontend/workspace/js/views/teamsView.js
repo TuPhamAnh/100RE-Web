@@ -20,7 +20,7 @@ export async function renderTeams(container, teamIdOrSlug = null) {
         <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
           <span class="ws-badge ws-badge-done"><i class="fa-solid fa-users"></i> MULTIDISCIPLINARY LAB</span>
         </div>
-        <h1>${isVi ? '9 Nhóm Nghiên Cứu Chuyên Sâu' : 'Research Teams'}</h1>
+        <h1>${isVi ? '8 Nhóm Nghiên Cứu Chuyên Sâu' : 'Research Teams'}</h1>
         <p>${isVi ? 'Trung tâm không gian làm việc của các nhóm nghiên cứu khoa học phòng thí nghiệm 100RE.' : '100RE Laboratory multidisciplinary research teams and domains.'}</p>
       </div>
       <div class="ws-page-actions">
@@ -40,14 +40,13 @@ export async function renderTeams(container, teamIdOrSlug = null) {
 
   const FALLBACK_TEAMS = [
     { id: 'team-pv', slug: 'pv', name: 'Photovoltaic (PV)', icon: '☀️', leader: 'Dr. Ngo Tri Duc', description: 'High-efficiency solar cells, bifacial modules modeling, solar irradiance forecasting and grid integration.', memberCount: 3, projectCount: 1, openTaskCount: 2, datasetCount: 1, docCount: 1 },
-    { id: 'team-smartgrid', slug: 'smartgrid', name: 'Smart Grid', icon: '⚡', leader: 'Pham Anh Tu', description: 'Microgrid energy management, real-time SCADA, active distribution networks and power quality control.', memberCount: 4, projectCount: 1, openTaskCount: 8, datasetCount: 1, docCount: 2 },
-    { id: 'team-bess', slug: 'bess', name: 'Battery Energy Storage (BESS)', icon: '🔋', leader: 'Dr. Trinh Minh Phuong', description: 'Li-ion battery SoC/SoH estimation, battery energy management systems (BEMS), degradation and peak shaving.', memberCount: 4, projectCount: 1, openTaskCount: 2, datasetCount: 1, docCount: 1 },
-    { id: 'team-ai', slug: 'ai', name: 'Artificial Intelligence (AI)', icon: '🤖', leader: 'Bui Quang Hai', description: 'Deep learning, neural networks, physics-informed AI, and reinforcement learning for energy systems.', memberCount: 2, projectCount: 1, openTaskCount: 1, datasetCount: 1, docCount: 1 },
     { id: 'team-wind', slug: 'wind', name: 'Wind Energy', icon: '💨', leader: 'Nguyen Nhu Tung', description: 'Wind turbine aerodynamics, power curve forecasting, wake effect modeling and offshore wind integration.', memberCount: 2, projectCount: 1, openTaskCount: 1, datasetCount: 1, docCount: 1 },
-    { id: 'team-ev', slug: 'ev', name: 'Electric Vehicle (EV)', icon: '🚗', leader: 'Dao Quoc Khanh', description: 'V2G (Vehicle-to-Grid) bi-directional charging, smart charging scheduling, and battery health degradation.', memberCount: 2, projectCount: 1, openTaskCount: 1, datasetCount: 1, docCount: 1 },
     { id: 'team-hydrogen', slug: 'hydrogen', name: 'Green Hydrogen', icon: '💧', leader: 'Nguyen Hoang Anh', description: 'Water electrolysis, PEM & alkaline fuel cells, hydrogen storage supply chains and H2-to-power systems.', memberCount: 2, projectCount: 1, openTaskCount: 1, datasetCount: 1, docCount: 1 },
-    { id: 'team-uc', slug: 'uc', name: 'Unit Commitment', icon: '📈', leader: 'Dr. Le Anh Quan', description: 'Security-constrained unit commitment, mixed-integer linear programming, power market clearing and dispatch.', memberCount: 2, projectCount: 1, openTaskCount: 1, datasetCount: 1, docCount: 1 },
-    { id: 'team-dr', slug: 'dr', name: 'Demand Response', icon: '⚡', leader: 'Dr. Le Anh Quan', description: 'Incentive-based demand response, commercial/industrial flexibility aggregation, and transactive energy.', memberCount: 2, projectCount: 1, openTaskCount: 1, datasetCount: 1, docCount: 1 }
+    { id: 'team-smartgrid', slug: 'smartgrid', name: 'Smart Grid', icon: '⚡', leader: 'Pham Anh Tu', description: 'Microgrid energy management, real-time SCADA, active distribution networks and power quality control.', memberCount: 4, projectCount: 1, openTaskCount: 8, datasetCount: 1, docCount: 2 },
+    { id: 'team-ev', slug: 'ev', name: 'Electric Vehicle (EV)', icon: '🚗', leader: 'Dao Quoc Khanh', description: 'V2G (Vehicle-to-Grid) bi-directional charging, smart charging scheduling, and battery health degradation.', memberCount: 2, projectCount: 1, openTaskCount: 1, datasetCount: 1, docCount: 1 },
+    { id: 'team-ai', slug: 'ai', name: 'Artificial Intelligence (AI)', icon: '🤖', leader: 'Bui Quang Hai', description: 'Deep learning, neural networks, physics-informed AI, and reinforcement learning for energy systems.', memberCount: 2, projectCount: 1, openTaskCount: 1, datasetCount: 1, docCount: 1 },
+    { id: 'team-bess', slug: 'bess', name: 'Battery Energy Storage (BESS)', icon: '🔋', leader: 'Dr. Trinh Minh Phuong', description: 'Li-ion battery SoC/SoH estimation, battery energy management systems (BEMS), degradation and peak shaving.', memberCount: 4, projectCount: 1, openTaskCount: 2, datasetCount: 1, docCount: 1 },
+    { id: 'team-ucdr', slug: 'ucdr', name: 'Unit Commitment & Demand Response (UCDR)', icon: '📈', leader: 'Dr. Le Anh Quan', description: 'Security-constrained unit commitment (SCUC), mixed-integer linear programming, demand response flexibility and market dispatch.', memberCount: 2, projectCount: 1, openTaskCount: 2, datasetCount: 1, docCount: 1 }
   ];
 
   try {
@@ -347,6 +346,31 @@ async function renderTeamDetail(container, teamIdOrSlug) {
         { id: 'usr-res-12', name: 'Nguyen Hoang Anh', email: 'anh.nguyenhoang@100relab', role: 'researcher', team_role: 'leader', avatar_url: '../assets/images/nguyen_hoang_anh.jpg' }
       ]
     },
+        'ucdr': {
+      name: 'Unit Commitment & Demand Response (UCDR)',
+      icon: '📈',
+      slug: 'ucdr',
+      id: 'team-ucdr',
+      leader: 'Dr. Le Anh Quan',
+      description: 'Mô hình Unit Commitment ràng buộc an ninh (SCUC), tối ưu hóa tổ máy phát điện quy mô lớn, điều khiển phụ tải linh hoạt công nghiệp và biểu giá điện động.',
+      projects: [
+        { id: 'proj-uc-01', name: 'High-Renewable Security-Constrained Unit Commitment & DR Scheduling', slug: 'scuc-high-re', description: 'Thuật toán MILP giải bài toán SCUC và huy động phụ tải linh hoạt tích hợp 40% năng lượng tái tạo.', status: 'in_progress', progress: 60, drive_folder_id: '1UC_Folder_08', start_date: '2026-01-10', end_date: '2026-11-30' }
+      ],
+      tasks: [
+        { id: 'tsk-dr-01', title: 'Dynamic pricing demand response for industrial loads', priority: 'medium', status: 'in_progress', due_date: '2026-10-25', assignee_names: ['Dr. Le Anh Quan', 'Nguyen Tuan Anh'] },
+        { id: 'tsk-uc-01', title: 'Formulate MILP formulation for 118-bus security-constrained unit commitment', priority: 'high', status: 'in_progress', due_date: '2026-11-05', assignee_names: ['Dr. Le Anh Quan'] }
+      ],
+      datasets: [
+        { id: 'ds-08', name: 'IEEE 118-Bus Test System 8760-Hour Dispatch, LMP & DR Response Log', format: 'CSV', data_type: 'time-series', resolution: '1-hour', source: 'Gurobi MILP Engine & RTU Meter', size: '42.0 MB' }
+      ],
+      documents: [
+        { id: 'doc-08', name: 'Security-Constrained Unit Commitment with High Wind-Solar Penetration and DR Flexibility', file_name: 'SCUC_DR_Formulation_Manuscript.pdf', file_type: 'PDF', created_at: 1708000000 }
+      ],
+      members: [
+        { id: 'usr-res-09', name: 'Dr. Le Anh Quan', email: 'quan.leanh@100relab', role: 'leader', team_role: 'leader', avatar_url: '../assets/images/le_anh_quan.jpg' },
+        { id: 'usr-res-02', name: 'Nguyen Tuan Anh', email: 'anh.nguyentuan@100relab', role: 'researcher', team_role: 'member', avatar_url: '../assets/images/nguyen_tuan_anh.png' }
+      ]
+    },
     'uc': {
       name: 'Unit Commitment & Market Dispatch',
       icon: '📈',
@@ -397,7 +421,7 @@ async function renderTeamDetail(container, teamIdOrSlug) {
     }
   };
 
-  let teamMeta = TEAM_CATALOG[cleanSlug] || TEAM_CATALOG['smartgrid'];
+  let teamMeta = TEAM_CATALOG[cleanSlug] || (cleanSlug === 'uc' || cleanSlug === 'dr' || cleanSlug === 'dr_uc' ? TEAM_CATALOG['ucdr'] : TEAM_CATALOG['smartgrid']);
 
   let team = {
     id: fullTeamId,

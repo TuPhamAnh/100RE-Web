@@ -17,7 +17,7 @@ export const ALL_PRESET_USERS = {
     avatar_url: 'assets/images/logo.jpg',
     isSupervisor: true,
     isLeader: true,
-    teams: ['team-pv', 'team-bess', 'team-ai', 'team-smartgrid', 'team-wind', 'team-ev', 'team-hydrogen', 'team-dr', 'team-uc'],
+    teams: ['team-pv', 'team-wind', 'team-hydrogen', 'team-smartgrid', 'team-ev', 'team-ai', 'team-bess', 'team-ucdr'],
     teamRoles: {},
     projects: []
   },
@@ -113,8 +113,8 @@ export const ALL_PRESET_USERS = {
     avatar_url: 'assets/images/nguyen_tuan_anh.jpg',
     isSupervisor: false,
     isLeader: false,
-    teams: ['team-dr', 'team-uc'],
-    teamRoles: { 'team-dr': 'member', 'team-uc': 'member' },
+    teams: ['team-ucdr'],
+    teamRoles: { 'team-ucdr': 'member' },
     projects: ['proj-grid-01']
   },
   'usr-res-03': {
@@ -209,7 +209,7 @@ export const ALL_PRESET_USERS = {
     avatar_url: 'assets/images/le_anh_quan.png',
     isSupervisor: false,
     isLeader: false,
-    teams: ['team-dr', 'team-uc'],
+    teams: ['team-ucdr'],
     teamRoles: {},
     projects: []
   },

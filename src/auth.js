@@ -29,7 +29,7 @@ export async function resolveUser(request, env, db) {
           isSystemAdmin: true,
           status: 'active',
           avatar_url: 'assets/images/logo.jpg',
-          teams: ['team-pv', 'team-bess', 'team-ai', 'team-smartgrid', 'team-wind', 'team-ev', 'team-hydrogen', 'team-dr', 'team-uc'],
+          teams: ['team-pv', 'team-wind', 'team-hydrogen', 'team-smartgrid', 'team-ev', 'team-ai', 'team-bess', 'team-ucdr'],
           projects: [],
           teamRoles: {},
           permissions: ['perm_ws_admin', 'perm_news', 'perm_journey', 'perm_research', 'perm_projects', 'perm_pubs', 'perm_photos', 'perm_members', 'perm_ws_all_teams', 'perm_ws_projects', 'perm_ws_tasks_create', 'perm_ws_tasks_update', 'perm_ws_scinote_edit', 'perm_ws_scinote_signoff', 'perm_ws_datasets', 'perm_ws_documents']
@@ -145,7 +145,7 @@ export async function resolveUser(request, env, db) {
       isSystemAdmin: false,
       status: 'active',
       avatar_url: 'assets/images/tuyen_nguyen_duc.jpg',
-      teams: ['team-pv', 'team-bess', 'team-ai', 'team-smartgrid', 'team-wind', 'team-ev', 'team-hydrogen', 'team-dr', 'team-uc'],
+      teams: ['team-pv', 'team-wind', 'team-hydrogen', 'team-smartgrid', 'team-ev', 'team-ai', 'team-bess', 'team-ucdr'],
       projects: [],
       teamRoles: {},
       permissions: ['perm_ws_admin', 'perm_news', 'perm_journey', 'perm_research', 'perm_projects', 'perm_pubs', 'perm_photos', 'perm_members', 'perm_ws_all_teams', 'perm_ws_projects', 'perm_ws_tasks_create', 'perm_ws_tasks_update', 'perm_ws_scinote_edit', 'perm_ws_scinote_signoff', 'perm_ws_datasets', 'perm_ws_documents']

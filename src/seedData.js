@@ -31,9 +31,9 @@ export const SEED_TEAMS = [
   { id: 'team-smartgrid', name: 'Smart Grid', slug: 'smartgrid', description: 'Microgrid energy management, real-time SCADA, active distribution networks and power quality control.', status: 'active', created_at: 1704067200, updated_at: 1704067200 },
   { id: 'team-ev', name: 'Electric Vehicle (EV)', slug: 'ev', description: 'V2G (Vehicle-to-Grid) bi-directional charging, smart charging scheduling, and battery health degradation.', status: 'active', created_at: 1704067200, updated_at: 1704067200 },
   { id: 'team-ai', name: 'Artificial Intelligence (AI)', slug: 'ai', description: 'Deep learning, neural networks, physics-informed AI, and reinforcement learning for energy systems.', status: 'active', created_at: 1704067200, updated_at: 1704067200 },
-  { id: 'team-uc', name: 'Unit Commitment', slug: 'uc', description: 'Security-constrained unit commitment, mixed-integer linear programming, power market clearing and dispatch.', status: 'active', created_at: 1704067200, updated_at: 1704067200 },
+  { id: 'team-ucdr', name: 'Unit Commitment', slug: 'uc', description: 'Security-constrained unit commitment, mixed-integer linear programming, power market clearing and dispatch.', status: 'active', created_at: 1704067200, updated_at: 1704067200 },
   { id: 'team-bess', name: 'Battery Energy Storage (BESS)', slug: 'bess', description: 'Li-ion battery SoC/SoH estimation, battery energy management systems (BEMS), degradation and peak shaving.', status: 'active', created_at: 1704067200, updated_at: 1704067200 },
-  { id: 'team-dr', name: 'Demand Response', slug: 'dr', description: 'Incentive-based demand response, commercial/industrial flexibility aggregation, and transactive energy.', status: 'active', created_at: 1704067200, updated_at: 1704067200 }
+  { id: 'team-ucdr', name: 'Demand Response', slug: 'dr', description: 'Incentive-based demand response, commercial/industrial flexibility aggregation, and transactive energy.', status: 'active', created_at: 1704067200, updated_at: 1704067200 }
 ];
 
 export const SEED_TEAM_MEMBERS = [
@@ -43,16 +43,16 @@ export const SEED_TEAM_MEMBERS = [
   { id: 'tm-04', team_id: 'team-pv', user_id: 'usr-res-01', team_role: 'member', joined_at: 1704153600 },
   { id: 'tm-05', team_id: 'team-bess', user_id: 'usr-res-01', team_role: 'member', joined_at: 1704153600 },
   { id: 'tm-06', team_id: 'team-smartgrid', user_id: 'usr-res-02', team_role: 'member', joined_at: 1704153600 },
-  { id: 'tm-07', team_id: 'team-uc', user_id: 'usr-res-02', team_role: 'member', joined_at: 1704153600 },
-  { id: 'tm-08', team_id: 'team-dr', user_id: 'usr-res-02', team_role: 'member', joined_at: 1704153600 },
+  { id: 'tm-07', team_id: 'team-ucdr', user_id: 'usr-res-02', team_role: 'member', joined_at: 1704153600 },
+  { id: 'tm-08', team_id: 'team-ucdr', user_id: 'usr-res-02', team_role: 'member', joined_at: 1704153600 },
   { id: 'tm-09', team_id: 'team-wind', user_id: 'usr-res-03', team_role: 'member', joined_at: 1704153600 },
   { id: 'tm-10', team_id: 'team-ev', user_id: 'usr-res-04', team_role: 'member', joined_at: 1704153600 },
   { id: 'tm-11', team_id: 'team-smartgrid', user_id: 'usr-res-05', team_role: 'member', joined_at: 1704153600 },
   { id: 'tm-12', team_id: 'team-smartgrid', user_id: 'usr-res-06', team_role: 'member', joined_at: 1704153600 },
   { id: 'tm-13', team_id: 'team-smartgrid', user_id: 'usr-res-07', team_role: 'member', joined_at: 1704153600 },
   { id: 'tm-14', team_id: 'team-pv', user_id: 'usr-res-08', team_role: 'member', joined_at: 1704153600 },
-  { id: 'tm-15', team_id: 'team-dr', user_id: 'usr-res-09', team_role: 'member', joined_at: 1704153600 },
-  { id: 'tm-16', team_id: 'team-uc', user_id: 'usr-res-09', team_role: 'member', joined_at: 1704153600 },
+  { id: 'tm-15', team_id: 'team-ucdr', user_id: 'usr-res-09', team_role: 'member', joined_at: 1704153600 },
+  { id: 'tm-16', team_id: 'team-ucdr', user_id: 'usr-res-09', team_role: 'member', joined_at: 1704153600 },
   { id: 'tm-17', team_id: 'team-wind', user_id: 'usr-res-10', team_role: 'member', joined_at: 1704153600 },
   { id: 'tm-18', team_id: 'team-ev', user_id: 'usr-res-11', team_role: 'member', joined_at: 1704153600 },
   { id: 'tm-19', team_id: 'team-hydrogen', user_id: 'usr-res-12', team_role: 'member', joined_at: 1704153600 },
