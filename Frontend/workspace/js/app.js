@@ -110,6 +110,9 @@ function handleRouting() {
     case 'tasks':
       renderTasks(container, filterParam);
       break;
+    case 'my-tasks':
+      renderTasks(container, 'me');
+      break;
     case 'datasets':
       renderDatasets(container);
       break;
@@ -156,7 +159,12 @@ function updateNav(route, paramId) {
 
   document.querySelectorAll('.ws-nav-link').forEach(link => {
     const linkRoute = link.getAttribute('data-route');
-    if (linkRoute === route || (route === 'tasks' && linkRoute === 'my-tasks' && window.location.hash.includes('filter=me'))) {
+    const isMyTasks = window.location.hash.includes('filter=me') || route === 'my-tasks';
+    if (linkRoute === 'my-tasks' && isMyTasks) {
+      link.classList.add('active');
+    } else if (linkRoute === 'tasks' && route === 'tasks' && !isMyTasks) {
+      link.classList.add('active');
+    } else if (linkRoute === route && !['tasks', 'my-tasks'].includes(linkRoute)) {
       link.classList.add('active');
     } else {
       link.classList.remove('active');
