@@ -344,27 +344,53 @@
 
   </main>
 
-  <!-- LOGIN MODAL -->
+    <!-- MEMBER PORTAL LOGIN MODAL -->
   <div class="modal-backdrop" id="loginModal">
-    <div class="modal-card" style="max-width: 420px;">
+    <div class="modal-card member-login-card">
       <button class="modal-close-btn" id="loginModalCloseBtn" aria-label="Close modal"><i class="fa-solid fa-xmark"></i></button>
-      <div class="modal-header-info" style="margin-bottom: 16px;">
-        <div class="modal-title-wrap">
-          <h3 style="font-size: 1.6rem;"><i class="fa-solid fa-shield-halved" style="color: #16a34a; margin-right: 8px;"></i> Admin Login</h3>
-          <p style="color: #64748b; font-size: 0.85rem; font-weight: 500;">Enter credentials (100re / 100re) to manage laboratory</p>
+      
+      <!-- Brand Header -->
+      <div class="member-login-header">
+        <div class="member-login-badge">
+          <i class="fa-solid fa-bolt-lightning"></i> 100RE LAB PORTAL
         </div>
+        <h3 class="member-login-title">Đăng Nhập Thành Viên</h3>
+        <p class="member-login-desc">Cổng thông tin &amp; không gian làm việc nghiên cứu phòng Lab</p>
       </div>
+
       <div class="form-alert-error" id="loginErrorAlert"></div>
-      <form id="loginForm">
-        <div class="form-group">
-          <label class="form-label" for="loginUsername">Username</label>
-          <input type="text" id="loginUsername" class="form-input" placeholder="Username (e.g. 100re)" required autocomplete="username">
+
+      <form id="loginForm" class="member-login-form">
+        <div class="member-form-group">
+          <label class="member-form-label" for="loginUsername">
+            <i class="fa-regular fa-user"></i> Tên đăng nhập hoặc Email
+          </label>
+          <div class="member-input-wrap">
+            <input type="text" id="loginUsername" class="member-form-input" placeholder="VD: tu.phamanh@100relab hoặc 100re" required autocomplete="username" autofocus>
+          </div>
         </div>
-        <div class="form-group">
-          <label class="form-label" for="loginPassword">Password</label>
-          <input type="password" id="loginPassword" class="form-input" placeholder="Password (e.g. 100re)" required autocomplete="current-password">
+
+        <div class="member-form-group">
+          <label class="member-form-label" for="loginPassword">
+            <i class="fa-solid fa-lock"></i> Mật khẩu
+          </label>
+          <div class="member-input-wrap" style="position: relative;">
+            <input type="password" id="loginPassword" class="member-form-input" placeholder="Nhập mật khẩu của bạn" required autocomplete="current-password">
+            <button type="button" class="btn-toggle-pwd" id="btnToggleLoginPwd" aria-label="Hiện/ẩn mật khẩu">
+              <i class="fa-regular fa-eye" id="pwdToggleIcon"></i>
+            </button>
+          </div>
         </div>
-        <button type="submit" class="btn-form-submit"><i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In</button>
+
+        <button type="submit" class="btn-member-login-submit">
+          <span>Đăng Nhập Không Gian Lab</span>
+          <i class="fa-solid fa-arrow-right-to-bracket"></i>
+        </button>
+
+        <div class="member-login-footer-hint">
+          <i class="fa-solid fa-shield-halved" style="color: #16a34a; margin-right: 4px;"></i>
+          <span>Dành cho Ban Cố vấn, Nghiên cứu viên và Sinh viên 100RE Lab</span>
+        </div>
       </form>
     </div>
   </div>

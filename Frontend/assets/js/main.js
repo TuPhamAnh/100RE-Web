@@ -358,6 +358,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+    // Password visibility toggle in Login Modal
+  const btnTogglePwd = document.getElementById('btnToggleLoginPwd');
+  const loginPwdInput = document.getElementById('loginPassword');
+  const pwdIcon = document.getElementById('pwdToggleIcon');
+  if (btnTogglePwd && loginPwdInput && pwdIcon) {
+    btnTogglePwd.addEventListener('click', () => {
+      if (loginPwdInput.type === 'password') {
+        loginPwdInput.type = 'text';
+        pwdIcon.className = 'fa-regular fa-eye-slash';
+      } else {
+        loginPwdInput.type = 'password';
+        pwdIcon.className = 'fa-regular fa-eye';
+      }
+    });
+  }
+
   if (loginModalCloseBtn) {
     loginModalCloseBtn.addEventListener('click', () => closeModal(loginModal));
   }

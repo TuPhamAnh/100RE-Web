@@ -474,79 +474,53 @@
     </div>
   </div>
 
-  <!-- LOGIN MODAL -->
+    <!-- MEMBER PORTAL LOGIN MODAL -->
   <div class="modal-backdrop" id="loginModal">
-    <div class="modal-card" style="max-width: 420px;">
+    <div class="modal-card member-login-card">
       <button class="modal-close-btn" id="loginModalCloseBtn" aria-label="Close modal"><i class="fa-solid fa-xmark"></i></button>
-      <div class="modal-header-info" style="margin-bottom: 16px;">
-        <div class="modal-title-wrap">
-          <h3 style="font-size: 1.6rem;"><i class="fa-solid fa-shield-halved" style="color: #16a34a; margin-right: 8px;"></i> Admin Login</h3>
-          <p style="color: #64748b; font-size: 0.85rem; font-weight: 500;">Enter credentials (100re / 100re) to manage members</p>
+      
+      <!-- Brand Header -->
+      <div class="member-login-header">
+        <div class="member-login-badge">
+          <i class="fa-solid fa-bolt-lightning"></i> 100RE LAB PORTAL
         </div>
+        <h3 class="member-login-title">Đăng Nhập Thành Viên</h3>
+        <p class="member-login-desc">Cổng thông tin &amp; không gian làm việc nghiên cứu phòng Lab</p>
       </div>
-      <div class="form-alert-error" id="loginErrorAlert"></div>
-      <form id="loginForm">
-        <div class="form-group">
-          <label class="form-label" for="loginUsername">Username</label>
-          <input type="text" id="loginUsername" class="form-input" placeholder="Username (e.g. 100re)" required autocomplete="username">
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="loginPassword">Password</label>
-          <input type="password" id="loginPassword" class="form-input" placeholder="Password (e.g. 100re)" required autocomplete="current-password">
-        </div>
-        <button type="submit" class="btn-form-submit"><i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In</button>
-      </form>
-    </div>
-  </div>
 
-  <!-- ADD / EDIT MEMBER MODAL -->
-  <div class="modal-backdrop" id="memberFormModal">
-    <div class="modal-card" style="max-width: 580px;">
-      <button class="modal-close-btn" id="memberFormCloseBtn" aria-label="Close modal"><i class="fa-solid fa-xmark"></i></button>
-      <div class="modal-header-info" style="margin-bottom: 16px;">
-        <div class="modal-title-wrap">
-          <h3 id="memberFormTitle">Add New Member</h3>
-          <p style="color: #64748b; font-size: 0.85rem; font-weight: 500;">Fill in the information and upload photo</p>
-        </div>
-      </div>
-      <div class="form-alert-error" id="memberFormErrorAlert"></div>
-      <form id="memberForm">
-        <input type="hidden" id="editMemberId" value="">
-        <div class="form-group">
-          <label class="form-label" for="formMemberName">Full Name *</label>
-          <input type="text" id="formMemberName" class="form-input" placeholder="e.g. Nguyễn Văn A" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="formMemberTeam">Research Team *</label>
-          <select id="formMemberTeam" class="form-select" required>
-            <option value="pv">PV Team</option>
-            <option value="ai">AI Team</option>
-            <option value="dr_uc">Demand Response and Unit Commitment Team</option>
-            <option value="wind">Wind Team</option>
-            <option value="smartgrid">Smart Grid Team</option>
-            <option value="ev">Electric Vehicle</option>
-            <option value="hydrogen">Hydrogen Team</option>
-            <option value="bess">BESS Team</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="formMemberRole">Role / Position</label>
-          <input type="text" id="formMemberRole" class="form-input" placeholder="e.g. PV Team Researcher">
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="formMemberBio">Biography / Research Focus</label>
-          <textarea id="formMemberBio" class="form-textarea" placeholder="Describe member's research focus..."></textarea>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Profile Photo (Upload file or keep current)</label>
-          <input type="file" id="formPhotoFile" class="form-input" accept="image/*">
-          <input type="hidden" id="formPhotoUrl" value="">
-          <div class="image-preview-box" id="imagePreviewBox">
-            <span style="color: #94a3b8; font-size: 0.85rem;" id="imagePreviewPlaceholder">No image selected</span>
-            <img src="" alt="Preview" id="imagePreviewImg" class="image-preview-img" style="display: none;">
+      <div class="form-alert-error" id="loginErrorAlert"></div>
+
+      <form id="loginForm" class="member-login-form">
+        <div class="member-form-group">
+          <label class="member-form-label" for="loginUsername">
+            <i class="fa-regular fa-user"></i> Tên đăng nhập hoặc Email
+          </label>
+          <div class="member-input-wrap">
+            <input type="text" id="loginUsername" class="member-form-input" placeholder="VD: tu.phamanh@100relab hoặc 100re" required autocomplete="username" autofocus>
           </div>
         </div>
-        <button type="submit" class="btn-form-submit" id="btnSaveMember"><i class="fa-solid fa-floppy-disk"></i> Save Member</button>
+
+        <div class="member-form-group">
+          <label class="member-form-label" for="loginPassword">
+            <i class="fa-solid fa-lock"></i> Mật khẩu
+          </label>
+          <div class="member-input-wrap" style="position: relative;">
+            <input type="password" id="loginPassword" class="member-form-input" placeholder="Nhập mật khẩu của bạn" required autocomplete="current-password">
+            <button type="button" class="btn-toggle-pwd" id="btnToggleLoginPwd" aria-label="Hiện/ẩn mật khẩu">
+              <i class="fa-regular fa-eye" id="pwdToggleIcon"></i>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-member-login-submit">
+          <span>Đăng Nhập Không Gian Lab</span>
+          <i class="fa-solid fa-arrow-right-to-bracket"></i>
+        </button>
+
+        <div class="member-login-footer-hint">
+          <i class="fa-solid fa-shield-halved" style="color: #16a34a; margin-right: 4px;"></i>
+          <span>Dành cho Ban Cố vấn, Nghiên cứu viên và Sinh viên 100RE Lab</span>
+        </div>
       </form>
     </div>
   </div>

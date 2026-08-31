@@ -1550,3 +1550,170 @@ body.admin-mode .card-admin-actions {
     opacity: 1;
   }
 }
+
+/* ==========================================================================
+   100RE LAB MEMBER PORTAL LOGIN MODAL — MODERN CRAFT DESIGN
+   ========================================================================== */
+.member-login-card {
+  max-width: 440px !important;
+  border-radius: 16px !important;
+  padding: 36px 32px 28px !important;
+  background: #ffffff !important;
+  border: 1px solid rgba(226, 232, 240, 0.9) !important;
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05) !important;
+}
+
+.member-login-header {
+  text-align: center;
+  margin-bottom: 22px;
+}
+
+.member-login-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f0fdf4;
+  color: #15803d;
+  font-size: 0.725rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid #bbf7d0;
+  margin-bottom: 12px;
+}
+
+.member-login-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.75rem !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  letter-spacing: 0.01em;
+  margin-bottom: 6px !important;
+  text-transform: uppercase;
+}
+
+.member-login-desc {
+  color: #64748b;
+  font-size: 0.85rem;
+  font-weight: 500;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.member-login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.member-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.member-form-label {
+  font-size: 0.825rem;
+  font-weight: 600;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.member-form-label i {
+  color: #16a34a;
+  font-size: 0.85rem;
+}
+
+.member-input-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.member-form-input {
+  width: 100%;
+  padding: 11px 14px;
+  font-size: 0.9rem;
+  color: #0f172a;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  outline: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-sizing: border-box;
+}
+
+.member-form-input:focus {
+  background: #ffffff;
+  border-color: #16a34a;
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15);
+}
+
+.member-form-input::placeholder {
+  color: #94a3b8;
+  font-size: 0.825rem;
+}
+
+.btn-toggle-pwd {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 4px;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s ease;
+}
+
+.btn-toggle-pwd:hover {
+  color: #334155;
+}
+
+.btn-member-login-submit {
+  width: 100%;
+  margin-top: 6px;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 4px 14px rgba(22, 163, 74, 0.35);
+  transition: all 0.2s ease;
+}
+
+.btn-member-login-submit:hover {
+  background: linear-gradient(135deg, #15803d 0%, #166534 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(22, 163, 74, 0.45);
+}
+
+.btn-member-login-submit:active {
+  transform: translateY(0);
+}
+
+.member-login-footer-hint {
+  text-align: center;
+  font-size: 0.775rem;
+  color: #64748b;
+  margin-top: 4px;
+  line-height: 1.4;
+  padding-top: 12px;
+  border-top: 1px solid #f1f5f9;
+}
