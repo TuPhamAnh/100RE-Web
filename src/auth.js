@@ -12,9 +12,10 @@ export async function resolveUser(request, env, db) {
   // 1. Check Dev User Header (Highest Priority for explicit user role switching & local preview)
   if (devUserHeader) {
     const rawVal = devUserHeader.toLowerCase().trim();
+    const normalized = rawVal.replace(/@100relab(\.hust\.edu\.vn)?$/, '');
 
-    // Check specific known usernames
-    if (rawVal === '100re' || rawVal === 'usr-admin-01') {
+    // Check Super Admin
+    if (rawVal === '100re' || rawVal === 'usr-admin-01' || normalized === '100re') {
       return {
         user: {
           id: 'usr-admin-01',
@@ -37,14 +38,15 @@ export async function resolveUser(request, env, db) {
       };
     }
 
-    if (rawVal === 'hai.duongminh' || rawVal === 'usr-res-05' || rawVal.includes('duongminh')) {
+    // Check Duong Minh Hai
+    if (rawVal === 'hai.duongminh@100relab' || rawVal === 'hai.duongminh' || rawVal === 'usr-res-05' || normalized === 'hai.duongminh') {
       return {
         user: {
           id: 'usr-res-05',
-          email: 'hai.duongminh@100relab.hust.edu.vn',
+          email: 'hai.duongminh@100relab',
           display_name: 'Duong Minh Hai',
           name: 'Duong Minh Hai',
-          username: 'hai.duongminh',
+          username: 'hai.duongminh@100relab',
           role: 'researcher',
           isSupervisor: false,
           isLeader: false,
@@ -52,7 +54,7 @@ export async function resolveUser(request, env, db) {
           status: 'active',
           avatar_url: 'assets/images/duong_minh_hai.png',
           teams: ['team-smartgrid'],
-          projects: ['proj-scada-01'],
+          projects: ['proj-grid-01'],
           teamRoles: { 'team-smartgrid': 'member' },
           permissions: ['perm_news', 'perm_journey', 'perm_research', 'perm_projects', 'perm_pubs', 'perm_photos', 'perm_ws_tasks_update', 'perm_ws_scinote_edit', 'perm_ws_datasets']
         },
@@ -65,10 +67,12 @@ export async function resolveUser(request, env, db) {
     if (u) return enrichUser(u, db);
 
     // Check by Email in DB
-    if (devUserHeader.includes('@')) {
-      u = await db.first('SELECT * FROM users WHERE email = ?', [rawVal]);
-      if (u) return enrichUser(u, db);
-    }
+    u = await db.first('SELECT * FROM users WHERE email = ?', [rawVal]);
+    if (u) return enrichUser(u, db);
+
+    // Check by Email normalized
+    u = await db.first('SELECT * FROM users WHERE email = ?', [`${normalized}@100relab`]);
+    if (u) return enrichUser(u, db);
 
     // Check by Member Key in DB
     u = await db.first('SELECT * FROM users WHERE member_key = ?', [rawVal]);
@@ -99,13 +103,18 @@ export async function resolveUser(request, env, db) {
             u = await db.first('SELECT * FROM users WHERE id = ?', [sessionUser.id]);
             if (u) return enrichUser(u, db);
           } else if (sessionUser && sessionUser.username) {
-            if (sessionUser.username === 'teamleader' || sessionUser.username === 'leader.pv') {
+            const rawU = sessionUser.username.toLowerCase().trim();
+            const normU = rawU.replace(/@100relab(\.hust\.edu\.vn)?$/, '');
+
+            if (rawU === 'duc.ngotri@100relab' || normU === 'duc.ngotri' || rawU === 'teamleader' || rawU === 'leader.pv') {
               u = await db.first('SELECT * FROM users WHERE id = ?', ['usr-ldr-01']);
-            } else if (sessionUser.username === 'researcher' || sessionUser.username === 'hai.ai') {
+            } else if (rawU === 'phuong.trinhminh@100relab' || normU === 'phuong.trinhminh' || rawU === 'leader.bess') {
+              u = await db.first('SELECT * FROM users WHERE id = ?', ['usr-ldr-02']);
+            } else if (rawU === 'hai.buiquang@100relab' || normU === 'hai.buiquang' || rawU === 'researcher' || rawU === 'hai.ai') {
               u = await db.first('SELECT * FROM users WHERE id = ?', ['usr-res-01']);
-            } else if (sessionUser.username === 'hai.duongminh') {
+            } else if (rawU === 'hai.duongminh@100relab' || normU === 'hai.duongminh') {
               u = await db.first('SELECT * FROM users WHERE id = ?', ['usr-res-05']);
-            } else if (sessionUser.username === '100re') {
+            } else if (rawU === '100re' || normU === '100re') {
               u = await db.first('SELECT * FROM users WHERE role = ? LIMIT 1', ['admin']);
             } else {
               u = await db.first('SELECT * FROM users WHERE id = ?', ['usr-sup-01']);
@@ -133,7 +142,7 @@ export async function resolveUser(request, env, db) {
       isLeader: true,
       isSystemAdmin: false,
       status: 'active',
-      avatar_url: 'assets/images/logo.jpg',
+      avatar_url: 'assets/images/tuyen_nguyen_duc.jpg',
       teams: ['team-pv', 'team-bess', 'team-ai', 'team-smartgrid', 'team-wind', 'team-ev', 'team-hydrogen', 'team-dr', 'team-uc'],
       projects: [],
       teamRoles: {},

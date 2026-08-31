@@ -30,7 +30,7 @@ export const ALL_PRESET_USERS = {
     role: 'supervisor',
     isSystemAdmin: false,
     status: 'active',
-    avatar_url: 'assets/images/logo.jpg',
+    avatar_url: 'assets/images/tuyen_nguyen_duc.jpg',
     isSupervisor: true,
     isLeader: true,
     teams: [],
@@ -39,10 +39,10 @@ export const ALL_PRESET_USERS = {
   },
   'usr-ldr-01': {
     id: 'usr-ldr-01',
-    username: 'leader.pv',
+    username: 'duc.ngotri@100relab',
     name: 'Dr. Ngo Tri Duc',
-    display_name: 'Dr. Ngo Tri Duc (Leader PV)',
-    email: 'leader.pv@100relab.hust.edu.vn',
+    display_name: 'Dr. Ngo Tri Duc',
+    email: 'duc.ngotri@100relab',
     role: 'team_leader',
     isSystemAdmin: false,
     status: 'active',
@@ -55,10 +55,10 @@ export const ALL_PRESET_USERS = {
   },
   'usr-ldr-02': {
     id: 'usr-ldr-02',
-    username: 'leader.bess',
+    username: 'phuong.trinhminh@100relab',
     name: 'Dr. Trinh Minh Phuong',
-    display_name: 'Dr. Trinh Minh Phuong (Leader BESS)',
-    email: 'leader.bess@100relab.hust.edu.vn',
+    display_name: 'Dr. Trinh Minh Phuong',
+    email: 'phuong.trinhminh@100relab',
     role: 'team_leader',
     isSystemAdmin: false,
     status: 'active',
@@ -71,10 +71,10 @@ export const ALL_PRESET_USERS = {
   },
   'usr-res-05': {
     id: 'usr-res-05',
-    username: 'hai.duongminh',
+    username: 'hai.duongminh@100relab',
     name: 'Duong Minh Hai',
-    display_name: 'Duong Minh Hai (Smart Grid)',
-    email: 'hai.duongminh@100relab.hust.edu.vn',
+    display_name: 'Duong Minh Hai',
+    email: 'hai.duongminh@100relab',
     role: 'researcher',
     isSystemAdmin: false,
     status: 'active',
@@ -83,14 +83,14 @@ export const ALL_PRESET_USERS = {
     isLeader: false,
     teams: ['team-smartgrid'],
     teamRoles: { 'team-smartgrid': 'member' },
-    projects: ['proj-scada-01']
+    projects: ['proj-grid-01']
   },
   'usr-res-01': {
     id: 'usr-res-01',
-    username: 'hai.ai',
+    username: 'hai.buiquang@100relab',
     name: 'Bui Quang Hai',
-    display_name: 'Bui Quang Hai (AI Team)',
-    email: 'hai.ai@100relab.hust.edu.vn',
+    display_name: 'Bui Quang Hai',
+    email: 'hai.buiquang@100relab',
     role: 'researcher',
     isSystemAdmin: false,
     status: 'active',
@@ -103,10 +103,10 @@ export const ALL_PRESET_USERS = {
   },
   'usr-res-02': {
     id: 'usr-res-02',
-    username: 'anh.grid',
+    username: 'anh.nguyentuan@100relab',
     name: 'Nguyen Tuan Anh',
-    display_name: 'Nguyen Tuan Anh (DR & UC)',
-    email: 'anh.grid@100relab.hust.edu.vn',
+    display_name: 'Nguyen Tuan Anh',
+    email: 'anh.nguyentuan@100relab',
     role: 'researcher',
     isSystemAdmin: false,
     status: 'active',
@@ -119,10 +119,10 @@ export const ALL_PRESET_USERS = {
   },
   'usr-res-03': {
     id: 'usr-res-03',
-    username: 'nam.wind',
-    name: 'Nguyen Hoàng Nam',
-    display_name: 'Nguyen Hoang Nam (Wind Team)',
-    email: 'nam.wind@100relab.hust.edu.vn',
+    username: 'nam.nguyenhoang@100relab',
+    name: 'Nguyen Hoang Nam',
+    display_name: 'Nguyen Hoang Nam',
+    email: 'nam.nguyenhoang@100relab',
     role: 'researcher',
     isSystemAdmin: false,
     status: 'active',
@@ -135,10 +135,10 @@ export const ALL_PRESET_USERS = {
   },
   'usr-res-04': {
     id: 'usr-res-04',
-    username: 'cuong.ev',
+    username: 'cuong.lethe@100relab',
     name: 'Le The Cuong',
-    display_name: 'Le The Cuong (EV Team)',
-    email: 'cuong.ev@100relab.hust.edu.vn',
+    display_name: 'Le The Cuong',
+    email: 'cuong.lethe@100relab',
     role: 'researcher',
     isSystemAdmin: false,
     status: 'active',
@@ -151,10 +151,10 @@ export const ALL_PRESET_USERS = {
   },
   'usr-res-06': {
     id: 'usr-res-06',
-    username: 'dung.scada',
+    username: 'dung.vutien@100relab',
     name: 'Vu Tien Dung',
-    display_name: 'Vu Tien Dung (SCADA/Grid)',
-    email: 'dung.scada@100relab.hust.edu.vn',
+    display_name: 'Vu Tien Dung',
+    email: 'dung.vutien@100relab',
     role: 'researcher',
     isSystemAdmin: false,
     status: 'active',
@@ -165,12 +165,140 @@ export const ALL_PRESET_USERS = {
     teamRoles: { 'team-smartgrid': 'member' },
     projects: []
   },
+  'usr-res-07': {
+    id: 'usr-res-07',
+    username: 'dung.lengoc@100relab',
+    name: 'Le Ngoc Dung',
+    display_name: 'Le Ngoc Dung',
+    email: 'dung.lengoc@100relab',
+    role: 'researcher',
+    isSystemAdmin: false,
+    status: 'active',
+    avatar_url: 'assets/images/le_ngoc_dung.jpg',
+    isSupervisor: false,
+    isLeader: false,
+    teams: ['team-smartgrid'],
+    teamRoles: { 'team-smartgrid': 'member' },
+    projects: []
+  },
+  'usr-res-08': {
+    id: 'usr-res-08',
+    username: 'minh.buiquang@100relab',
+    name: 'Bui Quang Minh',
+    display_name: 'Bui Quang Minh',
+    email: 'minh.buiquang@100relab',
+    role: 'researcher',
+    isSystemAdmin: false,
+    status: 'active',
+    avatar_url: 'assets/images/bui_quang_minh.jpg',
+    isSupervisor: false,
+    isLeader: false,
+    teams: ['team-pv'],
+    teamRoles: { 'team-pv': 'member' },
+    projects: []
+  },
+  'usr-res-09': {
+    id: 'usr-res-09',
+    username: 'quan.leanh@100relab',
+    name: 'Dr. Le Anh Quan',
+    display_name: 'Dr. Le Anh Quan',
+    email: 'quan.leanh@100relab',
+    role: 'alumni',
+    isSystemAdmin: false,
+    status: 'active',
+    avatar_url: 'assets/images/le_anh_quan.png',
+    isSupervisor: false,
+    isLeader: false,
+    teams: ['team-dr', 'team-uc'],
+    teamRoles: {},
+    projects: []
+  },
+  'usr-res-10': {
+    id: 'usr-res-10',
+    username: 'tung.nguyennhu@100relab',
+    name: 'Nguyen Nhu Tung',
+    display_name: 'Nguyen Nhu Tung',
+    email: 'tung.nguyennhu@100relab',
+    role: 'researcher',
+    isSystemAdmin: false,
+    status: 'active',
+    avatar_url: 'assets/images/nguyen_nhu_tung.png',
+    isSupervisor: false,
+    isLeader: false,
+    teams: ['team-wind'],
+    teamRoles: { 'team-wind': 'member' },
+    projects: []
+  },
+  'usr-res-11': {
+    id: 'usr-res-11',
+    username: 'khanh.daoquoc@100relab',
+    name: 'Dao Quoc Khanh',
+    display_name: 'Dao Quoc Khanh',
+    email: 'khanh.daoquoc@100relab',
+    role: 'researcher',
+    isSystemAdmin: false,
+    status: 'active',
+    avatar_url: 'assets/images/dao_quoc_khanh.jpg',
+    isSupervisor: false,
+    isLeader: false,
+    teams: ['team-ev'],
+    teamRoles: { 'team-ev': 'member' },
+    projects: []
+  },
+  'usr-res-12': {
+    id: 'usr-res-12',
+    username: 'anh.nguyenhoang@100relab',
+    name: 'Nguyen Hoang Anh',
+    display_name: 'Nguyen Hoang Anh',
+    email: 'anh.nguyenhoang@100relab',
+    role: 'researcher',
+    isSystemAdmin: false,
+    status: 'active',
+    avatar_url: 'assets/images/nguyen_hoang_anh.jpg',
+    isSupervisor: false,
+    isLeader: false,
+    teams: ['team-hydrogen'],
+    teamRoles: { 'team-hydrogen': 'member' },
+    projects: []
+  },
+  'usr-res-13': {
+    id: 'usr-res-13',
+    username: 'anh.nguyenquang@100relab',
+    name: 'Nguyen Quang Anh',
+    display_name: 'Nguyen Quang Anh',
+    email: 'anh.nguyenquang@100relab',
+    role: 'researcher',
+    isSystemAdmin: false,
+    status: 'active',
+    avatar_url: 'assets/images/nguyen_quang_anh.png',
+    isSupervisor: false,
+    isLeader: false,
+    teams: ['team-bess'],
+    teamRoles: { 'team-bess': 'member' },
+    projects: []
+  },
+  'usr-res-14': {
+    id: 'usr-res-14',
+    username: 'vinh.tranthihong@100relab',
+    name: 'Tran Thi Hong Vinh',
+    display_name: 'Tran Thi Hong Vinh',
+    email: 'vinh.tranthihong@100relab',
+    role: 'researcher',
+    isSystemAdmin: false,
+    status: 'active',
+    avatar_url: 'assets/images/tran_thi_hong_vinh.png',
+    isSupervisor: false,
+    isLeader: false,
+    teams: ['team-bess'],
+    teamRoles: { 'team-bess': 'member' },
+    projects: []
+  },
   'usr-guest-01': {
     id: 'usr-guest-01',
-    username: 'guest.visiting',
+    username: 'guest.visiting@100relab',
     name: 'Visiting Fellow',
-    display_name: 'Visiting Fellow (Guest)',
-    email: 'guest.visiting@100relab.hust.edu.vn',
+    display_name: 'Visiting Fellow',
+    email: 'guest.visiting@100relab',
     role: 'alumni',
     isSystemAdmin: false,
     status: 'active',
@@ -194,28 +322,45 @@ export const Auth = {
 
   async switchDevUser(userId) {
     const rawKey = (userId || '').trim().toLowerCase();
+    const normalized = rawKey.replace(/@100relab(\.hust\.edu\.vn)?$/, '');
     localStorage.setItem('ws_dev_user_id', rawKey);
 
     // 1. Direct key match in presets
     let matched = ALL_PRESET_USERS[rawKey];
 
-    // 2. Match by username in presets
+    // 2. Match by username/email in presets
     if (!matched) {
       matched = Object.values(ALL_PRESET_USERS).find(u => 
         u.username.toLowerCase() === rawKey ||
         u.id.toLowerCase() === rawKey ||
-        (u.email && u.email.toLowerCase().includes(rawKey))
+        u.username.toLowerCase().replace(/@100relab$/, '') === normalized ||
+        (u.email && u.email.toLowerCase() === rawKey) ||
+        (u.email && u.email.toLowerCase().replace(/@100relab$/, '') === normalized)
       );
     }
 
-    // 3. Match in custom created users in localStorage
+    // 3. Fallback aliases
+    if (!matched) {
+      if (rawKey === 'teamleader' || rawKey === 'leader.pv') matched = ALL_PRESET_USERS['usr-ldr-01'];
+      else if (rawKey === 'leader.bess') matched = ALL_PRESET_USERS['usr-ldr-02'];
+      else if (rawKey === 'researcher' || rawKey === 'hai.ai') matched = ALL_PRESET_USERS['usr-res-01'];
+      else if (rawKey === 'hai.duongminh') matched = ALL_PRESET_USERS['usr-res-05'];
+      else if (rawKey === 'anh.grid') matched = ALL_PRESET_USERS['usr-res-02'];
+      else if (rawKey === 'nam.wind') matched = ALL_PRESET_USERS['usr-res-03'];
+      else if (rawKey === 'cuong.ev') matched = ALL_PRESET_USERS['usr-res-04'];
+      else if (rawKey === 'supervisor') matched = ALL_PRESET_USERS['usr-sup-01'];
+      else if (rawKey === '100re' || rawKey === 'admin') matched = ALL_PRESET_USERS['usr-admin-01'];
+    }
+
+    // 4. Match in custom created users in localStorage
     if (!matched) {
       try {
         const customList = JSON.parse(localStorage.getItem('100re_created_users') || localStorage.getItem('100re_custom_users') || '[]');
         const customFound = customList.find(u => 
           u.id === rawKey || 
           (u.username && u.username.toLowerCase() === rawKey) || 
-          (u.email && u.email.toLowerCase().includes(rawKey))
+          (u.email && u.email.toLowerCase() === rawKey) ||
+          (u.username && u.username.toLowerCase().replace(/@100relab$/, '') === normalized)
         );
         if (customFound) {
           matched = {
@@ -223,6 +368,7 @@ export const Auth = {
             name: customFound.display_name || customFound.name || customFound.username,
             display_name: customFound.display_name || customFound.name,
             username: customFound.username || rawKey,
+            email: customFound.email || `${rawKey}@100relab`,
             role: customFound.role || 'researcher',
             isSystemAdmin: customFound.role === 'admin' || customFound.username === '100re',
             status: customFound.status || 'active',
@@ -238,7 +384,7 @@ export const Auth = {
       } catch (e) {}
     }
 
-    // 4. Default fallback to Supervisor
+    // 5. Default fallback to Supervisor
     if (!matched) {
       matched = ALL_PRESET_USERS['usr-sup-01'];
     }
@@ -364,7 +510,7 @@ export const Auth = {
       }
     }
 
-    // 5. Show or hide Dev Role Switcher bar (STRICTLY restricted to 100re Admin or Supervisor)
+    // 5. Show or hide Dev Role Switcher bar
     const devSwitcher = document.getElementById('wsDevSwitcher');
     if (devSwitcher) {
       devSwitcher.style.display = 'inline-flex';
@@ -373,12 +519,11 @@ export const Auth = {
     // 6. Update Dev Selector to match current user ID
     const devSelect = document.getElementById('devRoleSelect');
     if (devSelect) {
-      // Ensure current user exists in select options
       let exists = Array.from(devSelect.options).some(opt => opt.value === this.currentUser.id || opt.value === this.currentUser.username);
       if (!exists) {
         const opt = document.createElement('option');
         opt.value = this.currentUser.id;
-        opt.textContent = `👤 ${this.currentUser.display_name || this.currentUser.name} (${this.currentUser.role})`;
+        opt.textContent = `👤 ${this.currentUser.display_name || this.currentUser.name} (${this.currentUser.username})`;
         devSelect.appendChild(opt);
       }
       devSelect.value = this.currentUser.id;

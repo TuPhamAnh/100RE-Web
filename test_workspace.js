@@ -76,7 +76,7 @@ async function runTests() {
   });
 
   await test('Workspace User without member_key works normally (member_key = null)', async () => {
-    const req = makeReq('/api/me', 'GET', null, { 'X-Dev-User-Id': 'usr-res-06' });
+    const req = makeReq('/api/me', 'GET', null, { 'X-Dev-User-Id': 'usr-guest-01' });
     const res = await worker.fetch(req, mockEnv);
     const data = await res.json();
     if (!data.authenticated || data.user.member_key !== null) {

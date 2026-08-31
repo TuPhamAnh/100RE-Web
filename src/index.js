@@ -207,17 +207,18 @@ export default {
 
     // =========================================================================
     // =========================================================================
-    // C. USER AUTHENTICATION & LOGIN (Supervisor, Team Leader, Researcher)
+        // C. USER AUTHENTICATION & LOGIN (Supervisor, Team Leader, Researcher)
     // =========================================================================
     if (path === '/api/login' && request.method === 'POST') {
       try {
         const body = await request.json();
         const { username, password } = body;
         const lowerUser = (username || '').toLowerCase().trim();
+        const normalized = lowerUser.replace(/@100relab(\.hust\.edu\.vn)?$/, '');
 
         let userProfile = null;
         if (password === '100re') {
-          if (lowerUser === '100re' || lowerUser === 'admin') {
+          if (lowerUser === '100re' || lowerUser === 'admin' || normalized === '100re') {
             userProfile = {
               id: 'usr-admin-01',
               username: '100re',
@@ -227,36 +228,206 @@ export default {
               role: 'admin',
               isSystemAdmin: true
             };
-          } else if (lowerUser === 'supervisor') {
+          } else if (lowerUser === 'supervisor' || normalized === 'supervisor') {
             userProfile = {
               id: 'usr-sup-01',
               username: 'supervisor',
               name: 'Assoc. Prof. Nguyen Duc Tuyen',
-              display_name: 'Assoc. Prof. Nguyen Duc Tuyen (Supervisor)',
+              display_name: 'Assoc. Prof. Nguyen Duc Tuyen',
               email: 'supervisor@100relab.hust.edu.vn',
               role: 'supervisor',
               isSystemAdmin: false
             };
-          } else if (lowerUser === 'teamleader' || lowerUser === 'leader') {
+          } else if (lowerUser === 'duc.ngotri@100relab' || normalized === 'duc.ngotri' || lowerUser === 'teamleader' || lowerUser === 'leader.pv') {
             userProfile = {
               id: 'usr-ldr-01',
-              username: 'teamleader',
+              username: 'duc.ngotri@100relab',
               name: 'Dr. Ngo Tri Duc',
-              display_name: 'Dr. Ngo Tri Duc (Leader PV)',
-              email: 'leader.pv@100relab.hust.edu.vn',
+              display_name: 'Dr. Ngo Tri Duc',
+              email: 'duc.ngotri@100relab',
               role: 'team_leader',
               team: 'team-pv',
+              teams: ['team-pv'],
               isSystemAdmin: false
             };
-          } else if (lowerUser === 'researcher') {
+          } else if (lowerUser === 'phuong.trinhminh@100relab' || normalized === 'phuong.trinhminh' || lowerUser === 'leader.bess') {
+            userProfile = {
+              id: 'usr-ldr-02',
+              username: 'phuong.trinhminh@100relab',
+              name: 'Dr. Trinh Minh Phuong',
+              display_name: 'Dr. Trinh Minh Phuong',
+              email: 'phuong.trinhminh@100relab',
+              role: 'team_leader',
+              team: 'team-bess',
+              teams: ['team-bess'],
+              isSystemAdmin: false
+            };
+          } else if (lowerUser === 'hai.duongminh@100relab' || normalized === 'hai.duongminh') {
+            userProfile = {
+              id: 'usr-res-05',
+              username: 'hai.duongminh@100relab',
+              name: 'Duong Minh Hai',
+              display_name: 'Duong Minh Hai',
+              email: 'hai.duongminh@100relab',
+              role: 'researcher',
+              team: 'team-smartgrid',
+              teams: ['team-smartgrid'],
+              isSystemAdmin: false
+            };
+          } else if (lowerUser === 'hai.buiquang@100relab' || normalized === 'hai.buiquang' || lowerUser === 'researcher' || lowerUser === 'hai.ai') {
             userProfile = {
               id: 'usr-res-01',
-              username: 'researcher',
+              username: 'hai.buiquang@100relab',
               name: 'Bui Quang Hai',
-              display_name: 'Bui Quang Hai (Researcher PV)',
-              email: 'hai.ai@100relab.hust.edu.vn',
+              display_name: 'Bui Quang Hai',
+              email: 'hai.buiquang@100relab',
+              role: 'researcher',
+              team: 'team-ai',
+              teams: ['team-ai', 'team-pv'],
+              isSystemAdmin: false
+            };
+          } else if (lowerUser === 'anh.nguyentuan@100relab' || normalized === 'anh.nguyentuan' || lowerUser === 'anh.grid') {
+            userProfile = {
+              id: 'usr-res-02',
+              username: 'anh.nguyentuan@100relab',
+              name: 'Nguyen Tuan Anh',
+              display_name: 'Nguyen Tuan Anh',
+              email: 'anh.nguyentuan@100relab',
+              role: 'researcher',
+              team: 'team-dr',
+              teams: ['team-dr', 'team-uc'],
+              isSystemAdmin: false
+            };
+          } else if (lowerUser === 'nam.nguyenhoang@100relab' || normalized === 'nam.nguyenhoang' || lowerUser === 'nam.wind') {
+            userProfile = {
+              id: 'usr-res-03',
+              username: 'nam.nguyenhoang@100relab',
+              name: 'Nguyen Hoang Nam',
+              display_name: 'Nguyen Hoang Nam',
+              email: 'nam.nguyenhoang@100relab',
+              role: 'researcher',
+              team: 'team-wind',
+              teams: ['team-wind'],
+              isSystemAdmin: false
+            };
+          } else if (lowerUser === 'cuong.lethe@100relab' || normalized === 'cuong.lethe' || lowerUser === 'cuong.ev') {
+            userProfile = {
+              id: 'usr-res-04',
+              username: 'cuong.lethe@100relab',
+              name: 'Le The Cuong',
+              display_name: 'Le The Cuong',
+              email: 'cuong.lethe@100relab',
+              role: 'researcher',
+              team: 'team-ev',
+              teams: ['team-ev'],
+              isSystemAdmin: false
+            };
+          } else if (lowerUser === 'dung.vutien@100relab' || normalized === 'dung.vutien') {
+            userProfile = {
+              id: 'usr-res-06',
+              username: 'dung.vutien@100relab',
+              name: 'Vu Tien Dung',
+              display_name: 'Vu Tien Dung',
+              email: 'dung.vutien@100relab',
+              role: 'researcher',
+              team: 'team-smartgrid',
+              teams: ['team-smartgrid'],
+              isSystemAdmin: false
+            };
+          } else if (lowerUser === 'dung.lengoc@100relab' || normalized === 'dung.lengoc') {
+            userProfile = {
+              id: 'usr-res-07',
+              username: 'dung.lengoc@100relab',
+              name: 'Le Ngoc Dung',
+              display_name: 'Le Ngoc Dung',
+              email: 'dung.lengoc@100relab',
+              role: 'researcher',
+              team: 'team-smartgrid',
+              teams: ['team-smartgrid'],
+              isSystemAdmin: false
+            };
+          } else if (lowerUser === 'minh.buiquang@100relab' || normalized === 'minh.buiquang') {
+            userProfile = {
+              id: 'usr-res-08',
+              username: 'minh.buiquang@100relab',
+              name: 'Bui Quang Minh',
+              display_name: 'Bui Quang Minh',
+              email: 'minh.buiquang@100relab',
               role: 'researcher',
               team: 'team-pv',
+              teams: ['team-pv'],
+              isSystemAdmin: false
+            };
+          } else if (lowerUser === 'quan.leanh@100relab' || normalized === 'quan.leanh') {
+            userProfile = {
+              id: 'usr-res-09',
+              username: 'quan.leanh@100relab',
+              name: 'Dr. Le Anh Quan',
+              display_name: 'Dr. Le Anh Quan',
+              email: 'quan.leanh@100relab',
+              role: 'alumni',
+              team: 'team-dr',
+              teams: ['team-dr', 'team-uc'],
+              isSystemAdmin: false
+            };
+          } else if (lowerUser === 'tung.nguyennhu@100relab' || normalized === 'tung.nguyennhu') {
+            userProfile = {
+              id: 'usr-res-10',
+              username: 'tung.nguyennhu@100relab',
+              name: 'Nguyen Nhu Tung',
+              display_name: 'Nguyen Nhu Tung',
+              email: 'tung.nguyennhu@100relab',
+              role: 'researcher',
+              team: 'team-wind',
+              teams: ['team-wind'],
+              isSystemAdmin: false
+            };
+          } else if (lowerUser === 'khanh.daoquoc@100relab' || normalized === 'khanh.daoquoc') {
+            userProfile = {
+              id: 'usr-res-11',
+              username: 'khanh.daoquoc@100relab',
+              name: 'Dao Quoc Khanh',
+              display_name: 'Dao Quoc Khanh',
+              email: 'khanh.daoquoc@100relab',
+              role: 'researcher',
+              team: 'team-ev',
+              teams: ['team-ev'],
+              isSystemAdmin: false
+            };
+          } else if (lowerUser === 'anh.nguyenhoang@100relab' || normalized === 'anh.nguyenhoang') {
+            userProfile = {
+              id: 'usr-res-12',
+              username: 'anh.nguyenhoang@100relab',
+              name: 'Nguyen Hoang Anh',
+              display_name: 'Nguyen Hoang Anh',
+              email: 'anh.nguyenhoang@100relab',
+              role: 'researcher',
+              team: 'team-hydrogen',
+              teams: ['team-hydrogen'],
+              isSystemAdmin: false
+            };
+          } else if (lowerUser === 'anh.nguyenquang@100relab' || normalized === 'anh.nguyenquang') {
+            userProfile = {
+              id: 'usr-res-13',
+              username: 'anh.nguyenquang@100relab',
+              name: 'Nguyen Quang Anh',
+              display_name: 'Nguyen Quang Anh',
+              email: 'anh.nguyenquang@100relab',
+              role: 'researcher',
+              team: 'team-bess',
+              teams: ['team-bess'],
+              isSystemAdmin: false
+            };
+          } else if (lowerUser === 'vinh.tranthihong@100relab' || normalized === 'vinh.tranthihong') {
+            userProfile = {
+              id: 'usr-res-14',
+              username: 'vinh.tranthihong@100relab',
+              name: 'Tran Thi Hong Vinh',
+              display_name: 'Tran Thi Hong Vinh',
+              email: 'vinh.tranthihong@100relab',
+              role: 'researcher',
+              team: 'team-bess',
+              teams: ['team-bess'],
               isSystemAdmin: false
             };
           }

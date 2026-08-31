@@ -397,23 +397,109 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         }
       } catch (err) {
-        // Fallback for offline / direct file opening
+                // Fallback for offline / direct file opening
         const lowerUser = (username || '').toLowerCase().trim();
+        const normalized = lowerUser.replace(/@100relab(\.hust\.edu\.vn)?$/, '');
         const fallbackToken = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : ('uuid_' + Date.now());
         
         let matchedId = 'usr-sup-01';
         let role = 'supervisor';
-        let dispName = 'Assoc. Prof. Nguyen Duc Tuyen (Supervisor)';
+        let dispName = 'Assoc. Prof. Nguyen Duc Tuyen';
 
-        if (lowerUser === '100re' || lowerUser === 'admin') {
+        if (lowerUser === '100re' || lowerUser === 'admin' || normalized === '100re') {
           role = 'admin';
           matchedId = 'usr-admin-01';
           dispName = 'System Admin (100RE)';
           localStorage.setItem('100re_is_admin', 'true');
-        } else if (lowerUser === 'leader.pv' || lowerUser === 'teamleader') {
+        } else if (lowerUser === 'supervisor' || normalized === 'supervisor') {
+          role = 'supervisor';
+          matchedId = 'usr-sup-01';
+          dispName = 'Assoc. Prof. Nguyen Duc Tuyen';
+          localStorage.removeItem('100re_is_admin');
+        } else if (lowerUser === 'duc.ngotri@100relab' || normalized === 'duc.ngotri' || lowerUser === 'leader.pv' || lowerUser === 'teamleader') {
           role = 'team_leader';
           matchedId = 'usr-ldr-01';
-          dispName = 'Dr. Ngo Tri Duc (Leader PV)';
+          dispName = 'Dr. Ngo Tri Duc';
+          localStorage.removeItem('100re_is_admin');
+        } else if (lowerUser === 'phuong.trinhminh@100relab' || normalized === 'phuong.trinhminh' || lowerUser === 'leader.bess') {
+          role = 'team_leader';
+          matchedId = 'usr-ldr-02';
+          dispName = 'Dr. Trinh Minh Phuong';
+          localStorage.removeItem('100re_is_admin');
+        } else if (lowerUser === 'hai.duongminh@100relab' || normalized === 'hai.duongminh') {
+          role = 'researcher';
+          matchedId = 'usr-res-05';
+          dispName = 'Duong Minh Hai';
+          localStorage.removeItem('100re_is_admin');
+        } else if (lowerUser === 'hai.buiquang@100relab' || normalized === 'hai.buiquang' || lowerUser === 'hai.ai' || lowerUser === 'researcher') {
+          role = 'researcher';
+          matchedId = 'usr-res-01';
+          dispName = 'Bui Quang Hai';
+          localStorage.removeItem('100re_is_admin');
+        } else if (lowerUser === 'anh.nguyentuan@100relab' || normalized === 'anh.nguyentuan' || lowerUser === 'anh.grid') {
+          role = 'researcher';
+          matchedId = 'usr-res-02';
+          dispName = 'Nguyen Tuan Anh';
+          localStorage.removeItem('100re_is_admin');
+        } else if (lowerUser === 'nam.nguyenhoang@100relab' || normalized === 'nam.nguyenhoang' || lowerUser === 'nam.wind') {
+          role = 'researcher';
+          matchedId = 'usr-res-03';
+          dispName = 'Nguyen Hoang Nam';
+          localStorage.removeItem('100re_is_admin');
+        } else if (lowerUser === 'cuong.lethe@100relab' || normalized === 'cuong.lethe' || lowerUser === 'cuong.ev') {
+          role = 'researcher';
+          matchedId = 'usr-res-04';
+          dispName = 'Le The Cuong';
+          localStorage.removeItem('100re_is_admin');
+        } else if (lowerUser === 'dung.vutien@100relab' || normalized === 'dung.vutien') {
+          role = 'researcher';
+          matchedId = 'usr-res-06';
+          dispName = 'Vu Tien Dung';
+          localStorage.removeItem('100re_is_admin');
+        } else if (lowerUser === 'dung.lengoc@100relab' || normalized === 'dung.lengoc') {
+          role = 'researcher';
+          matchedId = 'usr-res-07';
+          dispName = 'Le Ngoc Dung';
+          localStorage.removeItem('100re_is_admin');
+        } else if (lowerUser === 'minh.buiquang@100relab' || normalized === 'minh.buiquang') {
+          role = 'researcher';
+          matchedId = 'usr-res-08';
+          dispName = 'Bui Quang Minh';
+          localStorage.removeItem('100re_is_admin');
+        } else if (lowerUser === 'quan.leanh@100relab' || normalized === 'quan.leanh') {
+          role = 'alumni';
+          matchedId = 'usr-res-09';
+          dispName = 'Dr. Le Anh Quan';
+          localStorage.removeItem('100re_is_admin');
+        } else if (lowerUser === 'tung.nguyennhu@100relab' || normalized === 'tung.nguyennhu') {
+          role = 'researcher';
+          matchedId = 'usr-res-10';
+          dispName = 'Nguyen Nhu Tung';
+          localStorage.removeItem('100re_is_admin');
+        } else if (lowerUser === 'khanh.daoquoc@100relab' || normalized === 'khanh.daoquoc') {
+          role = 'researcher';
+          matchedId = 'usr-res-11';
+          dispName = 'Dao Quoc Khanh';
+          localStorage.removeItem('100re_is_admin');
+        } else if (lowerUser === 'anh.nguyenhoang@100relab' || normalized === 'anh.nguyenhoang') {
+          role = 'researcher';
+          matchedId = 'usr-res-12';
+          dispName = 'Nguyen Hoang Anh';
+          localStorage.removeItem('100re_is_admin');
+        } else if (lowerUser === 'anh.nguyenquang@100relab' || normalized === 'anh.nguyenquang') {
+          role = 'researcher';
+          matchedId = 'usr-res-13';
+          dispName = 'Nguyen Quang Anh';
+          localStorage.removeItem('100re_is_admin');
+        } else if (lowerUser === 'vinh.tranthihong@100relab' || normalized === 'vinh.tranthihong') {
+          role = 'researcher';
+          matchedId = 'usr-res-14';
+          dispName = 'Tran Thi Hong Vinh';
+          localStorage.removeItem('100re_is_admin');
+        } else {
+          matchedId = lowerUser;
+          dispName = username;
+          role = 'researcher';
           localStorage.removeItem('100re_is_admin');
         } else if (lowerUser === 'leader.bess') {
           role = 'team_leader';

@@ -128,7 +128,7 @@ export async function renderAdmin(container) {
 
               <div class="form-group" style="margin-bottom:12px;">
                 <label style="display:block; font-size:0.8rem; font-weight:700; color:#475569; margin-bottom:4px;">Tên Đăng Nhập (Username) *</label>
-                <input type="text" id="permUsername" class="ws-search-input" style="width:100%; border-radius:6px; font-family:monospace; font-weight:700;" placeholder="ví dụ: hai.duongminh, supervisor, leader.pv..." required>
+                <input type="text" id="permUsername" class="ws-search-input" style="width:100%; border-radius:6px; font-family:monospace; font-weight:700;" placeholder="ví dụ: hai.duongminh@100relab, duc.ngotri@100relab..." required>
               </div>
 
               <div class="form-group" style="margin-bottom:12px;">
@@ -148,7 +148,7 @@ export async function renderAdmin(container) {
 
               <div class="form-group" style="margin-bottom:12px;">
                 <label style="display:block; font-size:0.8rem; font-weight:700; color:#475569; margin-bottom:4px;">Email</label>
-                <input type="text" id="permEmail" class="ws-search-input" style="width:100%; border-radius:6px;" placeholder="ví dụ: hai.duongminh@100relab.hust.edu.vn">
+                <input type="text" id="permEmail" class="ws-search-input" style="width:100%; border-radius:6px;" placeholder="ví dụ: hai.duongminh@100relab">
               </div>
 
               <div class="form-group" style="margin-bottom:14px;">
@@ -303,16 +303,24 @@ export async function renderAdmin(container) {
 
     // Default Seed Members if empty
     if (!members || members.length === 0) {
-      members = [
+            members = [
         { id: 'usr-sup-01', username: 'supervisor', password: '100re', display_name: 'Assoc. Prof. Nguyen Duc Tuyen', name: 'Assoc. Prof. Nguyen Duc Tuyen', email: 'supervisor@100relab.hust.edu.vn', role: 'supervisor', status: 'active', teams: [], permissions: [] },
-        { id: 'usr-ldr-01', username: 'leader.pv', password: '100re', display_name: 'Dr. Ngo Tri Duc', name: 'Dr. Ngo Tri Duc', email: 'leader.pv@100relab.hust.edu.vn', role: 'team_leader', status: 'active', teams: ['team-pv'], permissions: [] },
-        { id: 'usr-ldr-02', username: 'leader.bess', password: '100re', display_name: 'Dr. Trinh Minh Phuong', name: 'Dr. Trinh Minh Phuong', email: 'leader.bess@100relab.hust.edu.vn', role: 'team_leader', status: 'active', teams: ['team-bess'], permissions: [] },
-        { id: 'usr-res-01', username: 'hai.ai', password: '100re', display_name: 'Bui Quang Hai', name: 'Bui Quang Hai', email: 'hai.ai@100relab.hust.edu.vn', role: 'researcher', status: 'active', teams: ['team-ai', 'team-pv'], permissions: [] },
-        { id: 'usr-res-02', username: 'anh.grid', password: '100re', display_name: 'Nguyen Tuan Anh', name: 'Nguyen Tuan Anh', email: 'anh.grid@100relab.hust.edu.vn', role: 'researcher', status: 'active', teams: ['team-smartgrid', 'team-uc'], permissions: [] },
-        { id: 'usr-res-03', username: 'nam.wind', password: '100re', display_name: 'Nguyen Hoang Nam', name: 'Nguyen Hoang Nam', email: 'nam.wind@100relab.hust.edu.vn', role: 'researcher', status: 'active', teams: ['team-wind'], permissions: [] },
-        { id: 'usr-res-04', username: 'cuong.ev', password: '100re', display_name: 'Le The Cuong', name: 'Le The Cuong', email: 'cuong.ev@100relab.hust.edu.vn', role: 'researcher', status: 'active', teams: ['team-ev'], permissions: [] },
-        { id: 'usr-res-05', username: 'hai.duongminh', password: '100re', display_name: 'Duong Minh Hai', name: 'Duong Minh Hai', email: 'hai.duongminh@100relab.hust.edu.vn', role: 'researcher', status: 'active', teams: ['team-smartgrid'], permissions: [] },
-        { id: 'usr-res-06', username: 'dung.scada', password: '100re', display_name: 'Vu Tien Dung', name: 'Vu Tien Dung', email: 'dung.scada@100relab.hust.edu.vn', role: 'researcher', status: 'active', teams: ['team-smartgrid'], permissions: [] }
+        { id: 'usr-ldr-01', username: 'duc.ngotri@100relab', password: '100re', display_name: 'Dr. Ngo Tri Duc', name: 'Dr. Ngo Tri Duc', email: 'duc.ngotri@100relab', role: 'team_leader', status: 'active', teams: ['team-pv'], permissions: [] },
+        { id: 'usr-ldr-02', username: 'phuong.trinhminh@100relab', password: '100re', display_name: 'Dr. Trinh Minh Phuong', name: 'Dr. Trinh Minh Phuong', email: 'phuong.trinhminh@100relab', role: 'team_leader', status: 'active', teams: ['team-bess'], permissions: [] },
+        { id: 'usr-res-05', username: 'hai.duongminh@100relab', password: '100re', display_name: 'Duong Minh Hai', name: 'Duong Minh Hai', email: 'hai.duongminh@100relab', role: 'researcher', status: 'active', teams: ['team-smartgrid'], permissions: [] },
+        { id: 'usr-res-01', username: 'hai.buiquang@100relab', password: '100re', display_name: 'Bui Quang Hai', name: 'Bui Quang Hai', email: 'hai.buiquang@100relab', role: 'researcher', status: 'active', teams: ['team-ai', 'team-pv'], permissions: [] },
+        { id: 'usr-res-02', username: 'anh.nguyentuan@100relab', password: '100re', display_name: 'Nguyen Tuan Anh', name: 'Nguyen Tuan Anh', email: 'anh.nguyentuan@100relab', role: 'researcher', status: 'active', teams: ['team-dr', 'team-uc'], permissions: [] },
+        { id: 'usr-res-03', username: 'nam.nguyenhoang@100relab', password: '100re', display_name: 'Nguyen Hoang Nam', name: 'Nguyen Hoang Nam', email: 'nam.nguyenhoang@100relab', role: 'researcher', status: 'active', teams: ['team-wind'], permissions: [] },
+        { id: 'usr-res-04', username: 'cuong.lethe@100relab', password: '100re', display_name: 'Le The Cuong', name: 'Le The Cuong', email: 'cuong.lethe@100relab', role: 'researcher', status: 'active', teams: ['team-ev'], permissions: [] },
+        { id: 'usr-res-06', username: 'dung.vutien@100relab', password: '100re', display_name: 'Vu Tien Dung', name: 'Vu Tien Dung', email: 'dung.vutien@100relab', role: 'researcher', status: 'active', teams: ['team-smartgrid'], permissions: [] },
+        { id: 'usr-res-07', username: 'dung.lengoc@100relab', password: '100re', display_name: 'Le Ngoc Dung', name: 'Le Ngoc Dung', email: 'dung.lengoc@100relab', role: 'researcher', status: 'active', teams: ['team-smartgrid'], permissions: [] },
+        { id: 'usr-res-08', username: 'minh.buiquang@100relab', password: '100re', display_name: 'Bui Quang Minh', name: 'Bui Quang Minh', email: 'minh.buiquang@100relab', role: 'researcher', status: 'active', teams: ['team-pv'], permissions: [] },
+        { id: 'usr-res-09', username: 'quan.leanh@100relab', password: '100re', display_name: 'Dr. Le Anh Quan', name: 'Dr. Le Anh Quan', email: 'quan.leanh@100relab', role: 'alumni', status: 'active', teams: ['team-dr', 'team-uc'], permissions: [] },
+        { id: 'usr-res-10', username: 'tung.nguyennhu@100relab', password: '100re', display_name: 'Nguyen Nhu Tung', name: 'Nguyen Nhu Tung', email: 'tung.nguyennhu@100relab', role: 'researcher', status: 'active', teams: ['team-wind'], permissions: [] },
+        { id: 'usr-res-11', username: 'khanh.daoquoc@100relab', password: '100re', display_name: 'Dao Quoc Khanh', name: 'Dao Quoc Khanh', email: 'khanh.daoquoc@100relab', role: 'researcher', status: 'active', teams: ['team-ev'], permissions: [] },
+        { id: 'usr-res-12', username: 'anh.nguyenhoang@100relab', password: '100re', display_name: 'Nguyen Hoang Anh', name: 'Nguyen Hoang Anh', email: 'anh.nguyenhoang@100relab', role: 'researcher', status: 'active', teams: ['team-hydrogen'], permissions: [] },
+        { id: 'usr-res-13', username: 'anh.nguyenquang@100relab', password: '100re', display_name: 'Nguyen Quang Anh', name: 'Nguyen Quang Anh', email: 'anh.nguyenquang@100relab', role: 'researcher', status: 'active', teams: ['team-bess'], permissions: [] },
+        { id: 'usr-res-14', username: 'vinh.tranthihong@100relab', password: '100re', display_name: 'Tran Thi Hong Vinh', name: 'Tran Thi Hong Vinh', email: 'vinh.tranthihong@100relab', role: 'researcher', status: 'active', teams: ['team-bess'], permissions: [] }
       ];
     }
 
@@ -405,7 +413,8 @@ export async function renderAdmin(container) {
             <tbody>
               ${listToRender.map(u => {
                 const name = u.display_name || u.name;
-                const username = u.username || (u.email ? u.email.split('@')[0] : 'user');
+                const username = u.username || (u.email ? u.email : 'user');
+                const emailDisplay = u.email || (username.includes('@') ? username : `${username}@100relab`);
                 const password = u.password || '100re';
                 const permsCount = Array.isArray(u.permissions) && u.permissions.length > 0 ? u.permissions.length : (u.role === 'supervisor' ? 16 : 9);
                 const roleBadge = u.role === 'supervisor' ? '<span class="ws-badge ws-badge-done">👑 SUPERVISOR</span>' :
@@ -429,7 +438,6 @@ export async function renderAdmin(container) {
                             <span style="font-size:0.75rem; font-family:monospace; background:#f1f5f9; padding:1px 6px; border-radius:4px; color:#0f172a; border:1px solid #cbd5e1; font-weight:700;">
                               <i class="fa-solid fa-user" style="color:#64748b; font-size:0.65rem;"></i> ${escapeHtml(username)}
                             </span>
-                            <span style="font-size:0.75rem; color:var(--ws-text-muted);">${escapeHtml(u.email || (username + '@100relab.hust.edu.vn'))}</span>
                           </div>
                         </div>
                       </div>
@@ -687,7 +695,7 @@ Password: ${p}`);
       const role = container.querySelector('#permRole').value;
 
       if (!email) {
-        email = `${username}@100relab.hust.edu.vn`;
+        email = username.includes('@') ? username : `${username}@100relab`;
       } else if (!email.includes('@')) {
         email = `${email}@100relab.hust.edu.vn`;
       }
