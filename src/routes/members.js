@@ -9,7 +9,6 @@ import { logActivity } from '../activity.js';
 export async function handlePublicMembers(request, env) {
   const method = request.method;
 
-  // Placeholder seed dataset (used ONLY when KV is completely uninitialized)
   const INITIAL_SEED_MEMBERS = [
     { id: "pv-1", name: "Ngô Trí Đức", team: "pv", teamName: "PV Team", role: "PV Team", image: "assets/images/ngo_tri_duc.png", bio: "Researcher in the PV Team at 100RE Laboratory. Focusing on photovoltaic systems modeling, performance analysis, and optimization." },
     { id: "pv-2", name: "Bui Quang Minh", team: "pv", teamName: "PV Team", role: "PV Team", image: "assets/images/bui_quang_minh.jpg", bio: "Researcher in the PV Team at 100RE Laboratory. Dedicated to solar irradiance modeling and high-efficiency photovoltaic integration." },
@@ -29,19 +28,34 @@ export async function handlePublicMembers(request, env) {
     { id: "bess-3", name: "Tran Thi Hong Vinh", team: "bess", teamName: "BESS Team", role: "BESS Team", image: "assets/images/tran_thi_hong_vinh.png", bio: "Researcher in the BESS Team at 100RE Laboratory. Specializing in battery degradation models, thermal management, and energy storage peak shaving strategies." }
   ];
 
+  function getMergedMembers(customList) {
+    if (!Array.isArray(customList) || customList.length === 0) return INITIAL_SEED_MEMBERS;
+    const map = new Map(INITIAL_SEED_MEMBERS.map(m => [String(m.id), { ...m }]));
+    for (const cm of customList) {
+      if (cm && cm.id) {
+        const existing = map.get(String(cm.id)) || {};
+        map.set(String(cm.id), { ...existing, ...cm });
+      }
+    }
+    return Array.from(map.values());
+  }
+
   if (method === 'GET') {
+    let membersToReturn = INITIAL_SEED_MEMBERS;
     if (env && env.MEMBERS_KV) {
       const custom = (await env.MEMBERS_KV.get('members_list')) || (await env.MEMBERS_KV.get('members_data'));
       if (custom) {
         try {
           const parsed = JSON.parse(custom);
-          if (Array.isArray(parsed)) {
-            return parsed; // Directly return user KV data as pure source of truth
-          }
+          membersToReturn = getMergedMembers(parsed);
         } catch (e) {}
       }
+      // Ensure KV is populated with the complete list
+      try {
+        await env.MEMBERS_KV.put('members_list', JSON.stringify(membersToReturn));
+      } catch (e) {}
     }
-    return INITIAL_SEED_MEMBERS;
+    return membersToReturn;
   }
 
   if (method === 'POST' || method === 'PUT') {
@@ -51,7 +65,7 @@ export async function handlePublicMembers(request, env) {
       if (env && env.MEMBERS_KV) {
         const custom = (await env.MEMBERS_KV.get('members_list')) || (await env.MEMBERS_KV.get('members_data'));
         if (custom) {
-          try { current = JSON.parse(custom); } catch (e) {}
+          try { current = getMergedMembers(JSON.parse(custom)); } catch (e) {}
         }
       }
 
@@ -96,7 +110,7 @@ export async function handlePublicMembers(request, env) {
       if (env && env.MEMBERS_KV) {
         const custom = (await env.MEMBERS_KV.get('members_list')) || (await env.MEMBERS_KV.get('members_data'));
         if (custom) {
-          try { current = JSON.parse(custom); } catch (e) {}
+          try { current = getMergedMembers(JSON.parse(custom)); } catch (e) {}
         }
       }
       current = current.filter(m => String(m.id) !== String(memberId));
