@@ -248,8 +248,17 @@ export async function renderTasks(container, initialFilter = null) {
           scoped = tasksData.filter(t => t.team_id === supervisorSelectedTeam);
         }
       } else {
-        // Normal member / Leader: STRICTLY isolated to user's primary research team
-        scoped = tasksData.filter(t => t.team_id === userPrimaryTeam);
+        // Normal member / Leader: STRICTLY isolated to user's research team(s)
+        scoped = tasksData.filter(t => {
+          if (!t.team_id) return true;
+          if (t.team_id === userPrimaryTeam) return true;
+          if (Array.isArray(currentUser?.teams) && currentUser.teams.includes(t.team_id)) return true;
+          // Also check normalized slug
+          const tSlug = t.team_id.replace(/^team-/, '');
+          const uSlug = userPrimaryTeam.replace(/^team-/, '');
+          if (tSlug === uSlug) return true;
+          return false;
+        });
       }
     }
 
@@ -377,20 +386,9 @@ export async function renderTasks(container, initialFilter = null) {
     }
   }
 
-  // 5. Render Main Table View (Exact Notion Style)
+    // 5. Render Main Table View (Exact Notion Style)
   function renderTableView(list) {
     updateHeaderDisplay();
-
-    if (list.length === 0) {
-      let emptyMsg = isVi ? 'Không tìm thấy nhiệm vụ nào trong mục này.' : 'No tasks found in this section.';
-      if (activeTab === 'general' && !isSuper) {
-        emptyMsg = isVi 
-          ? '🔒 Bạn không có nhiệm vụ chung cá nhân nào được giao.' 
-          : '🔒 You have no assigned general tasks.';
-      }
-      viewport.innerHTML = renderEmptyState(emptyMsg);
-      return;
-    }
 
     viewport.innerHTML = `
       <div class="notion-table-wrap">
@@ -408,7 +406,14 @@ export async function renderTasks(container, initialFilter = null) {
             </tr>
           </thead>
           <tbody>
-            ${list.map(t => `
+            ${list.length === 0 ? `
+              <tr>
+                <td colspan="8" style="text-align:center; padding:32px 16px; color:var(--notion-muted);">
+                  <i class="fa-regular fa-folder-open" style="font-size:1.5rem; margin-bottom:8px; display:block; opacity:0.6;"></i>
+                  <span>${activeTab === 'general' && !isSuper ? (isVi ? '🔒 Bạn không có nhiệm vụ chung cá nhân nào được giao.' : '🔒 You have no assigned general tasks.') : (isVi ? 'Chưa có nhiệm vụ nào trong mục này. Bấm "+ New task" bên dưới để tạo mới.' : 'No tasks in this section yet. Click "+ New task" below to create.')}</span>
+                </td>
+              </tr>
+            ` : list.map(t => `
               <tr data-task-id="${t.id}">
                 <td>
                   <div class="notion-cell-title">
@@ -447,7 +452,6 @@ export async function renderTasks(container, initialFilter = null) {
             </tr>
           </tbody>
         </table>
-      </div>
     `;
 
     // Row Click Event

@@ -91,7 +91,7 @@ export async function resolveUser(request, env, db) {
     let u = await db.first('SELECT * FROM users WHERE id = ?', [token]);
     if (u) return enrichUser(u, db);
 
-    // If token is an active session in KV
+        // If token is an active session in KV
     if (env && env.MEMBERS_KV) {
       try {
         const sessionRaw = await env.MEMBERS_KV.get(`session_${token}`);
@@ -99,27 +99,29 @@ export async function resolveUser(request, env, db) {
           let sessionUser = null;
           try { sessionUser = JSON.parse(sessionRaw); } catch(e) { sessionUser = { username: sessionRaw }; }
 
-          if (sessionUser && sessionUser.id) {
-            u = await db.first('SELECT * FROM users WHERE id = ?', [sessionUser.id]);
-            if (u) return enrichUser(u, db);
-          } else if (sessionUser && sessionUser.username) {
-            const rawU = sessionUser.username.toLowerCase().trim();
-            const normU = rawU.replace(/@100relab(\.hust\.edu\.vn)?$/, '');
-
-            if (rawU === 'duc.ngotri@100relab' || normU === 'duc.ngotri' || rawU === 'teamleader' || rawU === 'leader.pv') {
-              u = await db.first('SELECT * FROM users WHERE id = ?', ['usr-ldr-01']);
-            } else if (rawU === 'phuong.trinhminh@100relab' || normU === 'phuong.trinhminh' || rawU === 'leader.bess') {
-              u = await db.first('SELECT * FROM users WHERE id = ?', ['usr-ldr-02']);
-            } else if (rawU === 'hai.buiquang@100relab' || normU === 'hai.buiquang' || rawU === 'researcher' || rawU === 'hai.ai') {
-              u = await db.first('SELECT * FROM users WHERE id = ?', ['usr-res-01']);
-            } else if (rawU === 'hai.duongminh@100relab' || normU === 'hai.duongminh') {
-              u = await db.first('SELECT * FROM users WHERE id = ?', ['usr-res-05']);
-            } else if (rawU === '100re' || normU === '100re') {
-              u = await db.first('SELECT * FROM users WHERE role = ? LIMIT 1', ['admin']);
-            } else {
-              u = await db.first('SELECT * FROM users WHERE id = ?', ['usr-sup-01']);
+          if (sessionUser) {
+            let uTeams = sessionUser.teams;
+            if (!uTeams || uTeams.length === 0) {
+              if (sessionUser.team) uTeams = [sessionUser.team];
+              else uTeams = ['team-smartgrid'];
             }
-            if (u) return enrichUser(u, db);
+            return {
+              user: {
+                id: sessionUser.id || sessionUser.userId || 'usr-smartgrid-1788108587815',
+                name: sessionUser.display_name || sessionUser.name || sessionUser.username,
+                display_name: sessionUser.display_name || sessionUser.name || sessionUser.username,
+                username: sessionUser.username,
+                email: sessionUser.email || `${sessionUser.username}@100relab`,
+                role: sessionUser.role || 'researcher',
+                teams: uTeams,
+                projects: sessionUser.projects || [],
+                isSupervisor: sessionUser.role === 'supervisor' || sessionUser.role === 'admin' || sessionUser.username === '100re',
+                isLeader: sessionUser.role === 'team_leader' || sessionUser.role === 'supervisor' || sessionUser.role === 'admin',
+                isSystemAdmin: sessionUser.role === 'admin' || sessionUser.username === '100re',
+                status: 'active'
+              },
+              isAuthenticated: true
+            };
           }
         }
       } catch (e) {}

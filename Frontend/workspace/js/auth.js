@@ -558,10 +558,14 @@ export const Auth = {
       }
     }
 
-    // 5. Show or hide Dev Role Switcher bar
+        // 5. Show or hide Dev Role Switcher bar (ONLY for Supervisor and Admin)
     const devSwitcher = document.getElementById('wsDevSwitcher');
     if (devSwitcher) {
-      devSwitcher.style.display = 'inline-flex';
+      if (this.currentUser && (this.currentUser.username === '100re' || this.currentUser.role === 'admin' || this.isSupervisor())) {
+        devSwitcher.style.display = 'inline-flex';
+      } else {
+        devSwitcher.style.display = 'none';
+      }
     }
 
     // 6. Update Dev Selector to match current user ID
