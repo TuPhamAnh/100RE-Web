@@ -12,6 +12,7 @@ export async function renderTasks(container, initialFilter = null) {
   let activeTab = initialFilter === 'me' ? 'me' : 'all'; // 'all' (Table) | 'status' (Board) | 'me' (My tasks)
   let tasksData = [];
   let allTeams = [];
+  let labMembers = [];
 
   // 1. Initial Shell Markup
   container.innerHTML = `
@@ -72,7 +73,7 @@ export async function renderTasks(container, initialFilter = null) {
     </div>
 
     <!-- Main Viewport Container -->
-    <div id="notionViewport">
+    <div id="notionViewport" style="position:relative;">
       <div class="ws-loader-center"><i class="fa-solid fa-spinner fa-spin fa-2x"></i></div>
     </div>
   `;
@@ -82,7 +83,6 @@ export async function renderTasks(container, initialFilter = null) {
   const filterPanel = container.querySelector('#notionFilterPanel');
   const btnToggleFilters = container.querySelector('#btnToggleFilters');
   const btnNewTask = container.querySelector('#btnNotionNewTask');
-  const pageTitleEl = container.querySelector('#notionPageTitle');
 
   // 2. Fetch Data from API
   try {
@@ -98,6 +98,11 @@ export async function renderTasks(container, initialFilter = null) {
           teamFilterSelect.appendChild(opt);
         });
       }
+    } catch (e) {}
+
+    try {
+      const membersRes = await API.get('/api/members');
+      labMembers = membersRes.members || membersRes.users || [];
     } catch (e) {}
 
     const tasksRes = await API.get('/api/tasks');
@@ -206,21 +211,25 @@ export async function renderTasks(container, initialFilter = null) {
       if (task.assignee?.display_name || task.assignee?.name) {
         names = [task.assignee.display_name || task.assignee.name];
       } else {
-        names = ['Unassigned'];
+        names = [];
       }
     }
 
     return `
-      <div class="notion-assignees-group">
-        ${names.map(n => {
-          const initial = n.trim().charAt(0) || 'U';
-          return `
-            <span class="notion-assignee-chip" title="${escapeHtml(n)}">
-              <span class="notion-avatar-circle">${escapeHtml(initial)}</span>
-              <span>${escapeHtml(n)}</span>
-            </span>
-          `;
-        }).join('')}
+      <div class="notion-cell-assignee-clickable" onclick="window.openNotionMemberPicker(event, '${task.id}')" title="Bấm để chọn/thay đổi thành viên Lab được giao">
+        <div class="notion-assignees-group">
+          ${names.length === 0 ? `
+            <span style="color:var(--notion-muted); font-size:0.75rem;"><i class="fa-solid fa-user-plus" style="margin-right:4px;"></i> Chưa giao</span>
+          ` : names.map(n => {
+            const initial = n.trim().charAt(0) || 'U';
+            return `
+              <span class="notion-assignee-chip" title="${escapeHtml(n)}">
+                <span class="notion-avatar-circle">${escapeHtml(initial)}</span>
+                <span>${escapeHtml(n)}</span>
+              </span>
+            `;
+          }).join('')}
+        </div>
       </div>
     `;
   }
@@ -280,7 +289,7 @@ export async function renderTasks(container, initialFilter = null) {
             <tr>
               <th style="width:280px;"><i class="fa-solid fa-font" style="font-size:0.7rem; margin-right:4px;"></i> ${isVi ? 'Tên nhiệm vụ' : 'Task name'}</th>
               <th style="width:140px;"><i class="fa-solid fa-circle-dot" style="font-size:0.7rem; margin-right:4px;"></i> ${isVi ? 'Trạng thái' : 'Status'}</th>
-              <th style="width:220px;"><i class="fa-solid fa-users" style="font-size:0.7rem; margin-right:4px;"></i> ${isVi ? 'Người được giao' : 'Assignees'}</th>
+              <th style="width:240px;"><i class="fa-solid fa-users" style="font-size:0.7rem; margin-right:4px;"></i> ${isVi ? 'Người được giao' : 'Assignees'}</th>
               <th style="width:110px;"><i class="fa-regular fa-calendar" style="font-size:0.7rem; margin-right:4px;"></i> ${isVi ? 'Hạn chót' : 'Due date'}</th>
               <th style="width:120px;"><i class="fa-solid fa-bullseye" style="font-size:0.7rem; margin-right:4px;"></i> ${isVi ? 'Mức độ ưu tiên' : 'Priority'}</th>
               <th><i class="fa-solid fa-bars-staggered" style="font-size:0.7rem; margin-right:4px;"></i> ${isVi ? 'Mô tả' : 'Description'}</th>
@@ -337,6 +346,8 @@ export async function renderTasks(container, initialFilter = null) {
       quickAddRow.addEventListener('click', () => {
         if (typeof window.openCreateTaskModal === 'function') {
           window.openCreateTaskModal();
+        } else if (typeof window.openNewTaskModal === 'function') {
+          window.openNewTaskModal();
         } else {
           showQuickCreatePrompt();
         }
@@ -366,7 +377,7 @@ export async function renderTasks(container, initialFilter = null) {
                   <strong style="font-size:0.85rem; color:var(--notion-text);">${col.title}</strong>
                   <span style="font-size:0.75rem; color:var(--notion-muted); background:var(--notion-hover); padding:1px 6px; border-radius:10px; font-weight:600;">${colTasks.length}</span>
                 </div>
-                <button type="button" style="background:none; border:none; color:var(--notion-muted); cursor:pointer;" onclick="window.openCreateTaskModal('${col.id}')">
+                <button type="button" style="background:none; border:none; color:var(--notion-muted); cursor:pointer;" onclick="window.openNewTaskModal('${col.id}')">
                   <i class="fa-solid fa-plus"></i>
                 </button>
               </div>
@@ -391,7 +402,7 @@ export async function renderTasks(container, initialFilter = null) {
                   </div>
                 `).join('')}
 
-                <button type="button" class="notion-btn-add-card" onclick="window.openCreateTaskModal('${col.id}')">
+                <button type="button" class="notion-btn-add-card" onclick="window.openNewTaskModal('${col.id}')">
                   <i class="fa-solid fa-plus"></i> ${isVi ? 'Thêm thẻ mới' : 'Add card'}
                 </button>
               </div>
@@ -410,6 +421,133 @@ export async function renderTasks(container, initialFilter = null) {
       renderTableView(list);
     }
   }
+
+  // 6. Interactive Notion Member Picker Popover
+  window.openNotionMemberPicker = function(event, taskId) {
+    event.stopPropagation();
+    const task = tasksData.find(t => t.id === taskId);
+    if (!task) return;
+
+    // Remove existing popovers
+    document.querySelectorAll('.notion-picker-popover').forEach(p => p.remove());
+
+    const popover = document.createElement('div');
+    popover.className = 'notion-picker-popover';
+    popover.id = `popover-task-${taskId}`;
+
+    // Get current assignees
+    let curNames = task.assignee_names || [];
+    if (curNames.length === 0 && task.assigned_to) {
+      const matched = labMembers.find(m => m.id === task.assigned_to);
+      if (matched) curNames = [matched.display_name || matched.name];
+    }
+
+    // Prepare list of selectable lab members
+    let memberList = [...labMembers];
+    if (memberList.length === 0) {
+      // Fallback default members if empty
+      memberList = [
+        { id: 'usr-smartgrid-1788108587815', display_name: 'Pham Anh Tu', name: 'Pham Anh Tu', team: 'Smart Grid' },
+        { id: 'usr-smartgrid-1788099630575', display_name: 'Nguyễn Quý Long', name: 'Nguyễn Quý Long', team: 'Smart Grid' },
+        { id: 'usr-smartgrid-1788099612925', display_name: 'Đỗ Đắc Hiếu', name: 'Đỗ Đắc Hiếu', team: 'Smart Grid' },
+        { id: 'usr-res-14', display_name: 'Tran Thi Hong Vinh', name: 'Tran Thi Hong Vinh', team: 'BESS' },
+        { id: 'usr-res-05', display_name: 'Duong Minh Hai', name: 'Duong Minh Hai', team: 'Smart Grid' },
+        { id: 'usr-res-01', display_name: 'Bui Quang Hai', name: 'Bui Quang Hai', team: 'AI' },
+        { id: 'usr-ldr-01', display_name: 'Dr. Ngo Tri Duc', name: 'Dr. Ngo Tri Duc', team: 'PV' },
+        { id: 'usr-ldr-02', display_name: 'Dr. Trinh Minh Phuong', name: 'Dr. Trinh Minh Phuong', team: 'BESS' },
+        { id: 'usr-sup-01', display_name: 'Assoc. Prof. Nguyen Duc Tuyen', name: 'Assoc. Prof. Nguyen Duc Tuyen', team: 'Supervisor' }
+      ];
+    }
+
+    popover.innerHTML = `
+      <div class="notion-picker-header">
+        <span><i class="fa-solid fa-users"></i> ${isVi ? 'Giao cho thành viên Lab' : 'Assign Lab Members'}</span>
+        <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="this.closest('.notion-picker-popover').remove()"></i>
+      </div>
+      <input type="text" class="notion-picker-search" placeholder="${isVi ? 'Tìm thành viên...' : 'Search members...'}" id="pickerSearchInput">
+      <div class="notion-picker-list" id="pickerMemberList">
+        ${memberList.map(m => {
+          const mName = m.display_name || m.name || 'Member';
+          const isSelected = curNames.some(cn => cn.toLowerCase() === mName.toLowerCase() || mName.toLowerCase().includes(cn.toLowerCase()) || cn.toLowerCase().includes(mName.toLowerCase()));
+          const initial = mName.trim().charAt(0);
+          const teamName = m.team || (m.teams && m.teams[0]?.team_name) || (m.role ? m.role.toUpperCase() : 'LAB');
+
+          return `
+            <div class="notion-picker-item ${isSelected ? 'selected' : ''}" data-member-name="${escapeHtml(mName)}" data-member-id="${m.id}">
+              <span class="notion-avatar-circle">${escapeHtml(initial)}</span>
+              <span>${escapeHtml(mName)}</span>
+              <span class="notion-picker-team-tag">${escapeHtml(teamName)}</span>
+              ${isSelected ? '<i class="fa-solid fa-check item-check"></i>' : ''}
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+
+    // Position popover near the clicked element
+    const rect = event.currentTarget.getBoundingClientRect();
+    popover.style.top = `${rect.bottom + window.scrollY + 4}px`;
+    popover.style.left = `${Math.min(rect.left + window.scrollX, window.innerWidth - 310)}px`;
+    document.body.appendChild(popover);
+
+    // Search filter inside popover
+    const pSearch = popover.querySelector('#pickerSearchInput');
+    const pList = popover.querySelector('#pickerMemberList');
+    if (pSearch && pList) {
+      pSearch.focus();
+      pSearch.addEventListener('input', () => {
+        const sq = pSearch.value.toLowerCase().trim();
+        pList.querySelectorAll('.notion-picker-item').forEach(item => {
+          const name = (item.getAttribute('data-member-name') || '').toLowerCase();
+          item.style.display = (!sq || name.includes(sq)) ? 'flex' : 'none';
+        });
+      });
+    }
+
+    // Toggle member selection
+    pList.querySelectorAll('.notion-picker-item').forEach(item => {
+      item.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const mName = item.getAttribute('data-member-name');
+        const mId = item.getAttribute('data-member-id');
+
+        let updatedNames = [...(task.assignee_names || [])];
+        const existingIdx = updatedNames.findIndex(n => n.toLowerCase() === mName.toLowerCase() || mName.toLowerCase().includes(n.toLowerCase()) || n.toLowerCase().includes(mName.toLowerCase()));
+
+        if (existingIdx >= 0) {
+          updatedNames.splice(existingIdx, 1);
+        } else {
+          updatedNames.push(mName);
+        }
+
+        task.assignee_names = updatedNames;
+        if (updatedNames.length > 0) {
+          task.assigned_to = mId;
+        }
+        task.updated_at = Math.floor(Date.now() / 1000);
+
+        showToast(`Đã cập nhật người được giao: ${updatedNames.join(', ') || 'Chưa giao'}`);
+        renderCurrentView();
+        popover.remove();
+
+        try {
+          await API.patch(`/api/tasks/${task.id}`, {
+            assignee_names: updatedNames,
+            assigned_to: task.assigned_to
+          });
+        } catch (e) {}
+      });
+    });
+
+    // Close on outside click
+    function closePicker(e) {
+      if (!popover.contains(e.target) && e.target !== event.currentTarget && !event.currentTarget.contains(e.target)) {
+        popover.remove();
+        document.removeEventListener('click', closePicker);
+      }
+    }
+    setTimeout(() => document.addEventListener('click', closePicker), 50);
+  };
 
   function showQuickCreatePrompt() {
     const title = prompt('Nhập tiêu đề nhiệm vụ mới:');
@@ -433,7 +571,7 @@ export async function renderTasks(container, initialFilter = null) {
     } catch(e) {}
   }
 
-  // 6. Event Bindings
+  // 7. Event Bindings
   const tabAll = container.querySelector('#tabAllTasks');
   const tabStatus = container.querySelector('#tabStatusBoard');
   const tabMe = container.querySelector('#tabMyTasks');
@@ -487,8 +625,8 @@ export async function renderTasks(container, initialFilter = null) {
 
   if (btnNewTask) {
     btnNewTask.addEventListener('click', () => {
-      if (typeof window.openCreateTaskModal === 'function') {
-        window.openCreateTaskModal();
+      if (typeof window.openNewTaskModal === 'function') {
+        window.openNewTaskModal();
       } else {
         showQuickCreatePrompt();
       }

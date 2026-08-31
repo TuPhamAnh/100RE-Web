@@ -554,3 +554,114 @@
   color: var(--notion-text);
   border-style: solid;
 }
+
+/* 11. NOTION MEMBER PICKER POPOVER */
+.notion-picker-popover {
+  position: absolute;
+  z-index: 1000;
+  background: var(--notion-bg);
+  border: 1px solid var(--notion-border);
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  width: 290px;
+  max-height: 380px;
+  overflow-y: auto;
+  padding: 8px;
+  animation: notionPop 0.12s ease-out;
+}
+
+@keyframes notionPop {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.notion-picker-header {
+  padding: 6px 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--notion-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--notion-border);
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.notion-picker-search {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid var(--notion-border);
+  border-radius: 4px;
+  font-size: 0.8rem;
+  margin-bottom: 8px;
+  outline: none;
+  background: var(--notion-hover);
+  box-sizing: border-box;
+}
+
+.notion-picker-search:focus {
+  border-color: var(--notion-blue);
+  background: var(--notion-bg);
+}
+
+.notion-picker-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.notion-picker-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.825rem;
+  color: var(--notion-text);
+  transition: background 0.1s ease;
+}
+
+.notion-picker-item:hover {
+  background: var(--notion-hover);
+}
+
+.notion-picker-item.selected {
+  background: var(--notion-blue-bg);
+  font-weight: 600;
+  color: var(--notion-blue-text);
+}
+
+.notion-picker-item .item-check {
+  margin-left: auto;
+  color: var(--notion-blue);
+  font-size: 0.85rem;
+}
+
+.notion-picker-team-tag {
+  font-size: 0.675rem;
+  color: var(--notion-muted);
+  background: var(--notion-hover);
+  padding: 1px 5px;
+  border-radius: 4px;
+  margin-left: 4px;
+}
+
+.notion-cell-assignee-clickable {
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  width: 100%;
+}
+
+.notion-cell-assignee-clickable:hover {
+  background: var(--notion-hover);
+}

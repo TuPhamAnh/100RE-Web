@@ -653,6 +653,7 @@ window.openTaskDetail = async function(taskId) {
   }
 };
 
+window.openCreateTaskModal = function(colStatus) { window.openNewTaskModal(colStatus); };
 window.openNewTaskModal = function(preselectedTeamId = null, preselectedProjectId = null) {
   const form = document.getElementById('formTask');
   if (form) form.reset();
