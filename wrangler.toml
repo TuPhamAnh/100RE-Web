@@ -12,12 +12,12 @@ binding = "ASSETS"
 binding = "MEMBERS_KV"
 id = "d24f895e1c7e4c9bbe3f8842f39b5675"
 
-# 2. LAB WORKSPACE: Cloudflare D1 Database (Bật lại sau khi tạo database thật trên Cloudflare bằng: npx wrangler d1 create 100re-workspace-db)
-# [[d1_databases]]
-# binding = "DB"
-# database_name = "100re-workspace-db"
-# database_id = "a42f8267-2f0e-4aa0-96d1-e3f1b3d8eb03"
-# migrations_dir = "migrations"
+# 2. LAB WORKSPACE: Cloudflare D1 Database
+[[d1_databases]]
+binding = "DB"
+database_name = "100re-workspace-db"
+database_id = "a42f8267-2f0e-4aa0-96d1-e3f1b3d8eb03"
+migrations_dir = "migrations"
 
 # 3. ENVIRONMENT CONFIGURATION (5 TB Google Drive Cloud Storage)
 [vars]
