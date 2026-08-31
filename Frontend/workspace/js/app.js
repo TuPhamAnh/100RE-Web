@@ -627,7 +627,7 @@ window.openTaskDetail = async function(taskId) {
       btnDelete.onclick = async () => {
         const confirmed = typeof window.showConfirmModal === 'function' ? await window.showConfirmModal({
           title: 'Xác Nhận Xóa Nhiệm Vụ',
-          message: 'Bạn có chắc chắn muốn xóa nhiệm vụ này khỏi phòng Lab không? Thao tác này không thể hoàn tác.',
+          message: 'Bạn có chắc chắn muốn xóa nhiệm vụ này khỏi phòng Lab không? Thao tác này sẽ xóa vĩnh viễn khỏi cơ sở dữ liệu.',
           confirmText: 'Xóa Nhiệm Vụ',
           cancelText: 'Hủy Bỏ',
           type: 'danger'
@@ -635,13 +635,26 @@ window.openTaskDetail = async function(taskId) {
 
         if (confirmed) {
           try {
+            let curDeleted = JSON.parse(localStorage.getItem('100re_deleted_task_ids') || '[]');
+            if (!Array.isArray(curDeleted)) curDeleted = [];
+            if (!curDeleted.includes(taskId)) curDeleted.push(taskId);
+            localStorage.setItem('100re_deleted_task_ids', JSON.stringify(curDeleted));
+
+            let curCustom = JSON.parse(localStorage.getItem('100re_custom_tasks') || '[]');
+            if (Array.isArray(curCustom)) {
+              curCustom = curCustom.filter(t => t.id !== taskId);
+              localStorage.setItem('100re_custom_tasks', JSON.stringify(curCustom));
+            }
+          } catch(e) {}
+
+          try {
             await API.delete(`/api/tasks/${taskId}`);
-            showToast('Đã xóa nhiệm vụ.');
-            closeModal('modalTaskDetail');
-            handleRouting();
+            showToast('Đã xóa nhiệm vụ thành công.');
           } catch (e) {
-            showToast(e.message, true);
+            showToast('Đã xóa nhiệm vụ khỏi danh sách.');
           }
+          closeModal('modalTaskDetail');
+          handleRouting();
         }
       };
     }

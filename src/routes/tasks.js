@@ -239,7 +239,37 @@ export async function handleTasks(request, user, db, env) {
       [title, description, status, priority, assigned_to, due_date, now, completed_at, task.id]
     );
 
-    // If status changed, log activity
+    const updatedTask = {
+      ...task,
+      title,
+      description,
+      status,
+      priority,
+      assigned_to,
+      assignees: body.assignees || task.assignees || (assigned_to ? [assigned_to] : []),
+      assignee_names: body.assignee_names || task.assignee_names || [],
+      due_date,
+      updated_at: now,
+      completed_at
+    };
+
+    if (env && env.MEMBERS_KV) {
+      try {
+        let curList = [];
+        const kvRaw = await env.MEMBERS_KV.get('tasks_dataset');
+        if (kvRaw) curList = JSON.parse(kvRaw);
+        if (Array.isArray(curList)) {
+          const idx = curList.findIndex(t => t.id === task.id);
+          if (idx >= 0) {
+            curList[idx] = { ...curList[idx], ...updatedTask };
+          } else {
+            curList.unshift(updatedTask);
+          }
+          await env.MEMBERS_KV.put('tasks_dataset', JSON.stringify(curList));
+        }
+      } catch(e) {}
+    }
+
     if (body.status && body.status !== task.status) {
       await logActivity(db, {
         userId: user.id,
@@ -252,31 +282,47 @@ export async function handleTasks(request, user, db, env) {
       });
     }
 
-    return { success: true, task: { ...task, title, description, status, priority, assigned_to, due_date, updated_at: now, completed_at } };
+    return { success: true, task: updatedTask };
   }
 
   // 5. DELETE /api/tasks/:id
   if (taskId && !subAction && method === 'DELETE') {
     const task = await db.first('SELECT * FROM tasks WHERE id = ?', [taskId]);
-    if (!task) return { error: 'Không tìm thấy Task.', status: 404 };
 
-    if (!RBAC.canDeleteTask(user, task)) {
+    // Check RBAC if task found in D1
+    if (task && !RBAC.canDeleteTask(user, task)) {
       return { error: 'Forbidden: Bạn không có quyền xóa Task này.', status: 403 };
     }
 
-    await db.run('DELETE FROM tasks WHERE id = ?', [task.id]);
+    if (task) {
+      await db.run('DELETE FROM tasks WHERE id = ?', [task.id]);
+      await db.run('DELETE FROM task_comments WHERE task_id = ?', [task.id]);
+    }
+
+    // Always delete from Cloudflare KV dataset
+    if (env && env.MEMBERS_KV) {
+      try {
+        let curList = [];
+        const kvRaw = await env.MEMBERS_KV.get('tasks_dataset');
+        if (kvRaw) curList = JSON.parse(kvRaw);
+        if (Array.isArray(curList)) {
+          curList = curList.filter(t => t.id !== taskId);
+          await env.MEMBERS_KV.put('tasks_dataset', JSON.stringify(curList));
+        }
+      } catch(e) {}
+    }
 
     await logActivity(db, {
       userId: user.id,
-      teamId: task.team_id,
-      projectId: task.project_id,
+      teamId: task ? task.team_id : 'team-general',
+      projectId: task ? task.project_id : null,
       entityType: 'task',
-      entityId: task.id,
+      entityId: taskId,
       action: 'delete_task',
-      metadata: { title: task.title }
+      metadata: { title: task ? task.title : taskId }
     });
 
-    return { success: true, message: 'Đã xóa task thành công.' };
+    return { success: true, message: 'Đã xóa task vĩnh viễn khỏi hệ thống.' };
   }
 
   // 6. COMMENTS: GET & POST /api/tasks/:id/comments

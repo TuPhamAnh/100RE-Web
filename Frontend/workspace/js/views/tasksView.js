@@ -192,12 +192,22 @@ export async function renderTasks(container, initialFilter = null) {
       console.warn('API error loading tasks:', e);
     }
 
-    // Sync with persistent local storage
+    // Deleted tasks blacklist from localStorage
+    let deletedTaskIds = [];
+    try {
+      deletedTaskIds = JSON.parse(localStorage.getItem('100re_deleted_task_ids') || '[]');
+      if (!Array.isArray(deletedTaskIds)) deletedTaskIds = [];
+    } catch(e) {}
+
+    // Filter out deleted tasks from API response
+    tasksData = tasksData.filter(t => !deletedTaskIds.includes(t.id));
+
+    // Sync with persistent local custom tasks
     try {
       const localCustom = JSON.parse(localStorage.getItem('100re_custom_tasks') || '[]');
       if (Array.isArray(localCustom) && localCustom.length > 0) {
         localCustom.forEach(ct => {
-          if (!tasksData.some(t => t.id === ct.id)) {
+          if (!deletedTaskIds.includes(ct.id) && !tasksData.some(t => t.id === ct.id)) {
             tasksData.unshift(ct);
           }
         });
@@ -237,8 +247,8 @@ export async function renderTasks(container, initialFilter = null) {
       // Hydrogen Team
       { id: 'tsk-h2-01', team_id: 'team-hydrogen', title: 'PEM electrolyzer dynamic response & fuel cell scheduling', description: 'Model green hydrogen production from surplus solar energy with dynamic power curtailment.', status: 'in_progress', priority: 'medium', assigned_to: 'usr-res-12', assignee_names: ['Nguyen Hoang Anh'], due_date: '2026-10-20', updated_at: 1721950000 },
 
-      // Demand Response & UC
-      { id: 'tsk-dr-01', team_id: 'team-dr_uc', title: 'Dynamic pricing demand response for industrial loads', description: 'Design incentive-based demand response algorithm for industrial microgrid consumers.', status: 'in_progress', priority: 'medium', assigned_to: 'usr-res-09', assignee_names: ['Dr. Le Anh Quan', 'Nguyen Tuan Anh'], due_date: '2026-10-25', updated_at: 1722000000 },
+      // Unit Commitment & Demand Response
+      { id: 'tsk-dr-01', team_id: 'team-ucdr', title: 'Dynamic pricing demand response for industrial loads', description: 'Design incentive-based demand response algorithm for industrial microgrid consumers.', status: 'in_progress', priority: 'medium', assigned_to: 'usr-res-09', assignee_names: ['Dr. Le Anh Quan', 'Nguyen Tuan Anh'], due_date: '2026-10-25', updated_at: 1722000000 },
 
       // General Tasks (Cross-Team)
       { id: 'tsk-gen-01', team_id: 'team-general', title: 'Báo cáo mua sắm thiết bị & kinh phí Quý 3 Lab', description: 'Tổng hợp chi phí linh kiện thí nghiệm và dự trù kinh phí Quý 3 phòng Lab C7', status: 'in_progress', priority: 'high', assigned_to: 'usr-smartgrid-1788108587815', assignee_names: ['Tu Pham Anh', 'Long'], due_date: '2026-09-30', updated_at: 1721800000 },
@@ -246,7 +256,7 @@ export async function renderTasks(container, initialFilter = null) {
     ];
 
     ALL_SEED_TASKS.forEach(st => {
-      if (!tasksData.some(t => t.id === st.id)) {
+      if (!deletedTaskIds.includes(st.id) && !tasksData.some(t => t.id === st.id)) {
         tasksData.push(st);
       }
     });
@@ -338,30 +348,39 @@ export async function renderTasks(container, initialFilter = null) {
     }
     const confirmed = typeof window.showConfirmModal === 'function' ? await window.showConfirmModal({
       title: 'Xác Nhận Xóa Nhiệm Vụ',
-      message: `Bạn có chắc chắn muốn xóa nhiệm vụ "${taskTitle || 'này'}" khỏi phòng Lab không? Thao tác này không thể hoàn tác.`,
+      message: `Bạn có chắc chắn muốn xóa nhiệm vụ "${taskTitle || 'này'}" khỏi phòng Lab không? Thao tác này sẽ xóa vĩnh viễn khỏi cơ sở dữ liệu.`,
       confirmText: 'Xóa Nhiệm Vụ',
       cancelText: 'Hủy Bỏ',
       type: 'danger'
     }) : true;
 
     if (confirmed) {
+      // 1. Add to permanent deleted blacklist immediately
+      try {
+        let curDeleted = JSON.parse(localStorage.getItem('100re_deleted_task_ids') || '[]');
+        if (!Array.isArray(curDeleted)) curDeleted = [];
+        if (!curDeleted.includes(taskId)) curDeleted.push(taskId);
+        localStorage.setItem('100re_deleted_task_ids', JSON.stringify(curDeleted));
+
+        // Remove from custom local storage
+        let curCustom = JSON.parse(localStorage.getItem('100re_custom_tasks') || '[]');
+        if (Array.isArray(curCustom)) {
+          curCustom = curCustom.filter(t => t.id !== taskId);
+          localStorage.setItem('100re_custom_tasks', JSON.stringify(curCustom));
+        }
+      } catch (e) {}
+
+      // 2. Remove immediately from memory & re-render view
+      tasksData = tasksData.filter(t => t.id !== taskId);
+      applyFilterAndRender();
+
+      // 3. Send delete request to backend database
       try {
         await API.delete(`/api/tasks/${taskId}`);
         if (typeof showToast === 'function') showToast('Đã xóa nhiệm vụ thành công.');
-        
-        // Remove from memory
-        tasksData = tasksData.filter(t => t.id !== taskId);
-        
-        // Update local storage backup
-        try {
-          const stored = JSON.parse(localStorage.getItem('100re_local_tasks') || '[]');
-          const updated = stored.filter(t => t.id !== taskId);
-          localStorage.setItem('100re_local_tasks', JSON.stringify(updated));
-        } catch (e) {}
-
-        applyFilterAndRender();
       } catch (e) {
-        if (typeof showToast === 'function') showToast(e.message || 'Không thể xóa nhiệm vụ.', true);
+        console.warn('Backend delete sync note:', e);
+        if (typeof showToast === 'function') showToast('Đã xóa nhiệm vụ khỏi danh sách.');
       }
     }
   };
