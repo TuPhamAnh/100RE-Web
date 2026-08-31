@@ -9,7 +9,8 @@ import { logActivity } from '../activity.js';
 export async function handlePublicMembers(request, env) {
   const method = request.method;
 
-  const DEFAULT_MEMBERS = [
+  // Placeholder seed dataset (used ONLY when KV is completely uninitialized)
+  const INITIAL_SEED_MEMBERS = [
     { id: "pv-1", name: "Ngô Trí Đức", team: "pv", teamName: "PV Team", role: "PV Team", image: "assets/images/ngo_tri_duc.png", bio: "Researcher in the PV Team at 100RE Laboratory. Focusing on photovoltaic systems modeling, performance analysis, and optimization." },
     { id: "pv-2", name: "Bui Quang Minh", team: "pv", teamName: "PV Team", role: "PV Team", image: "assets/images/bui_quang_minh.jpg", bio: "Researcher in the PV Team at 100RE Laboratory. Dedicated to solar irradiance modeling and high-efficiency photovoltaic integration." },
     { id: "ai-1", name: "Bui Quang Hai", team: "ai", teamName: "AI Team", role: "AI Team", image: "assets/images/bui_quang_hai.jpg", bio: "Researcher in the AI Team at 100RE Laboratory. Specializing in Artificial Intelligence, Deep Learning, and Neural Network applications for renewable energy systems." },
@@ -28,36 +29,25 @@ export async function handlePublicMembers(request, env) {
     { id: "bess-3", name: "Tran Thi Hong Vinh", team: "bess", teamName: "BESS Team", role: "BESS Team", image: "assets/images/tran_thi_hong_vinh.png", bio: "Researcher in the BESS Team at 100RE Laboratory. Specializing in battery degradation models, thermal management, and energy storage peak shaving strategies." }
   ];
 
-  // Helper to merge KV updates into default members ensuring all 8 teams always exist
-  function mergeMembers(customList) {
-    if (!Array.isArray(customList) || customList.length === 0) return DEFAULT_MEMBERS;
-    const map = new Map(DEFAULT_MEMBERS.map(m => [String(m.id), { ...m }]));
-    for (const cm of customList) {
-      if (cm && cm.id) {
-        const existing = map.get(String(cm.id)) || {};
-        map.set(String(cm.id), { ...existing, ...cm });
-      }
-    }
-    return Array.from(map.values());
-  }
-
   if (method === 'GET') {
     if (env && env.MEMBERS_KV) {
       const custom = (await env.MEMBERS_KV.get('members_list')) || (await env.MEMBERS_KV.get('members_data'));
       if (custom) {
         try {
           const parsed = JSON.parse(custom);
-          return mergeMembers(parsed);
+          if (Array.isArray(parsed)) {
+            return parsed; // Directly return user KV data as pure source of truth
+          }
         } catch (e) {}
       }
     }
-    return DEFAULT_MEMBERS;
+    return INITIAL_SEED_MEMBERS;
   }
 
   if (method === 'POST' || method === 'PUT') {
     try {
       const body = await request.json();
-      let current = DEFAULT_MEMBERS;
+      let current = INITIAL_SEED_MEMBERS;
       if (env && env.MEMBERS_KV) {
         const custom = (await env.MEMBERS_KV.get('members_list')) || (await env.MEMBERS_KV.get('members_data'));
         if (custom) {
@@ -92,7 +82,7 @@ export async function handlePublicMembers(request, env) {
       if (env && env.MEMBERS_KV) {
         await env.MEMBERS_KV.put('members_list', JSON.stringify(current));
       }
-      return { success: true, member: savedMember, members: mergeMembers(current) };
+      return { success: true, member: savedMember, members: current };
     } catch (e) {
       return { error: 'Failed to update members: ' + e.message };
     }
@@ -102,7 +92,7 @@ export async function handlePublicMembers(request, env) {
     try {
       const url = new URL(request.url);
       const memberId = url.pathname.split('/').pop();
-      let current = DEFAULT_MEMBERS;
+      let current = INITIAL_SEED_MEMBERS;
       if (env && env.MEMBERS_KV) {
         const custom = (await env.MEMBERS_KV.get('members_list')) || (await env.MEMBERS_KV.get('members_data'));
         if (custom) {
