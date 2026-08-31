@@ -496,11 +496,6 @@ document.addEventListener('DOMContentLoaded', () => {
           matchedId = 'usr-res-14';
           dispName = 'Tran Thi Hong Vinh';
           localStorage.removeItem('100re_is_admin');
-        } else {
-          matchedId = lowerUser;
-          dispName = username;
-          role = 'researcher';
-          localStorage.removeItem('100re_is_admin');
         } else if (lowerUser === 'leader.bess') {
           role = 'team_leader';
           matchedId = 'usr-ldr-02';
