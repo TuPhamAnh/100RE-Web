@@ -50,10 +50,33 @@ export async function renderTeams(container, teamIdOrSlug = null) {
   ];
 
   try {
-    let teams = [];
+        let teams = [];
     try {
       const res = await API.get('/api/teams');
-      teams = res.teams || [];
+      const rawList = res.teams || [];
+      const map8 = new Map();
+      rawList.forEach(t => {
+        if (t.id === 'team-uc' || t.id === 'team-dr' || t.slug === 'uc' || t.slug === 'dr' || t.id === 'team-dr_uc' || t.slug === 'dr_uc') {
+          if (!map8.has('team-ucdr')) {
+            map8.set('team-ucdr', {
+              id: 'team-ucdr',
+              slug: 'ucdr',
+              name: 'Unit Commitment & Demand Response (UCDR)',
+              icon: '📈',
+              leader: 'Dr. Le Anh Quan',
+              description: 'Security-constrained unit commitment (SCUC), mixed-integer linear programming, demand response flexibility and market dispatch.',
+              memberCount: 2,
+              projectCount: 1,
+              openTaskCount: 2,
+              datasetCount: 1,
+              docCount: 1
+            });
+          }
+        } else {
+          map8.set(t.id, t);
+        }
+      });
+      teams = Array.from(map8.values());
     } catch(e) {}
 
     if (!teams || teams.length === 0) {
@@ -65,6 +88,9 @@ export async function renderTeams(container, teamIdOrSlug = null) {
         }
       });
     }
+
+    // Final safety filter: remove any lingering separate team-uc or team-dr
+    teams = teams.filter(t => t.id !== 'team-uc' && t.id !== 'team-dr' && t.slug !== 'uc' && t.slug !== 'dr');
 
     const grid = container.querySelector('#teamsGridContainer');
 
