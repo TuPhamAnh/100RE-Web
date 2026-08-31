@@ -430,6 +430,42 @@ export default {
               teams: ['team-bess'],
               isSystemAdmin: false
             };
+          } else if (lowerUser === 'tu.phamanh@100relab' || normalized === 'tu.phamanh' || lowerUser === 'pham.anh.tu@100relab') {
+            userProfile = {
+              id: 'usr-smartgrid-1788108587815',
+              username: 'tu.phamanh@100relab',
+              name: 'Pham Anh Tu',
+              display_name: 'Pham Anh Tu',
+              email: 'tu.phamanh@100relab',
+              role: 'researcher',
+              team: 'team-smartgrid',
+              teams: ['team-smartgrid'],
+              isSystemAdmin: false
+            };
+          } else if (lowerUser === 'long.nguyenquy@100relab' || normalized === 'long.nguyenquy' || lowerUser === 'nguyen.quy.long@100relab') {
+            userProfile = {
+              id: 'usr-smartgrid-1788099630575',
+              username: 'long.nguyenquy@100relab',
+              name: 'Nguyễn Quý Long',
+              display_name: 'Nguyễn Quý Long',
+              email: 'long.nguyenquy@100relab',
+              role: 'researcher',
+              team: 'team-smartgrid',
+              teams: ['team-smartgrid'],
+              isSystemAdmin: false
+            };
+          } else if (lowerUser === 'hieu.dodac@100relab' || normalized === 'hieu.dodac' || lowerUser === 'do.dac.hieu@100relab') {
+            userProfile = {
+              id: 'usr-smartgrid-1788099612925',
+              username: 'hieu.dodac@100relab',
+              name: 'Đỗ Đắc Hiếu',
+              display_name: 'Đỗ Đắc Hiếu',
+              email: 'hieu.dodac@100relab',
+              role: 'researcher',
+              team: 'team-smartgrid',
+              teams: ['team-smartgrid'],
+              isSystemAdmin: false
+            };
           }
         }
 

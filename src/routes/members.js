@@ -246,11 +246,22 @@ export async function handleWorkspaceUsers(request, user, db, env) {
         const teamSlug = `team-${pm.team}`;
         const teamObj = allTeams.find(t => t.slug === pm.team || t.id === teamSlug);
         const teamName = teamObj?.name || pm.teamName || `${pm.team.toUpperCase()} Team`;
-        const emailSlug = pm.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '.');
+        
+        function formatTenHoDem(fullName) {
+          const clean = (fullName || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z\s]/g, '').trim();
+          const parts = clean.split(/\s+/).filter(Boolean);
+          if (parts.length === 0) return 'user@100relab';
+          if (parts.length === 1) return `${parts[0]}@100relab`;
+          const firstName = parts[parts.length - 1];
+          const rest = parts.slice(0, parts.length - 1).join('');
+          return `${firstName}.${rest}@100relab`;
+        }
+        const userEmail = formatTenHoDem(pm.name);
 
         enriched.push({
           id: `usr-${pm.id}`,
-          email: `${emailSlug}@100relab.hust.edu.vn`,
+          email: userEmail,
+          username: userEmail,
           display_name: pm.name,
           name: pm.name,
           member_key: pm.id,

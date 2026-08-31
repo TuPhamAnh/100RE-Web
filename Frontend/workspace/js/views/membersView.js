@@ -111,6 +111,28 @@ export async function renderMembers(container) {
 
         const name = u.display_name || u.name;
 
+        function formatTenHoDem(fullName) {
+          if (!fullName) return 'user@100relab';
+          const clean = fullName.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z\s]/g, '').trim();
+          const parts = clean.split(/\s+/).filter(Boolean);
+          if (parts.length === 0) return 'user@100relab';
+          if (parts.length === 1) return `${parts[0]}@100relab`;
+          const firstName = parts[parts.length - 1];
+          const rest = parts.slice(0, parts.length - 1).join('');
+          return `${firstName}.${rest}@100relab`;
+        }
+
+        let displayEmail = u.email || u.username;
+        if (!displayEmail || displayEmail.includes('@100relab.hust.edu.vn') || (!displayEmail.includes('@100relab') && !displayEmail.includes('@100relab.com'))) {
+          if (u.role === 'supervisor' || u.username === 'supervisor') {
+            displayEmail = 'supervisor@100relab.hust.edu.vn';
+          } else if (u.role === 'admin' || u.username === '100re') {
+            displayEmail = 'admin@100relab.com';
+          } else {
+            displayEmail = formatTenHoDem(name);
+          }
+        }
+
         return `
           <div class="ws-card" style="margin-bottom:0;">
             <div style="padding:20px;">
@@ -119,7 +141,7 @@ export async function renderMembers(container) {
                   <img src="${u.avatar_url || 'assets/images/logo.jpg'}" style="width:48px; height:48px; border-radius:50%; object-fit:cover; border:2px solid var(--ws-border);" alt="${escapeHtml(name)}">
                   <div>
                     <h3 style="font-size:1rem; font-weight:700; color:var(--ws-dark);">${escapeHtml(name)}</h3>
-                    <span style="font-size:0.775rem; color:var(--ws-text-muted);">${escapeHtml(u.email || (u.username ? u.username + '@100relab.hust.edu.vn' : ''))}</span>
+                    <span style="font-size:0.775rem; color:var(--ws-text-muted); font-family:monospace; font-weight:600;">${escapeHtml(displayEmail)}</span>
                     <div style="margin-top:4px;">
                       <span class="ws-badge ${badgeClass}">${String(u.role || 'researcher').replace('_', ' ').toUpperCase()}</span>
                       ${u.status === 'inactive' ? '<span class="ws-badge ws-badge-urgent">INACTIVE</span>' : ''}

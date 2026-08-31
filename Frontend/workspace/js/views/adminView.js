@@ -697,7 +697,7 @@ Password: ${p}`);
       if (!email) {
         email = username.includes('@') ? username : `${username}@100relab`;
       } else if (!email.includes('@')) {
-        email = `${email}@100relab.hust.edu.vn`;
+        email = `${email}@100relab`;
       }
 
       if (!username) {
