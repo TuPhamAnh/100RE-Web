@@ -709,23 +709,48 @@ window.openProjectModal = function(preselectedTeamId = null) {
   openModal('modalProject');
 };
 
-window.openUploadDocumentModal = function(preselectedTeamId = null, preselectedProjectId = null) {
+window.openUploadDocumentModal = async function(preselectedTeamId = null, preselectedProjectId = null) {
   const form = document.getElementById('formDocument');
   if (form) form.reset();
   const teamSelect = document.getElementById('docFormTeam');
   const projSelect = document.getElementById('docFormProject');
-  populateSelect(teamSelect, currentTeamsCache, preselectedTeamId);
+  
+  let teamsToUse = currentTeamsCache && currentTeamsCache.length > 0 ? currentTeamsCache : [
+    { id: 'team-smartgrid', name: '⚡ Smart Grid Team' },
+    { id: 'team-ai', name: '🤖 AI Team' },
+    { id: 'team-bess', name: '🔋 BESS Team' },
+    { id: 'team-pv', name: '☀️ PV Team' },
+    { id: 'team-wind', name: '💨 Wind Team' },
+    { id: 'team-ev', name: '🚗 Electric Vehicle Team' },
+    { id: 'team-hydrogen', name: '💧 Hydrogen Team' },
+    { id: 'team-dr_uc', name: '📈 Demand Response & UC' }
+  ];
+  
+  populateSelect(teamSelect, teamsToUse, preselectedTeamId);
   updateProjectDropdown(preselectedTeamId || teamSelect.value, preselectedProjectId, projSelect);
   teamSelect.onchange = () => updateProjectDropdown(teamSelect.value, null, projSelect);
   openModal('modalDocument');
 };
+window.openUploadDocModal = window.openUploadDocumentModal;
 
-window.openUploadDatasetModal = function(preselectedTeamId = null, preselectedProjectId = null) {
+window.openUploadDatasetModal = async function(preselectedTeamId = null, preselectedProjectId = null) {
   const form = document.getElementById('formDataset');
   if (form) form.reset();
   const teamSelect = document.getElementById('dsFormTeam');
   const projSelect = document.getElementById('dsFormProject');
-  populateSelect(teamSelect, currentTeamsCache, preselectedTeamId);
+  
+  let teamsToUse = currentTeamsCache && currentTeamsCache.length > 0 ? currentTeamsCache : [
+    { id: 'team-smartgrid', name: '⚡ Smart Grid Team' },
+    { id: 'team-ai', name: '🤖 AI Team' },
+    { id: 'team-bess', name: '🔋 BESS Team' },
+    { id: 'team-pv', name: '☀️ PV Team' },
+    { id: 'team-wind', name: '💨 Wind Team' },
+    { id: 'team-ev', name: '🚗 Electric Vehicle Team' },
+    { id: 'team-hydrogen', name: '💧 Hydrogen Team' },
+    { id: 'team-dr_uc', name: '📈 Demand Response & UC' }
+  ];
+
+  populateSelect(teamSelect, teamsToUse, preselectedTeamId);
   updateProjectDropdown(preselectedTeamId || teamSelect.value, preselectedProjectId, projSelect);
   teamSelect.onchange = () => updateProjectDropdown(teamSelect.value, null, projSelect);
   openModal('modalDataset');

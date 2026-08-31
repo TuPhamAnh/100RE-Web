@@ -136,8 +136,12 @@ export async function renderDocuments(container) {
 
     const btnUpload = container.querySelector('#btnUploadDoc');
     if (btnUpload) {
-      btnUpload?.addEventListener('click', () => {
-        window.openUploadDocModal();
+      btnUpload.addEventListener('click', () => {
+        if (typeof window.openUploadDocumentModal === 'function') {
+          window.openUploadDocumentModal();
+        } else if (typeof window.openUploadDocModal === 'function') {
+          window.openUploadDocModal();
+        }
       });
     }
 
