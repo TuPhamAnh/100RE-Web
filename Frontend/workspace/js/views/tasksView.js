@@ -1,6 +1,11 @@
 /**
  * 100RE LAB WORKSPACE — Notion-Style Team Workspace & Task Database
- * Faithful recreation of Notion Table & Status Board with SciNote integration.
+ * Features:
+ * - Dynamic Team Workspace naming (e.g. Smart Grid Tasks, PV Tasks)
+ * - Strict Team Isolation: Members only see their own team's tasks
+ * - Supervisor / Admin Team Switcher: Full access to inspect any team or all teams
+ * - General Tasks Tab (Nhiệm vụ chung): Only visible to individuals assigned to that task
+ * - Notion Table & Board View with SciNote ELN integration
  */
 
 import { API } from '../api.js';
@@ -9,38 +14,113 @@ import { formatDate, escapeHtml, renderEmptyState, showToast } from '../componen
 
 export async function renderTasks(container, initialFilter = null) {
   const isVi = (window.i18n ? window.i18n.getLanguage() : 'vi') === 'vi';
-  let activeTab = initialFilter === 'me' ? 'me' : 'all'; // 'all' (Table) | 'status' (Board) | 'me' (My tasks)
+  const currentUser = Auth.getUser();
+  const isSuper = Auth.isSupervisor() || Auth.isAdmin();
+
+  // User's primary research team
+  let userPrimaryTeam = 'team-smartgrid';
+  if (currentUser && Array.isArray(currentUser.teams) && currentUser.teams.length > 0) {
+    const rawT = currentUser.teams[0];
+    userPrimaryTeam = typeof rawT === 'string' ? rawT : (rawT.team_id || rawT.id || 'team-smartgrid');
+  } else if (currentUser && currentUser.team) {
+    userPrimaryTeam = currentUser.team;
+  }
+
+  // Active Tab state: 'team' | 'general' | 'me' | 'status'
+  let activeTab = initialFilter === 'me' ? 'me' : 'team';
+  let supervisorSelectedTeam = isSuper ? 'all' : userPrimaryTeam;
+
   let tasksData = [];
   let allTeams = [];
   let labMembers = [];
 
-  // 1. Initial Shell Markup
+  // 1. Team Metadata Mapping (Icons & Formatted Names)
+  const TEAM_META = {
+    'team-smartgrid': { name: 'Smart Grid Team Tasks', icon: '⚡', slug: 'smartgrid', vi: 'Nhiệm Vụ Nhóm Smart Grid' },
+    'team-ai': { name: 'AI Team Tasks', icon: '🤖', slug: 'ai', vi: 'Nhiệm Vụ Nhóm AI' },
+    'team-bess': { name: 'BESS Team Tasks', icon: '🔋', slug: 'bess', vi: 'Nhiệm Vụ Nhóm BESS' },
+    'team-pv': { name: 'PV Team Tasks', icon: '☀️', slug: 'pv', vi: 'Nhiệm Vụ Nhóm PV' },
+    'team-wind': { name: 'Wind Team Tasks', icon: '💨', slug: 'wind', vi: 'Nhiệm Vụ Nhóm Wind' },
+    'team-ev': { name: 'Electric Vehicle Tasks', icon: '🚗', slug: 'ev', vi: 'Nhiệm Vụ Nhóm EV' },
+    'team-hydrogen': { name: 'Hydrogen Team Tasks', icon: '💧', slug: 'hydrogen', vi: 'Nhiệm Vụ Nhóm Hydrogen' },
+    'team-dr_uc': { name: 'Demand Response & UC Tasks', icon: '📈', slug: 'dr_uc', vi: 'Nhiệm Vụ Nhóm DR & UC' },
+    'team-general': { name: 'General & Personal Tasks', icon: '📋', slug: 'general', vi: 'Nhiệm Vụ Chung & Giao Cá Nhân' },
+    'all': { name: 'All Lab Research Tasks', icon: '🌐', slug: 'all', vi: 'Toàn Bộ Nhiệm Vụ Phòng Lab' }
+  };
+
+  function getWorkspaceTitle() {
+    if (activeTab === 'general') {
+      return { icon: '📋', title: isVi ? 'Nhiệm Vụ Chung & Giao Cá Nhân' : 'General & Personal Tasks' };
+    }
+    if (activeTab === 'me') {
+      return { icon: '👤', title: isVi ? 'Nhiệm Vụ Được Giao Cho Tôi' : 'My Assigned Tasks' };
+    }
+
+    if (isSuper) {
+      if (supervisorSelectedTeam === 'all') {
+        return { icon: '🌐', title: isVi ? 'Toàn Bộ Nhiệm Vụ Phòng Lab' : 'All Lab Research Tasks' };
+      }
+      const meta = TEAM_META[supervisorSelectedTeam] || { name: 'Team Tasks', icon: '⚡', vi: 'Nhiệm Vụ Nhóm' };
+      return { icon: meta.icon, title: isVi ? meta.vi : meta.name };
+    }
+
+    const meta = TEAM_META[userPrimaryTeam] || { name: 'Smart Grid Team Tasks', icon: '⚡', vi: 'Nhiệm Vụ Nhóm Smart Grid' };
+    return { icon: meta.icon, title: isVi ? meta.vi : meta.name };
+  }
+
+  const initialTitleMeta = getWorkspaceTitle();
+
+  // 2. Initial Page Shell HTML
   container.innerHTML = `
     <div class="notion-page-header">
-      <div class="notion-title-row">
-        <span class="notion-title-icon">✅</span>
-        <h1 class="notion-title-text" id="notionPageTitle">Smartgrid Missions: Impossible</h1>
+      <div class="notion-title-row" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span class="notion-title-icon" id="notionTitleIcon">${initialTitleMeta.icon}</span>
+          <h1 class="notion-title-text" id="notionPageTitle">${initialTitleMeta.title}</h1>
+        </div>
+
+        ${isSuper ? `
+          <!-- Supervisor / Admin Exclusive Team Workspace Switcher -->
+          <div style="display:flex; align-items:center; gap:8px; background:var(--notion-hover); padding:4px 10px; border-radius:6px; border:1px solid var(--notion-border);">
+            <span style="font-size:0.75rem; font-weight:700; color:var(--notion-muted); text-transform:uppercase; letter-spacing:0.04em;">
+              <i class="fa-solid fa-crown" style="color:#eab308; margin-right:4px;"></i> ${isVi ? 'Xem theo nhóm:' : 'Team View:'}
+            </span>
+            <select id="supervisorTeamSwitcher" class="notion-select-filter" style="border:none; background:transparent; font-weight:600; cursor:pointer;">
+              <option value="all">🌐 ${isVi ? 'Tất Cả Các Nhóm (All Teams)' : 'All Lab Teams'}</option>
+              <option value="team-smartgrid">⚡ Smart Grid Team</option>
+              <option value="team-ai">🤖 AI Team</option>
+              <option value="team-bess">🔋 BESS Team</option>
+              <option value="team-pv">☀️ PV Team</option>
+              <option value="team-wind">💨 Wind Team</option>
+              <option value="team-ev">🚗 Electric Vehicle Team</option>
+              <option value="team-hydrogen">💧 Hydrogen Team</option>
+              <option value="team-dr_uc">📈 Demand Response & UC</option>
+              <option value="team-general">📋 ${isVi ? 'Nhiệm Vụ Chung' : 'General Tasks'}</option>
+            </select>
+          </div>
+        ` : ''}
       </div>
       
       <!-- Notion View Switcher & Actions Toolbar -->
       <div class="notion-toolbar">
         <div class="notion-tabs">
-          <button type="button" class="notion-tab-btn ${activeTab === 'all' ? 'active' : ''}" id="tabAllTasks">
-            <i class="fa-regular fa-star"></i> ${isVi ? 'Tất cả nhiệm vụ' : 'All tasks'}
+          <button type="button" class="notion-tab-btn ${activeTab === 'team' ? 'active' : ''}" id="tabTeamTasks">
+            <i class="fa-regular fa-star"></i> ${isSuper ? (isVi ? 'Tất cả nhiệm vụ' : 'All tasks') : (isVi ? 'Nhiệm vụ nhóm' : 'Team Tasks')}
+          </button>
+          <button type="button" class="notion-tab-btn ${activeTab === 'general' ? 'active' : ''}" id="tabGeneralTasks">
+            <i class="fa-solid fa-clipboard-list"></i> ${isVi ? 'Nhiệm vụ chung' : 'General Tasks'}
+            <span id="generalTaskBadge" style="display:none; font-size:0.675rem; background:#3b82f6; color:#fff; padding:1px 5px; border-radius:8px; margin-left:2px;"></span>
+          </button>
+          <button type="button" class="notion-tab-btn ${activeTab === 'me' ? 'active' : ''}" id="tabMyTasks">
+            <i class="fa-regular fa-user"></i> ${isVi ? 'Giao cho tôi' : 'My tasks'}
           </button>
           <button type="button" class="notion-tab-btn ${activeTab === 'status' ? 'active' : ''}" id="tabStatusBoard">
             <i class="fa-solid fa-table-columns"></i> ${isVi ? 'Theo trạng thái' : 'Status Board'}
-          </button>
-          <button type="button" class="notion-tab-btn ${activeTab === 'me' ? 'active' : ''}" id="tabMyTasks">
-            <i class="fa-regular fa-user"></i> ${isVi ? 'Nhiệm vụ của tôi' : 'My tasks'}
           </button>
         </div>
 
         <div class="notion-actions-right">
           <input type="text" id="notionSearchInput" class="notion-search-input" placeholder="${isVi ? 'Tìm kiếm nhiệm vụ...' : 'Search tasks...'}">
-          <select id="notionTeamFilter" class="notion-select-filter" style="display:none;">
-            <option value="">${isVi ? 'Tất Cả Nhóm' : 'All Teams'}</option>
-          </select>
           <button type="button" class="notion-btn-icon" id="btnToggleFilters" title="Lọc nhiệm vụ">
             <i class="fa-solid fa-arrow-down-wide-short"></i>
           </button>
@@ -52,9 +132,6 @@ export async function renderTasks(container, initialFilter = null) {
 
       <!-- Expandable Filter Bar -->
       <div class="notion-filter-bar" id="notionFilterPanel" style="display:none; margin-top:10px;">
-        <select id="notionFilterTeam" class="notion-select-filter">
-          <option value="">${isVi ? '📌 Tất Cả Nhóm (Team)' : 'All Teams'}</option>
-        </select>
         <select id="notionFilterStatus" class="notion-select-filter">
           <option value="">${isVi ? '✴️ Tất Cả Trạng Thái' : 'All Statuses'}</option>
           <option value="todo">${isVi ? 'Chưa bắt đầu' : 'To Do'}</option>
@@ -65,6 +142,7 @@ export async function renderTasks(container, initialFilter = null) {
         </select>
         <select id="notionFilterPriority" class="notion-select-filter">
           <option value="">${isVi ? '🎯 Mức Độ Ưu Tiên' : 'All Priorities'}</option>
+          <option value="urgent">${isVi ? 'Khẩn cấp' : 'Urgent'}</option>
           <option value="high">${isVi ? 'Cao' : 'High'}</option>
           <option value="medium">${isVi ? 'Trung bình' : 'Medium'}</option>
           <option value="low">${isVi ? 'Thấp' : 'Low'}</option>
@@ -83,21 +161,15 @@ export async function renderTasks(container, initialFilter = null) {
   const filterPanel = container.querySelector('#notionFilterPanel');
   const btnToggleFilters = container.querySelector('#btnToggleFilters');
   const btnNewTask = container.querySelector('#btnNotionNewTask');
+  const pageTitleEl = container.querySelector('#notionPageTitle');
+  const pageIconEl = container.querySelector('#notionTitleIcon');
+  const supervisorSwitcher = container.querySelector('#supervisorTeamSwitcher');
 
-  // 2. Fetch Data from API
+  // 3. Load Data from API
   try {
     try {
       const teamsRes = await API.get('/api/teams');
       allTeams = teamsRes.teams || [];
-      const teamFilterSelect = container.querySelector('#notionFilterTeam');
-      if (teamFilterSelect) {
-        allTeams.forEach(t => {
-          const opt = document.createElement('option');
-          opt.value = t.id;
-          opt.textContent = t.name;
-          teamFilterSelect.appendChild(opt);
-        });
-      }
     } catch (e) {}
 
     try {
@@ -120,33 +192,69 @@ export async function renderTasks(container, initialFilter = null) {
         { id: 'tsk-sg-07', team_id: 'team-smartgrid', title: 'Slide PowerCon', description: 'Thiết kế slide thuyết trình báo cáo PowerCon', status: 'in_progress', priority: 'low', assignee_names: ['Hai Duong Minh', 'Hiếu Đỗ', 'Tu Pham Anh'], due_date: '2026-09-20', updated_at: 1721498100 },
         { id: 'tsk-sg-08', team_id: 'team-smartgrid', title: 'Data Center - Review', description: 'Đánh giá cấu trúc mạng và phân tích hiệu năng Data Center', status: 'in_progress', priority: 'low', assignee_names: ['Hiếu Đỗ', 'Vinh Hồng'], due_date: '2026-09-15', updated_at: 1721587020 },
         { id: 'tsk-sg-09', team_id: 'team-bess', title: 'Nafosted BESS', description: 'Nghiên cứu mô hình lưu trữ năng lượng pin BESS đề tài Nafosted', status: 'in_progress', priority: 'high', assignee_names: ['Long', 'Vinh Hồng'], due_date: '2026-07-30', updated_at: 1721500800 },
-        { id: 'tsk-sg-10', team_id: 'team-smartgrid', title: 'Distributed Controller - RNN', description: 'Sửa lại ICGEA để Long test HIL bên Đài', status: 'todo', priority: 'medium', assignee_names: ['Long', 'Tu Pham Anh', 'Hiếu Đỗ'], due_date: '2026-09-01', updated_at: 1720893420 }
+        { id: 'tsk-sg-10', team_id: 'team-smartgrid', title: 'Distributed Controller - RNN', description: 'Sửa lại ICGEA để Long test HIL bên Đài', status: 'todo', priority: 'medium', assignee_names: ['Long', 'Tu Pham Anh', 'Hiếu Đỗ'], due_date: '2026-09-01', updated_at: 1720893420 },
+        { id: 'tsk-gen-01', team_id: 'team-general', title: 'Báo cáo mua sắm thiết bị & kinh phí Quý 3 Lab', description: 'Tổng hợp chi phí linh kiện thí nghiệm và dự trù kinh phí Quý 3 phòng Lab C7', status: 'in_progress', priority: 'high', assignee_names: ['Tu Pham Anh', 'Long'], due_date: '2026-09-30', updated_at: 1721800000 },
+        { id: 'tsk-gen-02', team_id: 'team-general', title: 'Chuẩn bị hồ sơ nghiệm thu đề tài cấp Bộ', description: 'Hoàn thiện thuyết minh kỹ thuật và biên bản thử nghiệm HIL phục vụ nghiệm thu', status: 'in_progress', priority: 'urgent', assignee_names: ['Hiếu Đỗ', 'Vinh Hồng'], due_date: '2026-10-15', updated_at: 1721900000 }
       ];
     }
   } catch (e) {
     console.warn('API error loading tasks:', e);
   }
 
-  // 3. Helper Functions
+  // 4. Filtering Logic with Team Isolation & Personal Privacy for General Tasks
+  function isUserAssignedToTask(task, user) {
+    if (!user) return false;
+    const uId = user.id || '';
+    const uName = (user.display_name || user.name || '').toLowerCase();
+    const uEmail = (user.email || user.username || '').toLowerCase();
+
+    if (task.assigned_to && task.assigned_to === uId) return true;
+    if (Array.isArray(task.assignees) && task.assignees.includes(uId)) return true;
+    if (Array.isArray(task.assignee_names)) {
+      return task.assignee_names.some(n => {
+        const ln = n.toLowerCase();
+        return ln.includes(uName) || uName.includes(ln) || (uEmail && ln.includes(uEmail.split('@')[0]));
+      });
+    }
+    return false;
+  }
+
   function getFilteredList() {
     const q = (searchInput?.value || '').toLowerCase().trim();
-    const team = container.querySelector('#notionFilterTeam')?.value || '';
     const status = container.querySelector('#notionFilterStatus')?.value || '';
     const prio = container.querySelector('#notionFilterPriority')?.value || '';
-    const currentUser = Auth.getUser();
 
-    return tasksData.filter(t => {
-      // Tab filter
-      if (activeTab === 'me') {
-        const uId = currentUser?.id || '';
-        const uName = (currentUser?.display_name || currentUser?.name || '').toLowerCase();
-        const isAssigned = (t.assigned_to && t.assigned_to === uId) || 
-                           (t.assignees && t.assignees.includes(uId)) ||
-                           (t.assignee_names && t.assignee_names.some(n => uName.includes(n.toLowerCase()) || n.toLowerCase().includes(uName)));
-        if (!isAssigned) return false;
+    // Step A: Base Scope Filter (Team vs General vs Me)
+    let scoped = [];
+
+    if (activeTab === 'general') {
+      // General Tasks tab: Contains team-general / cross-team tasks
+      scoped = tasksData.filter(t => {
+        const isGen = t.team_id === 'team-general' || t.team_id === 'general' || !t.team_id;
+        if (!isGen) return false;
+        // Privacy rule: Supervisor/Admin can see all general tasks; Researchers only see if their name is in the task!
+        if (isSuper) return true;
+        return isUserAssignedToTask(t, currentUser);
+      });
+    } else if (activeTab === 'me') {
+      // My tasks tab: All tasks (team + general) assigned to current user
+      scoped = tasksData.filter(t => isUserAssignedToTask(t, currentUser));
+    } else {
+      // 'team' or 'status' view:
+      if (isSuper) {
+        if (supervisorSelectedTeam === 'all') {
+          scoped = [...tasksData];
+        } else {
+          scoped = tasksData.filter(t => t.team_id === supervisorSelectedTeam);
+        }
+      } else {
+        // Normal member / Leader: STRICTLY isolated to user's primary research team
+        scoped = tasksData.filter(t => t.team_id === userPrimaryTeam);
       }
+    }
 
-      // Keyword search
+    // Step B: Query & Dropdown Filters
+    return scoped.filter(t => {
       if (q) {
         const matchTitle = t.title && t.title.toLowerCase().includes(q);
         const matchDesc = t.description && t.description.toLowerCase().includes(q);
@@ -154,8 +262,6 @@ export async function renderTasks(container, initialFilter = null) {
         if (!matchTitle && !matchDesc && !matchAssignee) return false;
       }
 
-      // Dropdown filters
-      if (team && t.team_id !== team) return false;
       if (status && t.status !== status) return false;
       if (prio && t.priority !== prio) return false;
 
@@ -163,24 +269,20 @@ export async function renderTasks(container, initialFilter = null) {
     });
   }
 
+  function updateHeaderDisplay() {
+    const meta = getWorkspaceTitle();
+    if (pageTitleEl) pageTitleEl.textContent = meta.title;
+    if (pageIconEl) pageIconEl.textContent = meta.icon;
+  }
+
   function renderStatusPill(status, taskId) {
     const st = (status || 'todo').toLowerCase();
-    let label = 'Chưa bắt đầu';
     let cls = 'status-todo';
 
-    if (st === 'in_progress' || st === 'dang-thuc-hien') {
-      label = 'Đang thực hiện';
-      cls = 'status-in_progress';
-    } else if (st === 'review' || st === 'cho-duyet') {
-      label = 'Chờ duyệt';
-      cls = 'status-review';
-    } else if (st === 'done' || st === 'hoan-thanh') {
-      label = 'Hoàn thành';
-      cls = 'status-done';
-    } else if (st === 'cancelled' || st === 'cancel') {
-      label = 'Cancel';
-      cls = 'status-cancelled';
-    }
+    if (st === 'in_progress' || st === 'dang-thuc-hien') cls = 'status-in_progress';
+    else if (st === 'review' || st === 'cho-duyet') cls = 'status-review';
+    else if (st === 'done' || st === 'hoan-thanh') cls = 'status-done';
+    else if (st === 'cancelled' || st === 'cancel') cls = 'status-cancelled';
 
     return `
       <select class="notion-pill-status ${cls}" data-task-id="${taskId}" onchange="window.handleNotionStatusChange(this, '${taskId}')">
@@ -275,10 +377,18 @@ export async function renderTasks(container, initialFilter = null) {
     }
   }
 
-  // 4. Render Main Table View (Exact Notion Style)
+  // 5. Render Main Table View (Exact Notion Style)
   function renderTableView(list) {
+    updateHeaderDisplay();
+
     if (list.length === 0) {
-      viewport.innerHTML = renderEmptyState(isVi ? 'Không tìm thấy nhiệm vụ nào.' : 'No tasks found.');
+      let emptyMsg = isVi ? 'Không tìm thấy nhiệm vụ nào trong mục này.' : 'No tasks found in this section.';
+      if (activeTab === 'general' && !isSuper) {
+        emptyMsg = isVi 
+          ? '🔒 Bạn không có nhiệm vụ chung cá nhân nào được giao.' 
+          : '🔒 You have no assigned general tasks.';
+      }
+      viewport.innerHTML = renderEmptyState(emptyMsg);
       return;
     }
 
@@ -349,8 +459,10 @@ export async function renderTasks(container, initialFilter = null) {
     }
   }
 
-  // 5. Render Board View (Notion Columns)
+  // 6. Render Board View (Notion Columns)
   function renderBoardView(list) {
+    updateHeaderDisplay();
+
     const columns = [
       { id: 'todo', title: 'Chưa bắt đầu', dotClass: 'status-todo' },
       { id: 'in_progress', title: 'Đang thực hiện', dotClass: 'status-in_progress' },
@@ -416,7 +528,7 @@ export async function renderTasks(container, initialFilter = null) {
     }
   }
 
-  // 6. Interactive Notion Member Picker Popover
+  // 7. Interactive Notion Member Picker Popover
   window.openNotionMemberPicker = function(event, taskId) {
     event.stopPropagation();
     const task = tasksData.find(t => t.id === taskId);
@@ -429,17 +541,14 @@ export async function renderTasks(container, initialFilter = null) {
     popover.className = 'notion-picker-popover';
     popover.id = `popover-task-${taskId}`;
 
-    // Get current assignees
     let curNames = task.assignee_names || [];
     if (curNames.length === 0 && task.assigned_to) {
       const matched = labMembers.find(m => m.id === task.assigned_to);
       if (matched) curNames = [matched.display_name || matched.name];
     }
 
-    // Prepare list of selectable lab members
     let memberList = [...labMembers];
     if (memberList.length === 0) {
-      // Fallback default members if empty
       memberList = [
         { id: 'usr-smartgrid-1788108587815', display_name: 'Pham Anh Tu', name: 'Pham Anh Tu', team: 'Smart Grid' },
         { id: 'usr-smartgrid-1788099630575', display_name: 'Nguyễn Quý Long', name: 'Nguyễn Quý Long', team: 'Smart Grid' },
@@ -478,13 +587,11 @@ export async function renderTasks(container, initialFilter = null) {
       </div>
     `;
 
-    // Position popover near the clicked element
     const rect = event.currentTarget.getBoundingClientRect();
     popover.style.top = `${rect.bottom + window.scrollY + 4}px`;
     popover.style.left = `${Math.min(rect.left + window.scrollX, window.innerWidth - 310)}px`;
     document.body.appendChild(popover);
 
-    // Search filter inside popover
     const pSearch = popover.querySelector('#pickerSearchInput');
     const pList = popover.querySelector('#pickerMemberList');
     if (pSearch && pList) {
@@ -498,7 +605,6 @@ export async function renderTasks(container, initialFilter = null) {
       });
     }
 
-    // Toggle member selection
     pList.querySelectorAll('.notion-picker-item').forEach(item => {
       item.addEventListener('click', async (e) => {
         e.stopPropagation();
@@ -533,7 +639,6 @@ export async function renderTasks(container, initialFilter = null) {
       });
     });
 
-    // Close on outside click
     function closePicker(e) {
       if (!popover.contains(e.target) && e.target !== event.currentTarget && !event.currentTarget.contains(e.target)) {
         popover.remove();
@@ -543,9 +648,8 @@ export async function renderTasks(container, initialFilter = null) {
     setTimeout(() => document.addEventListener('click', closePicker), 50);
   };
 
-  // 7. Dedicated Notion Task Creation Modal
+  // 8. Dedicated Notion Task Creation Modal
   function openNotionCreateTaskModal(defaultStatus = 'in_progress') {
-    // Remove existing modals
     document.querySelectorAll('.notion-modal-backdrop').forEach(m => m.remove());
 
     let memberList = [...labMembers];
@@ -562,6 +666,8 @@ export async function renderTasks(container, initialFilter = null) {
         { id: 'usr-sup-01', display_name: 'Assoc. Prof. Nguyen Duc Tuyen', name: 'Assoc. Prof. Nguyen Duc Tuyen', team: 'Supervisor' }
       ];
     }
+
+    const defaultTeamForCreate = activeTab === 'general' ? 'team-general' : (isSuper && supervisorSelectedTeam !== 'all' ? supervisorSelectedTeam : userPrimaryTeam);
 
     const modal = document.createElement('div');
     modal.className = 'notion-modal-backdrop';
@@ -583,16 +689,17 @@ export async function renderTasks(container, initialFilter = null) {
 
             <div class="notion-form-row">
               <div class="notion-form-group">
-                <label class="notion-form-label"><i class="fa-solid fa-users-viewfinder"></i> ${isVi ? 'Nhóm Nghiên Cứu' : 'Research Team'}</label>
+                <label class="notion-form-label"><i class="fa-solid fa-users-viewfinder"></i> ${isVi ? 'Phạm vi / Nhóm Nghiên Cứu' : 'Research Team'}</label>
                 <select id="nTaskTeam" class="notion-form-select">
-                  <option value="team-smartgrid">⚡ Smart Grid Team</option>
-                  <option value="team-ai">🤖 AI Team</option>
-                  <option value="team-bess">🔋 BESS Team</option>
-                  <option value="team-pv">☀️ PV Team</option>
-                  <option value="team-wind">💨 Wind Team</option>
-                  <option value="team-ev">🚗 Electric Vehicle Team</option>
-                  <option value="team-hydrogen">💧 Hydrogen Team</option>
-                  <option value="team-dr_uc">📈 Demand Response & UC</option>
+                  <option value="team-smartgrid" ${defaultTeamForCreate === 'team-smartgrid' ? 'selected' : ''}>⚡ Smart Grid Team</option>
+                  <option value="team-ai" ${defaultTeamForCreate === 'team-ai' ? 'selected' : ''}>🤖 AI Team</option>
+                  <option value="team-bess" ${defaultTeamForCreate === 'team-bess' ? 'selected' : ''}>🔋 BESS Team</option>
+                  <option value="team-pv" ${defaultTeamForCreate === 'team-pv' ? 'selected' : ''}>☀️ PV Team</option>
+                  <option value="team-wind" ${defaultTeamForCreate === 'team-wind' ? 'selected' : ''}>💨 Wind Team</option>
+                  <option value="team-ev" ${defaultTeamForCreate === 'team-ev' ? 'selected' : ''}>🚗 Electric Vehicle Team</option>
+                  <option value="team-hydrogen" ${defaultTeamForCreate === 'team-hydrogen' ? 'selected' : ''}>💧 Hydrogen Team</option>
+                  <option value="team-dr_uc" ${defaultTeamForCreate === 'team-dr_uc' ? 'selected' : ''}>📈 Demand Response & UC</option>
+                  <option value="team-general" ${defaultTeamForCreate === 'team-general' ? 'selected' : ''}>📋 ${isVi ? 'Nhiệm Vụ Chung (Giao Cá Nhân)' : 'General (Personal Task)'}</option>
                 </select>
               </div>
 
@@ -716,27 +823,30 @@ export async function renderTasks(container, initialFilter = null) {
   window.openCreateTaskModal = openNotionCreateTaskModal;
   window.openNewTaskModal = openNotionCreateTaskModal;
 
-  // 8. Event Bindings
-  const tabAll = container.querySelector('#tabAllTasks');
-  const tabStatus = container.querySelector('#tabStatusBoard');
+  // 9. Event Bindings
+  const tabTeam = container.querySelector('#tabTeamTasks');
+  const tabGeneral = container.querySelector('#tabGeneralTasks');
   const tabMe = container.querySelector('#tabMyTasks');
+  const tabStatus = container.querySelector('#tabStatusBoard');
 
-  if (tabAll) {
-    tabAll.addEventListener('click', () => {
-      activeTab = 'all';
-      tabAll.classList.add('active');
-      tabStatus?.classList.remove('active');
+  if (tabTeam) {
+    tabTeam.addEventListener('click', () => {
+      activeTab = 'team';
+      tabTeam.classList.add('active');
+      tabGeneral?.classList.remove('active');
       tabMe?.classList.remove('active');
+      tabStatus?.classList.remove('active');
       renderCurrentView();
     });
   }
 
-  if (tabStatus) {
-    tabStatus.addEventListener('click', () => {
-      activeTab = 'status';
-      tabStatus.classList.add('active');
-      tabAll?.classList.remove('active');
+  if (tabGeneral) {
+    tabGeneral.addEventListener('click', () => {
+      activeTab = 'general';
+      tabGeneral.classList.add('active');
+      tabTeam?.classList.remove('active');
       tabMe?.classList.remove('active');
+      tabStatus?.classList.remove('active');
       renderCurrentView();
     });
   }
@@ -745,8 +855,28 @@ export async function renderTasks(container, initialFilter = null) {
     tabMe.addEventListener('click', () => {
       activeTab = 'me';
       tabMe.classList.add('active');
-      tabAll?.classList.remove('active');
+      tabTeam?.classList.remove('active');
+      tabGeneral?.classList.remove('active');
       tabStatus?.classList.remove('active');
+      renderCurrentView();
+    });
+  }
+
+  if (tabStatus) {
+    tabStatus.addEventListener('click', () => {
+      activeTab = 'status';
+      tabStatus.classList.add('active');
+      tabTeam?.classList.remove('active');
+      tabGeneral?.classList.remove('active');
+      tabMe?.classList.remove('active');
+      renderCurrentView();
+    });
+  }
+
+  // Supervisor Team Switcher
+  if (supervisorSwitcher) {
+    supervisorSwitcher.addEventListener('change', () => {
+      supervisorSelectedTeam = supervisorSwitcher.value;
       renderCurrentView();
     });
   }
@@ -761,10 +891,9 @@ export async function renderTasks(container, initialFilter = null) {
     });
   }
 
-  const fTeam = container.querySelector('#notionFilterTeam');
   const fStatus = container.querySelector('#notionFilterStatus');
   const fPrio = container.querySelector('#notionFilterPriority');
-  [fTeam, fStatus, fPrio].forEach(select => {
+  [fStatus, fPrio].forEach(select => {
     if (select) select.addEventListener('change', () => renderCurrentView());
   });
 

@@ -30,8 +30,33 @@ export async function handleTasks(request, user, db) {
     const projectMap = new Map(projects.map(p => [p.id, p]));
     const userMap = new Map(users.map(u => [u.id, u]));
 
-    // Filter by user access
-    let filtered = allTasks.filter(t => RBAC.canAccessTeam(user, t.team_id));
+    // Filter by user access (Supervisor/Admin can see all; Researchers/Leaders only see their team tasks + General tasks assigned to them)
+    let filtered = allTasks.filter(t => {
+      if (RBAC.isSuper(user)) return true;
+
+      const uName = (user.display_name || user.name || '').toLowerCase();
+      const uId = user.id;
+      const isAssigned = (t.assigned_to === uId) ||
+        (Array.isArray(t.assignees) && t.assignees.includes(uId)) ||
+        (Array.isArray(t.assignee_names) && t.assignee_names.some(n => n.toLowerCase().includes(uName) || uName.includes(n.toLowerCase())));
+
+      // General / Cross-team tasks: ONLY visible if user is directly assigned
+      if (t.team_id === 'team-general' || t.team_id === 'general') {
+        return isAssigned;
+      }
+
+      // Team tasks: Visible if user belongs to this research team
+      if (RBAC.canAccessTeam(user, t.team_id)) {
+        return true;
+      }
+
+      // If user is directly assigned to a task outside their team
+      if (isAssigned) {
+        return true;
+      }
+
+      return false;
+    });
 
     if (teamFilter) {
       filtered = filtered.filter(t => t.team_id === teamFilter || (teamMap.get(t.team_id) && teamMap.get(t.team_id).slug === teamFilter));
