@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function setAdminState(isAdmin, username = '100re') {
+    function setAdminState(isAdmin, username = '100re') {
     const wsLink = document.getElementById('navWorkspaceLink');
     const dropdown = ensureUserDropdown();
     if (isAdmin) {
@@ -124,14 +124,31 @@ document.addEventListener('DOMContentLoaded', () => {
       const dropName = document.getElementById('dropdownUserName');
       if (dropName) dropName.textContent = username;
       if (navLoginBtn) {
-        navLoginBtn.innerHTML = `<i class="fa-solid fa-user-shield"></i> ${username} <i class="fa-solid fa-chevron-down" style="font-size:0.7rem; margin-left:4px;"></i>`;
+        navLoginBtn.classList.add('user-logged-in-chip');
+        const initial = (username.trim().charAt(0) || 'U').toUpperCase();
+        let shortName = username;
+        if (username.includes('System Admin') || username === '100re') {
+          shortName = 'Admin (100RE)';
+        } else if (username.includes('Assoc. Prof. Nguyen Duc Tuyen')) {
+          shortName = 'Prof. Tuyen';
+        } else if (username.includes('Dr. Ngo Tri Duc')) {
+          shortName = 'Dr. Ngo Tri Duc';
+        } else if (username.includes('Dr. Trinh Minh Phuong')) {
+          shortName = 'Dr. TM Phuong';
+        }
+        navLoginBtn.innerHTML = `
+          <span class="user-chip-avatar">${escapeHtml(initial)}</span>
+          <span class="user-chip-name">${escapeHtml(shortName)}</span>
+          <i class="fa-solid fa-chevron-down user-chip-arrow"></i>
+        `;
         navLoginBtn.setAttribute('title', `Tài khoản: ${username} (Bấm để mở menu / Đăng xuất)`);
       }
       if (wsLink) wsLink.style.display = 'block';
     } else {
       document.body.classList.remove('admin-mode');
       if (navLoginBtn) {
-        navLoginBtn.innerHTML = `<i class="fa-solid fa-lock"></i> Login`;
+        navLoginBtn.classList.remove('user-logged-in-chip');
+        navLoginBtn.innerHTML = `<i class="fa-solid fa-arrow-right-to-bracket"></i> <span>Đăng Nhập</span>`;
         navLoginBtn.removeAttribute('title');
       }
       if (dropdown) dropdown.classList.remove('show');
