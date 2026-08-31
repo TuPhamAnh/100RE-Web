@@ -40,40 +40,39 @@ export async function renderTasks(container, initialFilter = null) {
   let labMembers = [];
 
   // Team Metadata Mapping (Icons, Names, Slugs)
-  const TEAM_META = {
-    'team-smartgrid': { name: 'Smart Grid Team Tasks', icon: '⚡', slug: 'smartgrid', vi: 'Nhiệm Vụ Nhóm Smart Grid' },
-    'team-ai': { name: 'AI Team Tasks', icon: '🤖', slug: 'ai', vi: 'Nhiệm Vụ Nhóm AI' },
-    'team-bess': { name: 'BESS Team Tasks', icon: '🔋', slug: 'bess', vi: 'Nhiệm Vụ Nhóm BESS' },
-    'team-pv': { name: 'PV Team Tasks', icon: '☀️', slug: 'pv', vi: 'Nhiệm Vụ Nhóm PV' },
-    'team-wind': { name: 'Wind Team Tasks', icon: '💨', slug: 'wind', vi: 'Nhiệm Vụ Nhóm Wind' },
-    'team-ev': { name: 'Electric Vehicle Tasks', icon: '🚗', slug: 'ev', vi: 'Nhiệm Vụ Nhóm EV' },
-    'team-hydrogen': { name: 'Hydrogen Team Tasks', icon: '💧', slug: 'hydrogen', vi: 'Nhiệm Vụ Nhóm Hydrogen' },
-    'team-ucdr': { name: 'Unit Commitment & Demand Response Tasks', icon: '📈', slug: 'ucdr', vi: 'Nhiệm Vụ Nhóm UC & DR' },
-    'team-dr_uc': { name: 'Unit Commitment & Demand Response Tasks', icon: '📈', slug: 'ucdr', vi: 'Nhiệm Vụ Nhóm UC & DR' },
-    'team-uc': { name: 'Unit Commitment & Demand Response Tasks', icon: '📈', slug: 'ucdr', vi: 'Nhiệm Vụ Nhóm UC & DR' },
-    'team-dr': { name: 'Unit Commitment & Demand Response Tasks', icon: '📈', slug: 'ucdr', vi: 'Nhiệm Vụ Nhóm UC & DR' },
-    'team-dr': { name: 'Demand Response Tasks', icon: '📈', slug: 'dr', vi: 'Nhiệm Vụ Nhóm DR & UC' },
-    'team-general': { name: 'General & Personal Tasks', icon: '📋', slug: 'general', vi: 'Nhiệm Vụ Chung & Giao Cá Nhân' },
-    'all': { name: 'All Lab Research Tasks', icon: '🌐', slug: 'all', vi: 'Toàn Bộ Nhiệm Vụ Phòng Lab' }
+    const TEAM_META = {
+    'team-smartgrid': { name: 'Smart Grid Team Tasks', icon: '<i class="fa-solid fa-network-wired" style="color:#0284c7;"></i>', slug: 'smartgrid', vi: 'Nhiệm Vụ Nhóm Smart Grid' },
+    'team-ai': { name: 'AI Team Tasks', icon: '<i class="fa-solid fa-brain" style="color:#8b5cf6;"></i>', slug: 'ai', vi: 'Nhiệm Vụ Nhóm AI' },
+    'team-bess': { name: 'BESS Team Tasks', icon: '<i class="fa-solid fa-car-battery" style="color:#10b981;"></i>', slug: 'bess', vi: 'Nhiệm Vụ Nhóm BESS' },
+    'team-pv': { name: 'PV Team Tasks', icon: '<i class="fa-solid fa-solar-panel" style="color:#f59e0b;"></i>', slug: 'pv', vi: 'Nhiệm Vụ Nhóm PV' },
+    'team-wind': { name: 'Wind Team Tasks', icon: '<i class="fa-solid fa-wind" style="color:#06b6d4;"></i>', slug: 'wind', vi: 'Nhiệm Vụ Nhóm Wind' },
+    'team-ev': { name: 'Electric Vehicle Tasks', icon: '<i class="fa-solid fa-charging-station" style="color:#ec4899;"></i>', slug: 'ev', vi: 'Nhiệm Vụ Nhóm EV' },
+    'team-hydrogen': { name: 'Hydrogen Team Tasks', icon: '<i class="fa-solid fa-droplet" style="color:#3b82f6;"></i>', slug: 'hydrogen', vi: 'Nhiệm Vụ Nhóm Hydrogen' },
+    'team-ucdr': { name: 'Unit Commitment & Demand Response Tasks', icon: '<i class="fa-solid fa-chart-line" style="color:#6366f1;"></i>', slug: 'ucdr', vi: 'Nhiệm Vụ Nhóm UC & DR' },
+    'team-dr_uc': { name: 'Unit Commitment & Demand Response Tasks', icon: '<i class="fa-solid fa-chart-line" style="color:#6366f1;"></i>', slug: 'ucdr', vi: 'Nhiệm Vụ Nhóm UC & DR' },
+    'team-uc': { name: 'Unit Commitment & Demand Response Tasks', icon: '<i class="fa-solid fa-chart-line" style="color:#6366f1;"></i>', slug: 'ucdr', vi: 'Nhiệm Vụ Nhóm UC & DR' },
+    'team-dr': { name: 'Unit Commitment & Demand Response Tasks', icon: '<i class="fa-solid fa-chart-line" style="color:#6366f1;"></i>', slug: 'ucdr', vi: 'Nhiệm Vụ Nhóm UC & DR' },
+    'team-general': { name: 'General & Personal Tasks', icon: '<i class="fa-solid fa-clipboard-list" style="color:#64748b;"></i>', slug: 'general', vi: 'Nhiệm Vụ Chung & Giao Cá Nhân' },
+    'all': { name: 'All Lab Research Tasks', icon: '<i class="fa-solid fa-list-check" style="color:#16a34a;"></i>', slug: 'all', vi: 'Toàn Bộ Nhiệm Vụ Phòng Lab' }
   };
 
   function getWorkspaceTitle() {
     if (activeTab === 'general') {
-      return { icon: '📋', title: isVi ? 'Nhiệm Vụ Chung & Giao Cá Nhân' : 'General & Personal Tasks' };
+      return { icon: '<i class="fa-solid fa-clipboard-list" style="color:#64748b;"></i>', title: isVi ? 'Nhiệm Vụ Chung & Giao Cá Nhân' : 'General & Personal Tasks' };
     }
     if (activeTab === 'me') {
-      return { icon: '👤', title: isVi ? 'Nhiệm Vụ Được Giao Cho Tôi' : 'My Assigned Tasks' };
+      return { icon: '<i class="fa-solid fa-user-tag" style="color:#0284c7;"></i>', title: isVi ? 'Nhiệm Vụ Được Giao Cho Tôi' : 'My Assigned Tasks' };
     }
 
     if (isSuper) {
       if (supervisorSelectedTeam === 'all') {
-        return { icon: '🌐', title: isVi ? 'Toàn Bộ Nhiệm Vụ Phòng Lab' : 'All Lab Research Tasks' };
+        return { icon: '<i class="fa-solid fa-list-check" style="color:#16a34a;"></i>', title: isVi ? 'Toàn Bộ Nhiệm Vụ Phòng Lab' : 'All Lab Research Tasks' };
       }
-      const meta = TEAM_META[supervisorSelectedTeam] || { name: 'Team Tasks', icon: '⚡', vi: 'Nhiệm Vụ Nhóm' };
+      const meta = TEAM_META[supervisorSelectedTeam] || { name: 'Team Tasks', icon: '<i class="fa-solid fa-layer-group" style="color:#16a34a;"></i>', vi: 'Nhiệm Vụ Nhóm' };
       return { icon: meta.icon, title: isVi ? meta.vi : meta.name };
     }
 
-    const meta = TEAM_META[userPrimaryTeam] || { name: 'Team Tasks', icon: '⚡', vi: 'Nhiệm Vụ Nhóm Nghiên Cứu' };
+    const meta = TEAM_META[userPrimaryTeam] || { name: 'Team Tasks', icon: '<i class="fa-solid fa-layer-group" style="color:#16a34a;"></i>', vi: 'Nhiệm Vụ Nhóm Nghiên Cứu' };
     return { icon: meta.icon, title: isVi ? meta.vi : meta.name };
   }
 
@@ -92,19 +91,19 @@ export async function renderTasks(container, initialFilter = null) {
           <!-- Supervisor / Admin Exclusive Team Workspace Switcher -->
           <div style="display:flex; align-items:center; gap:8px; background:var(--notion-hover); padding:4px 10px; border-radius:6px; border:1px solid var(--notion-border);">
             <span style="font-size:0.75rem; font-weight:700; color:var(--notion-muted); text-transform:uppercase; letter-spacing:0.04em;">
-              <i class="fa-solid fa-crown" style="color:#eab308; margin-right:4px;"></i> ${isVi ? 'Xem theo nhóm:' : 'Team View:'}
+              <i class="fa-solid fa-layer-group" style="color:#16a34a; margin-right:4px;"></i> ${isVi ? 'Xem theo nhóm:' : 'Team View:'}
             </span>
-            <select id="supervisorTeamSwitcher" class="notion-select-filter" style="border:none; background:transparent; font-weight:600; cursor:pointer;">
-              <option value="all">🌐 ${isVi ? 'Tất Cả Các Nhóm (All Teams)' : 'All Lab Teams'}</option>
-              <option value="team-smartgrid">⚡ Smart Grid Team</option>
-              <option value="team-ai">🤖 AI Team</option>
-              <option value="team-bess">🔋 BESS Team</option>
-              <option value="team-pv">☀️ PV Team</option>
-              <option value="team-wind">💨 Wind Team</option>
-              <option value="team-ev">🚗 Electric Vehicle Team</option>
-              <option value="team-hydrogen">💧 Hydrogen Team</option>
-              <option value="team-ucdr">📈 Unit Commitment & Demand Response (UCDR)</option>
-              <option value="team-general">📋 ${isVi ? 'Nhiệm Vụ Chung' : 'General Tasks'}</option>
+            <select id="supervisorTeamSwitcher" class="notion-select-filter" style="border:none; background:transparent; font-weight:600; cursor:pointer; color:#1e293b;">
+              <option value="all">${isVi ? 'Tất Cả Các Nhóm (All Lab Teams)' : 'All Lab Teams'}</option>
+              <option value="team-smartgrid">Smart Grid Team</option>
+              <option value="team-ai">AI Team</option>
+              <option value="team-bess">BESS Team</option>
+              <option value="team-pv">PV Team</option>
+              <option value="team-wind">Wind Team</option>
+              <option value="team-ev">Electric Vehicle Team</option>
+              <option value="team-hydrogen">Hydrogen Team</option>
+              <option value="team-ucdr">Unit Commitment & Demand Response (UCDR)</option>
+              <option value="team-general">${isVi ? 'Nhiệm Vụ Chung (General Tasks)' : 'General Tasks'}</option>
             </select>
           </div>
         ` : ''}
@@ -331,10 +330,46 @@ export async function renderTasks(container, initialFilter = null) {
     });
   }
 
+    // Direct Delete Task Action from Table & Board Views
+  window.deleteTaskDirectly = async function(event, taskId, taskTitle) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    const confirmed = typeof window.showConfirmModal === 'function' ? await window.showConfirmModal({
+      title: 'Xác Nhận Xóa Nhiệm Vụ',
+      message: `Bạn có chắc chắn muốn xóa nhiệm vụ "${taskTitle || 'này'}" khỏi phòng Lab không? Thao tác này không thể hoàn tác.`,
+      confirmText: 'Xóa Nhiệm Vụ',
+      cancelText: 'Hủy Bỏ',
+      type: 'danger'
+    }) : true;
+
+    if (confirmed) {
+      try {
+        await API.delete(`/api/tasks/${taskId}`);
+        if (typeof showToast === 'function') showToast('Đã xóa nhiệm vụ thành công.');
+        
+        // Remove from memory
+        tasksData = tasksData.filter(t => t.id !== taskId);
+        
+        // Update local storage backup
+        try {
+          const stored = JSON.parse(localStorage.getItem('100re_local_tasks') || '[]');
+          const updated = stored.filter(t => t.id !== taskId);
+          localStorage.setItem('100re_local_tasks', JSON.stringify(updated));
+        } catch (e) {}
+
+        applyFilterAndRender();
+      } catch (e) {
+        if (typeof showToast === 'function') showToast(e.message || 'Không thể xóa nhiệm vụ.', true);
+      }
+    }
+  };
+
   function updateHeaderDisplay() {
     const meta = getWorkspaceTitle();
     if (pageTitleEl) pageTitleEl.textContent = meta.title;
-    if (pageIconEl) pageIconEl.textContent = meta.icon;
+    if (pageIconEl) pageIconEl.innerHTML = meta.icon;
   }
 
   function renderStatusPill(status, taskId) {
@@ -455,13 +490,14 @@ export async function renderTasks(container, initialFilter = null) {
               <th style="width:120px;"><i class="fa-solid fa-bullseye" style="font-size:0.7rem; margin-right:4px;"></i> ${isVi ? 'Mức độ ưu tiên' : 'Priority'}</th>
               <th><i class="fa-solid fa-bars-staggered" style="font-size:0.7rem; margin-right:4px;"></i> ${isVi ? 'Mô tả' : 'Description'}</th>
               <th style="width:110px;"><i class="fa-solid fa-triangle-exclamation" style="font-size:0.7rem; margin-right:4px;"></i> ${isVi ? 'Tình trạng' : 'Status'}</th>
-              <th style="width:160px;"><i class="fa-regular fa-clock" style="font-size:0.7rem; margin-right:4px;"></i> ${isVi ? 'Đã cập nhật lúc' : 'Last updated'}</th>
+              <th style="width:140px;"><i class="fa-regular fa-clock" style="font-size:0.7rem; margin-right:4px;"></i> ${isVi ? 'Đã cập nhật lúc' : 'Last updated'}</th>
+              <th style="width:60px; text-align:center;"><i class="fa-solid fa-ellipsis" style="font-size:0.7rem;"></i></th>
             </tr>
           </thead>
           <tbody>
             ${list.length === 0 ? `
               <tr>
-                <td colspan="8" style="text-align:center; padding:32px 16px; color:var(--notion-muted);">
+                <td colspan="9" style="text-align:center; padding:32px 16px; color:var(--notion-muted);">
                   <i class="fa-regular fa-folder-open" style="font-size:1.5rem; margin-bottom:8px; display:block; opacity:0.6;"></i>
                   <span>${activeTab === 'general' && !isSuper ? (isVi ? '🔒 Bạn không có nhiệm vụ chung cá nhân nào được giao.' : '🔒 You have no assigned general tasks.') : (isVi ? 'Chưa có nhiệm vụ nào trong mục này. Bấm "+ New task" bên dưới để tạo mới.' : 'No tasks in this section yet. Click "+ New task" below to create.')}</span>
                 </td>
@@ -495,11 +531,16 @@ export async function renderTasks(container, initialFilter = null) {
                     ${formatUpdatedTime(t.updated_at || t.created_at)}
                   </span>
                 </td>
+                <td style="text-align:center;">
+                  <button type="button" class="notion-btn-delete-task" onclick="window.deleteTaskDirectly(event, '${t.id}', '${escapeHtml((t.title || '').replace(/'/g, "\\'"))}')" title="Xóa nhiệm vụ này">
+                    <i class="fa-solid fa-trash-can"></i>
+                  </button>
+                </td>
               </tr>
             `).join('')}
             <!-- Inline Quick Add Row -->
             <tr class="notion-row-new" id="rowQuickAdd">
-              <td colspan="8" style="padding:10px 14px;">
+              <td colspan="9" style="padding:10px 14px;">
                 <i class="fa-solid fa-plus" style="margin-right:6px; font-size:0.75rem;"></i> ${isVi ? 'New task' : 'New task'}
               </td>
             </tr>
@@ -547,8 +588,13 @@ export async function renderTasks(container, initialFilter = null) {
 
               <div class="notion-board-cards">
                 ${colTasks.map(t => `
-                  <div class="notion-card" onclick="window.openTaskDetail('${t.id}')">
-                    <h4 class="notion-card-title">${escapeHtml(t.title)}</h4>
+                  <div class="notion-card" onclick="window.openTaskDetail('${t.id}')" style="position:relative;">
+                    <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:6px;">
+                      <h4 class="notion-card-title" style="flex:1;">${escapeHtml(t.title)}</h4>
+                      <button type="button" class="notion-btn-delete-task" style="padding:2px 4px; font-size:0.75rem;" onclick="window.deleteTaskDirectly(event, '${t.id}', '${escapeHtml((t.title || '').replace(/'/g, "\\'"))}')" title="Xóa nhiệm vụ này">
+                        <i class="fa-solid fa-trash-can"></i>
+                      </button>
+                    </div>
                     ${t.description ? `<p class="notion-card-desc">${escapeHtml(t.description)}</p>` : ''}
                     
                     <div style="margin-bottom:8px; display:flex; align-items:center; justify-content:space-between; gap:6px;">

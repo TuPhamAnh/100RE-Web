@@ -1399,3 +1399,25 @@ code, pre, .ws-code, [style*="Fira Code"] {
   transform: translateY(-1px);
   box-shadow: 0 5px 15px rgba(220, 38, 38, 0.4);
 }
+
+/* Notion Delete Task Button */
+.notion-btn-delete-task {
+  background: transparent;
+  border: 1px solid transparent;
+  color: #94a3b8;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notion-btn-delete-task:hover {
+  background: #fee2e2;
+  border-color: #fecaca;
+  color: #dc2626;
+  transform: scale(1.05);
+}

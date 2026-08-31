@@ -39,14 +39,14 @@ export async function renderTeams(container, teamIdOrSlug = null) {
   `;
 
   const FALLBACK_TEAMS = [
-    { id: 'team-pv', slug: 'pv', name: 'Photovoltaic (PV)', icon: '☀️', leader: 'Dr. Ngo Tri Duc', description: 'High-efficiency solar cells, bifacial modules modeling, solar irradiance forecasting and grid integration.', memberCount: 3, projectCount: 1, openTaskCount: 2, datasetCount: 1, docCount: 1 },
-    { id: 'team-wind', slug: 'wind', name: 'Wind Energy', icon: '💨', leader: 'Nguyen Nhu Tung', description: 'Wind turbine aerodynamics, power curve forecasting, wake effect modeling and offshore wind integration.', memberCount: 2, projectCount: 1, openTaskCount: 1, datasetCount: 1, docCount: 1 },
-    { id: 'team-hydrogen', slug: 'hydrogen', name: 'Green Hydrogen', icon: '💧', leader: 'Nguyen Hoang Anh', description: 'Water electrolysis, PEM & alkaline fuel cells, hydrogen storage supply chains and H2-to-power systems.', memberCount: 2, projectCount: 1, openTaskCount: 1, datasetCount: 1, docCount: 1 },
-    { id: 'team-smartgrid', slug: 'smartgrid', name: 'Smart Grid', icon: '⚡', leader: 'Pham Anh Tu', description: 'Microgrid energy management, real-time SCADA, active distribution networks and power quality control.', memberCount: 4, projectCount: 1, openTaskCount: 8, datasetCount: 1, docCount: 2 },
-    { id: 'team-ev', slug: 'ev', name: 'Electric Vehicle (EV)', icon: '🚗', leader: 'Dao Quoc Khanh', description: 'V2G (Vehicle-to-Grid) bi-directional charging, smart charging scheduling, and battery health degradation.', memberCount: 2, projectCount: 1, openTaskCount: 1, datasetCount: 1, docCount: 1 },
-    { id: 'team-ai', slug: 'ai', name: 'Artificial Intelligence (AI)', icon: '🤖', leader: 'Bui Quang Hai', description: 'Deep learning, neural networks, physics-informed AI, and reinforcement learning for energy systems.', memberCount: 2, projectCount: 1, openTaskCount: 1, datasetCount: 1, docCount: 1 },
-    { id: 'team-bess', slug: 'bess', name: 'Battery Energy Storage (BESS)', icon: '🔋', leader: 'Dr. Trinh Minh Phuong', description: 'Li-ion battery SoC/SoH estimation, battery energy management systems (BEMS), degradation and peak shaving.', memberCount: 4, projectCount: 1, openTaskCount: 2, datasetCount: 1, docCount: 1 },
-    { id: 'team-ucdr', slug: 'ucdr', name: 'Unit Commitment & Demand Response (UCDR)', icon: '📈', leader: 'Dr. Le Anh Quan', description: 'Security-constrained unit commitment (SCUC), mixed-integer linear programming, demand response flexibility and market dispatch.', memberCount: 2, projectCount: 1, openTaskCount: 2, datasetCount: 1, docCount: 1 }
+    { id: 'team-pv', slug: 'pv', name: 'Photovoltaic (PV)', icon: 'solar-panel', leader: 'Dr. Ngo Tri Duc', description: 'High-efficiency solar cells, bifacial modules modeling, solar irradiance forecasting and grid integration.', memberCount: 3, projectCount: 1, openTaskCount: 2, datasetCount: 1, docCount: 1 },
+    { id: 'team-wind', slug: 'wind', name: 'Wind Energy', icon: 'wind', leader: 'Nguyen Nhu Tung', description: 'Wind turbine aerodynamics, power curve forecasting, wake effect modeling and offshore wind integration.', memberCount: 2, projectCount: 1, openTaskCount: 1, datasetCount: 1, docCount: 1 },
+    { id: 'team-hydrogen', slug: 'hydrogen', name: 'Green Hydrogen', icon: 'droplet', leader: 'Nguyen Hoang Anh', description: 'Water electrolysis, PEM & alkaline fuel cells, hydrogen storage supply chains and H2-to-power systems.', memberCount: 2, projectCount: 1, openTaskCount: 1, datasetCount: 1, docCount: 1 },
+    { id: 'team-smartgrid', slug: 'smartgrid', name: 'Smart Grid', icon: 'network-wired', leader: 'Pham Anh Tu', description: 'Microgrid energy management, real-time SCADA, active distribution networks and power quality control.', memberCount: 4, projectCount: 1, openTaskCount: 8, datasetCount: 1, docCount: 2 },
+    { id: 'team-ev', slug: 'ev', name: 'Electric Vehicle (EV)', icon: 'charging-station', leader: 'Dao Quoc Khanh', description: 'V2G (Vehicle-to-Grid) bi-directional charging, smart charging scheduling, and battery health degradation.', memberCount: 2, projectCount: 1, openTaskCount: 1, datasetCount: 1, docCount: 1 },
+    { id: 'team-ai', slug: 'ai', name: 'Artificial Intelligence (AI)', icon: 'brain', leader: 'Bui Quang Hai', description: 'Deep learning, neural networks, physics-informed AI, and reinforcement learning for energy systems.', memberCount: 2, projectCount: 1, openTaskCount: 1, datasetCount: 1, docCount: 1 },
+    { id: 'team-bess', slug: 'bess', name: 'Battery Energy Storage (BESS)', icon: 'car-battery', leader: 'Dr. Trinh Minh Phuong', description: 'Li-ion battery SoC/SoH estimation, battery energy management systems (BEMS), degradation and peak shaving.', memberCount: 4, projectCount: 1, openTaskCount: 2, datasetCount: 1, docCount: 1 },
+    { id: 'team-ucdr', slug: 'ucdr', name: 'Unit Commitment & Demand Response (UCDR)', icon: 'chart-line', leader: 'Dr. Le Anh Quan', description: 'Security-constrained unit commitment (SCUC), mixed-integer linear programming, demand response flexibility and market dispatch.', memberCount: 2, projectCount: 1, openTaskCount: 2, datasetCount: 1, docCount: 1 }
   ];
 
   try {
@@ -62,7 +62,7 @@ export async function renderTeams(container, teamIdOrSlug = null) {
               id: 'team-ucdr',
               slug: 'ucdr',
               name: 'Unit Commitment & Demand Response (UCDR)',
-              icon: '📈',
+              icon: 'chart-line',
               leader: 'Dr. Le Anh Quan',
               description: 'Security-constrained unit commitment (SCUC), mixed-integer linear programming, demand response flexibility and market dispatch.',
               memberCount: 2,
@@ -101,7 +101,17 @@ export async function renderTeams(container, teamIdOrSlug = null) {
       }
 
       grid.innerHTML = list.map(t => {
-        const icon = t.icon || (t.slug === 'pv' ? '☀️' : (t.slug === 'bess' ? '🔋' : (t.slug === 'ai' ? '🤖' : (t.slug === 'wind' ? '💨' : (t.slug === 'ev' ? '🚗' : (t.slug === 'hydrogen' ? '💧' : '⚡'))))));
+        const FA_ICONS = {
+          'pv': '<i class="fa-solid fa-solar-panel" style="color:#f59e0b;"></i>',
+          'wind': '<i class="fa-solid fa-wind" style="color:#06b6d4;"></i>',
+          'hydrogen': '<i class="fa-solid fa-droplet" style="color:#3b82f6;"></i>',
+          'smartgrid': '<i class="fa-solid fa-network-wired" style="color:#0284c7;"></i>',
+          'ev': '<i class="fa-solid fa-charging-station" style="color:#ec4899;"></i>',
+          'ai': '<i class="fa-solid fa-brain" style="color:#8b5cf6;"></i>',
+          'bess': '<i class="fa-solid fa-car-battery" style="color:#10b981;"></i>',
+          'ucdr': '<i class="fa-solid fa-chart-line" style="color:#6366f1;"></i>'
+        };
+        const iconHtml = FA_ICONS[cleanSlug] || '<i class="fa-solid fa-layer-group" style="color:#16a34a;"></i>';
         return `
           <div class="ws-card" style="margin-bottom:0; display:flex; flex-direction:column; justify-content:space-between; border-radius:12px; transition:transform 0.2s, box-shadow 0.2s; border:1px solid var(--ws-border);">
             <div style="padding:22px 20px 18px;">
@@ -198,7 +208,7 @@ async function renderTeamDetail(container, teamIdOrSlug) {
   const TEAM_CATALOG = {
     'pv': {
       name: 'Photovoltaic (PV) Research Team',
-      icon: '☀️',
+      icon: 'solar-panel',
       slug: 'pv',
       id: 'team-pv',
       leader: 'Dr. Ngo Tri Duc',
@@ -225,7 +235,7 @@ async function renderTeamDetail(container, teamIdOrSlug) {
     },
     'smartgrid': {
       name: 'Smart Grid & Microgrid Systems',
-      icon: '⚡',
+      icon: 'network-wired',
       slug: 'smartgrid',
       id: 'team-smartgrid',
       leader: 'Pham Anh Tu',
@@ -254,7 +264,7 @@ async function renderTeamDetail(container, teamIdOrSlug) {
     },
     'bess': {
       name: 'Battery Energy Storage (BESS)',
-      icon: '🔋',
+      icon: 'car-battery',
       slug: 'bess',
       id: 'team-bess',
       leader: 'Dr. Trinh Minh Phuong',
@@ -280,7 +290,7 @@ async function renderTeamDetail(container, teamIdOrSlug) {
     },
     'ai': {
       name: 'Artificial Intelligence (AI) Team',
-      icon: '🤖',
+      icon: 'brain',
       slug: 'ai',
       id: 'team-ai',
       leader: 'Bui Quang Hai',
@@ -303,7 +313,7 @@ async function renderTeamDetail(container, teamIdOrSlug) {
     },
     'wind': {
       name: 'Wind Energy Research Team',
-      icon: '💨',
+      icon: 'wind',
       slug: 'wind',
       id: 'team-wind',
       leader: 'Nguyen Nhu Tung',
@@ -327,7 +337,7 @@ async function renderTeamDetail(container, teamIdOrSlug) {
     },
     'ev': {
       name: 'Electric Vehicle (EV) Integration',
-      icon: '🚗',
+      icon: 'charging-station',
       slug: 'ev',
       id: 'team-ev',
       leader: 'Dao Quoc Khanh',
@@ -351,7 +361,7 @@ async function renderTeamDetail(container, teamIdOrSlug) {
     },
     'hydrogen': {
       name: 'Green Hydrogen Systems',
-      icon: '💧',
+      icon: 'droplet',
       slug: 'hydrogen',
       id: 'team-hydrogen',
       leader: 'Nguyen Hoang Anh',
@@ -374,7 +384,7 @@ async function renderTeamDetail(container, teamIdOrSlug) {
     },
         'ucdr': {
       name: 'Unit Commitment & Demand Response (UCDR)',
-      icon: '📈',
+      icon: 'chart-line',
       slug: 'ucdr',
       id: 'team-ucdr',
       leader: 'Dr. Le Anh Quan',
@@ -399,7 +409,7 @@ async function renderTeamDetail(container, teamIdOrSlug) {
     },
     'uc': {
       name: 'Unit Commitment & Market Dispatch',
-      icon: '📈',
+      icon: 'chart-line',
       slug: 'uc',
       id: 'team-uc',
       leader: 'Dr. Le Anh Quan',
@@ -423,7 +433,7 @@ async function renderTeamDetail(container, teamIdOrSlug) {
     },
     'dr': {
       name: 'Demand Response & Flexibility',
-      icon: '⚡',
+      icon: 'network-wired',
       slug: 'dr',
       id: 'team-dr',
       leader: 'Dr. Le Anh Quan',
@@ -505,7 +515,7 @@ async function renderTeamDetail(container, teamIdOrSlug) {
           </div>
 
           <div style="display:flex; align-items:center; gap:12px;">
-            <span style="font-size:2rem;">${teamMeta.icon || '⚡'}</span>
+            <span style="font-size:1.8rem; display:inline-flex; align-items:center; justify-content:center;">${(FA_ICONS && FA_ICONS[cleanSlug]) || '<i class="fa-solid fa-layer-group"></i>'}</span>
             <h1 style="font-size:1.6rem; font-weight:800; color:var(--ws-dark); margin:0;">${escapeHtml(team.name)}</h1>
           </div>
 

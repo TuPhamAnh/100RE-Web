@@ -724,14 +724,14 @@ window.openUploadDocumentModal = async function(preselectedTeamId = null, presel
   const projSelect = document.getElementById('docFormProject');
   
   let teamsToUse = currentTeamsCache && currentTeamsCache.length > 0 ? currentTeamsCache : [
-    { id: 'team-smartgrid', name: '⚡ Smart Grid Team' },
-    { id: 'team-ai', name: '🤖 AI Team' },
-    { id: 'team-bess', name: '🔋 BESS Team' },
+    { id: 'team-smartgrid', name: 'Smart Grid Team' },
+    { id: 'team-ai', name: 'AI Team' },
+    { id: 'team-bess', name: 'BESS Team' },
     { id: 'team-pv', name: '☀️ PV Team' },
-    { id: 'team-wind', name: '💨 Wind Team' },
-    { id: 'team-ev', name: '🚗 Electric Vehicle Team' },
-    { id: 'team-hydrogen', name: '💧 Hydrogen Team' },
-    { id: 'team-dr_uc', name: '📈 Demand Response & UC' }
+    { id: 'team-wind', name: 'Wind Team' },
+    { id: 'team-ev', name: 'Electric Vehicle Team' },
+    { id: 'team-hydrogen', name: 'Hydrogen Team' },
+    { id: 'team-dr_uc', name: 'Unit Commitment & Demand Response (UCDR)' }
   ];
   
   populateSelect(teamSelect, teamsToUse, preselectedTeamId);
@@ -748,14 +748,14 @@ window.openUploadDatasetModal = async function(preselectedTeamId = null, presele
   const projSelect = document.getElementById('dsFormProject');
   
   let teamsToUse = currentTeamsCache && currentTeamsCache.length > 0 ? currentTeamsCache : [
-    { id: 'team-smartgrid', name: '⚡ Smart Grid Team' },
-    { id: 'team-ai', name: '🤖 AI Team' },
-    { id: 'team-bess', name: '🔋 BESS Team' },
+    { id: 'team-smartgrid', name: 'Smart Grid Team' },
+    { id: 'team-ai', name: 'AI Team' },
+    { id: 'team-bess', name: 'BESS Team' },
     { id: 'team-pv', name: '☀️ PV Team' },
-    { id: 'team-wind', name: '💨 Wind Team' },
-    { id: 'team-ev', name: '🚗 Electric Vehicle Team' },
-    { id: 'team-hydrogen', name: '💧 Hydrogen Team' },
-    { id: 'team-dr_uc', name: '📈 Demand Response & UC' }
+    { id: 'team-wind', name: 'Wind Team' },
+    { id: 'team-ev', name: 'Electric Vehicle Team' },
+    { id: 'team-hydrogen', name: 'Hydrogen Team' },
+    { id: 'team-dr_uc', name: 'Unit Commitment & Demand Response (UCDR)' }
   ];
 
   populateSelect(teamSelect, teamsToUse, preselectedTeamId);
