@@ -504,17 +504,10 @@ export const Auth = {
       nameEl.title = this.currentUser.email || this.currentUser.username;
     }
 
-    // 2. Update Role Badge with Team information & Color Coding
+    // 2. Update Role Badge with Color Coding (Role only, no team suffix)
     if (roleEl) {
-      const roleStr = (this.currentUser.role || 'researcher').replace('_', ' ').toUpperCase();
-      let teamInfo = '';
-      if (this.currentUser.teams && this.currentUser.teams.length > 0) {
-        const t0 = this.currentUser.teams[0];
-        const tName = typeof t0 === 'string' ? t0.replace('team-', '').toUpperCase() : (t0.team_name || t0.team_id || '');
-        if (tName) teamInfo = tName;
-      }
-
-      roleEl.textContent = teamInfo ? `${roleStr} • ${teamInfo}` : roleStr;
+      const roleStr = (this.currentUser.role || 'researcher').replace(/_/g, ' ').toUpperCase();
+      roleEl.textContent = roleStr;
 
       // Color tags
       if (this.currentUser.role === 'admin') {
