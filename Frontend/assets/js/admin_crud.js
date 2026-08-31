@@ -740,12 +740,39 @@
       this.renderCurrentPage();
     },
 
-    confirmDelete(collectionKey, itemId) {
+        async confirmDelete(collectionKey, itemId) {
       const schema = SCHEMAS[collectionKey];
       if (!schema) return;
-      if (confirm(`Are you sure you want to permanently delete this ${schema.name.toLowerCase()}?`)) {
+
+      const collTitles = {
+        'photos': 'Ảnh Thư Viện',
+        'projects': 'Đề Tài Nghiên Cứu',
+        'news': 'Bài Báo / Tin Tức',
+        'publications': 'Bài Báo Khoa Học',
+        'journey': 'Cột Mốc Hành Trình',
+        'research': 'Hướng Nghiên Cứu',
+        'collaborations': 'Đối Tác Hợp Tác',
+        'lab_equipment': 'Thiết Bị Phòng Lab',
+        'fund_raise': 'Khoản Tài Trợ'
+      };
+      const itemName = collTitles[collectionKey] || schema.name || 'mục';
+
+      let isConfirmed = false;
+      if (typeof window.showConfirmModal === 'function') {
+        isConfirmed = await window.showConfirmModal({
+          title: `Xác Nhận Xóa ${itemName}`,
+          message: `Bạn có chắc chắn muốn xóa vĩnh viễn ${itemName.toLowerCase()} này không? Thao tác này không thể hoàn tác.`,
+          confirmText: 'Xóa Vĩnh Viễn',
+          cancelText: 'Hủy Bỏ',
+          type: 'danger'
+        });
+      } else {
+        isConfirmed = true;
+      }
+
+      if (isConfirmed) {
         DataManager.remove(collectionKey, itemId);
-        this.notify(`Deleted ${schema.name.toLowerCase()} successfully!`);
+        this.notify(`Đã xóa ${itemName.toLowerCase()} thành công!`);
         this.renderCurrentPage();
       }
     },

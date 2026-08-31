@@ -102,3 +102,56 @@ export function escapeHtml(str) {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
 }
+
+export function showConfirmModal({
+  title = 'Xác Nhận Xóa',
+  message = 'Bạn có chắc chắn muốn thực hiện hành động này không?',
+  confirmText = 'Xóa Vĩnh Viễn',
+  cancelText = 'Hủy Bỏ',
+  type = 'danger',
+  icon = 'fa-trash-can'
+} = {}) {
+  return new Promise((resolve) => {
+    document.querySelectorAll('.app-confirm-backdrop').forEach(m => m.remove());
+
+    const backdrop = document.createElement('div');
+    backdrop.className = 'app-confirm-backdrop';
+    backdrop.innerHTML = `
+      <div class="app-confirm-card">
+        <div class="app-confirm-icon-box ${type}">
+          <i class="fa-solid ${type === 'danger' ? 'fa-triangle-exclamation' : 'fa-circle-info'}"></i>
+        </div>
+        <div class="app-confirm-content">
+          <h4 class="app-confirm-title">${escapeHtml(title)}</h4>
+          <p class="app-confirm-msg">${escapeHtml(message)}</p>
+        </div>
+        <div class="app-confirm-actions">
+          <button type="button" class="app-confirm-btn-cancel" id="btnConfirmCancel">
+            ${escapeHtml(cancelText)}
+          </button>
+          <button type="button" class="app-confirm-btn-submit ${type}" id="btnConfirmOk">
+            <i class="fa-solid ${icon}"></i>
+            <span>${escapeHtml(confirmText)}</span>
+          </button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(backdrop);
+    setTimeout(() => backdrop.classList.add('show'), 10);
+
+    function cleanup(result) {
+      backdrop.classList.remove('show');
+      setTimeout(() => backdrop.remove(), 200);
+      resolve(result);
+    }
+
+    backdrop.querySelector('#btnConfirmCancel').addEventListener('click', () => cleanup(false));
+    backdrop.querySelector('#btnConfirmOk').addEventListener('click', () => cleanup(true));
+    backdrop.addEventListener('click', (e) => {
+      if (e.target === backdrop) cleanup(false);
+    });
+  });
+}
+
+window.showConfirmModal = showConfirmModal;

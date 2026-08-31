@@ -667,8 +667,15 @@
     }
   }
 
-  function confirmDelete(id) {
-    if (confirm('Bạn có chắc chắn muốn xóa bài báo này không?')) {
+  async function confirmDelete(id) {
+    const confirmed = typeof window.showConfirmModal === 'function' ? await window.showConfirmModal({
+      title: 'Xác Nhận Xóa Bài Viết',
+      message: 'Bạn có chắc chắn muốn xóa bài báo / sự kiện này không? Thao tác này không thể hoàn tác.',
+      confirmText: 'Xóa Bài Viết',
+      cancelText: 'Hủy Bỏ',
+      type: 'danger'
+    }) : confirm('Bạn có chắc chắn muốn xóa bài báo này không?');
+    if (confirmed) {
       window.DataManager.remove('news', id);
       if (typeof showToast === 'function') showToast('Đã xóa bài báo thành công!');
       if (activeArticleId === id) {

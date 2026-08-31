@@ -513,7 +513,15 @@ Password: ${p}`);
         btn.addEventListener('click', async () => {
           const uid = btn.getAttribute('data-user-id');
           const uname = btn.getAttribute('data-user-name');
-          if (confirm(`Bạn có chắc chắn muốn xóa tài khoản "${uname}"?`)) {
+          const confirmed = typeof window.showConfirmModal === 'function' ? await window.showConfirmModal({
+            title: 'Xác Nhận Xóa Tài Khoản',
+            message: `Bạn có chắc chắn muốn xóa tài khoản "${uname}" khỏi hệ thống không?`,
+            confirmText: 'Xóa Tài Khoản',
+            cancelText: 'Hủy Bỏ',
+            type: 'danger'
+          }) : true;
+
+          if (confirmed) {
             const targetObj = members.find(m => m.id === uid);
             
             // Add to persistent deleted blacklist

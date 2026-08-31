@@ -625,7 +625,15 @@ window.openTaskDetail = async function(taskId) {
     const btnDelete = document.getElementById('btnDeleteTaskFromDetail');
     if (btnDelete) {
       btnDelete.onclick = async () => {
-        if (confirm('Bạn có chắc chắn muốn xóa nhiệm vụ này không?')) {
+        const confirmed = typeof window.showConfirmModal === 'function' ? await window.showConfirmModal({
+          title: 'Xác Nhận Xóa Nhiệm Vụ',
+          message: 'Bạn có chắc chắn muốn xóa nhiệm vụ này khỏi phòng Lab không? Thao tác này không thể hoàn tác.',
+          confirmText: 'Xóa Nhiệm Vụ',
+          cancelText: 'Hủy Bỏ',
+          type: 'danger'
+        }) : true;
+
+        if (confirmed) {
           try {
             await API.delete(`/api/tasks/${taskId}`);
             showToast('Đã xóa nhiệm vụ.');
