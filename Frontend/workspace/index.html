@@ -107,19 +107,12 @@
         <div class="ws-nav-section-label" data-i18n="nav_sec_work">CÔNG VIỆC &amp; NHIỆM VỤ</div>
         <ul class="ws-nav-group">
           <li class="ws-nav-item">
-            <a href="#tasks?filter=me" class="ws-nav-link" data-route="my-tasks">
-              <i class="fa-solid fa-list-check"></i>
-              <span data-i18n="nav_my_tasks">Nhiệm Vụ Của Tôi</span>
-              <span class="ws-nav-badge ws-badge-alert" id="badgeMyTaskCount" style="display:none;">0</span>
-            </a>
-          </li>
-          <li class="ws-nav-item">
             <a href="#tasks" class="ws-nav-link" data-route="tasks">
-              <i class="fa-solid fa-table-columns"></i>
-              <span data-i18n="nav_all_tasks">Tất Cả Task / Kanban</span>
+              <i class="fa-solid fa-list-check"></i>
+              <span data-i18n="nav_all_tasks">Tất Cả Nhiệm Vụ (All Tasks)</span>
             </a>
           </li>
-          <li class="ws-nav-item">
+          <li class="ws-nav-item" id="navItemTeams" style="display:none;">
             <a href="#teams" class="ws-nav-link" data-route="teams">
               <i class="fa-solid fa-users"></i>
               <span data-i18n="nav_teams">9 Nhóm Nghiên Cứu</span>

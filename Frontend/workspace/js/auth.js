@@ -551,7 +551,7 @@ export const Auth = {
       avatarEl.onerror = () => { avatarEl.src = '../assets/images/logo.jpg'; };
     }
 
-    // 4. Show or hide Admin section (Accessible to supervisor and 100re admin)
+    // 4. Show or hide Admin section & Research Teams (Accessible ONLY to supervisor and 100re admin)
     if (adminSecLabel && adminNavGroup) {
       if (this.isSupervisor()) {
         adminSecLabel.style.display = 'block';
@@ -559,6 +559,15 @@ export const Auth = {
       } else {
         adminSecLabel.style.display = 'none';
         adminNavGroup.style.display = 'none';
+      }
+    }
+
+    const navItemTeams = document.getElementById('navItemTeams');
+    if (navItemTeams) {
+      if (this.isSupervisor()) {
+        navItemTeams.style.display = 'block';
+      } else {
+        navItemTeams.style.display = 'none';
       }
     }
 

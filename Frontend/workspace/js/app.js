@@ -102,6 +102,11 @@ function handleRouting() {
       renderSignoffs(container);
       break;
     case 'teams':
+      if (!Auth.isSupervisor()) {
+        showToast(i18n.getLanguage() === 'vi' ? 'Chỉ Supervisor và Admin mới có quyền xem danh sách tất cả các nhóm.' : 'Only Supervisor and Admin can view all research teams.', true);
+        window.location.hash = '#tasks';
+        return;
+      }
       renderTeams(container, paramId);
       break;
     case 'projects':
@@ -159,12 +164,7 @@ function updateNav(route, paramId) {
 
   document.querySelectorAll('.ws-nav-link').forEach(link => {
     const linkRoute = link.getAttribute('data-route');
-    const isMyTasks = window.location.hash.includes('filter=me') || route === 'my-tasks';
-    if (linkRoute === 'my-tasks' && isMyTasks) {
-      link.classList.add('active');
-    } else if (linkRoute === 'tasks' && route === 'tasks' && !isMyTasks) {
-      link.classList.add('active');
-    } else if (linkRoute === route && !['tasks', 'my-tasks'].includes(linkRoute)) {
+    if (linkRoute === route || (route === 'tasks' && linkRoute === 'tasks')) {
       link.classList.add('active');
     } else {
       link.classList.remove('active');
