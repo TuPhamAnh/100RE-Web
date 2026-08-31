@@ -294,8 +294,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function ensureUserDropdown() {
-    const loginItem = document.getElementById('loginNavItem');
+    const loginItem = document.getElementById('loginNavItem') || (navLoginBtn ? navLoginBtn.closest('.nav-item') : null) || (navLoginBtn ? navLoginBtn.parentElement : null);
     if (!loginItem) return null;
+    loginItem.style.position = 'relative';
     let dropdown = document.getElementById('userDropdownMenu');
     if (!dropdown) {
       dropdown = document.createElement('div');
@@ -303,17 +304,17 @@ document.addEventListener('DOMContentLoaded', () => {
       dropdown.id = 'userDropdownMenu';
       dropdown.innerHTML = `
         <div class="user-dropdown-header">
-          <i class="fa-solid fa-circle-user"></i>
+          <i class="fa-solid fa-circle-user" style="font-size:1.6rem; color:#16a34a;"></i>
           <div>
             <strong id="dropdownUserName">100re</strong>
-            <small>Quản trị viên (Supervisor)</small>
+            <small id="dropdownUserRole">Quản trị viên (Supervisor)</small>
           </div>
         </div>
         <a href="workspace/index.html" class="user-dropdown-item">
           <i class="fa-solid fa-flask-vial" style="color:#16a34a;"></i> 100RE Workspace
         </a>
         <a href="members.html" class="user-dropdown-item">
-          <i class="fa-solid fa-users" style="color:#0284c7;"></i> Quản lý Thành viên
+          <i class="fa-solid fa-users" style="color:#0284c7;"></i> Danh Sách Thành Viên
         </a>
         <div class="user-dropdown-divider"></div>
         <button class="user-dropdown-item text-danger" id="userDropdownLogoutBtn" type="button">
@@ -325,6 +326,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const logoutBtn = dropdown.querySelector('#userDropdownLogoutBtn');
       if (logoutBtn) {
         logoutBtn.addEventListener('click', async (e) => {
+          e.preventDefault();
           e.stopPropagation();
           dropdown.classList.remove('show');
           await handleLogout();
@@ -354,7 +356,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (navLoginBtn) {
     navLoginBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      if (document.body.classList.contains('admin-mode')) {
+      e.preventDefault();
+      if (document.body.classList.contains('admin-mode') || localStorage.getItem('100re_token')) {
         const dropdown = ensureUserDropdown();
         if (dropdown) dropdown.classList.toggle('show');
       } else {
