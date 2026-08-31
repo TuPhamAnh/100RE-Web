@@ -15,7 +15,7 @@ import { formatDate, escapeHtml, renderEmptyState, showToast } from '../componen
 export async function renderTasks(container, initialFilter = null) {
   const isVi = (window.i18n ? window.i18n.getLanguage() : 'vi') === 'vi';
   const currentUser = Auth.getUser();
-  const isSuper = Auth.isSupervisor() || Auth.isAdmin();
+  const isSuper = (Auth && typeof Auth.isSupervisor === 'function' && Auth.isSupervisor()) || (Auth && typeof Auth.isSystemAdmin === 'function' && Auth.isSystemAdmin());
 
   // Determine user's primary research team
   let userPrimaryTeam = 'team-smartgrid';

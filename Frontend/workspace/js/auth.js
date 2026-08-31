@@ -468,6 +468,10 @@ export const Auth = {
            localStorage.getItem('100re_is_admin') === 'true';
   },
 
+  isAdmin() {
+    return this.isSystemAdmin();
+  },
+
   isTeamLeader() {
     return this.currentUser && (this.currentUser.role === 'team_leader' || this.currentUser.role === 'supervisor' || this.currentUser.role === 'admin');
   },
