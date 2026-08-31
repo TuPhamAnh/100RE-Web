@@ -344,13 +344,7 @@ export async function renderTasks(container, initialFilter = null) {
     const quickAddRow = viewport.querySelector('#rowQuickAdd');
     if (quickAddRow) {
       quickAddRow.addEventListener('click', () => {
-        if (typeof window.openCreateTaskModal === 'function') {
-          window.openCreateTaskModal();
-        } else if (typeof window.openNewTaskModal === 'function') {
-          window.openNewTaskModal();
-        } else {
-          showQuickCreatePrompt();
-        }
+        openNotionCreateTaskModal();
       });
     }
   }
@@ -377,7 +371,7 @@ export async function renderTasks(container, initialFilter = null) {
                   <strong style="font-size:0.85rem; color:var(--notion-text);">${col.title}</strong>
                   <span style="font-size:0.75rem; color:var(--notion-muted); background:var(--notion-hover); padding:1px 6px; border-radius:10px; font-weight:600;">${colTasks.length}</span>
                 </div>
-                <button type="button" style="background:none; border:none; color:var(--notion-muted); cursor:pointer;" onclick="window.openNewTaskModal('${col.id}')">
+                <button type="button" style="background:none; border:none; color:var(--notion-muted); cursor:pointer;" onclick="window.openCreateTaskModal('${col.id}')">
                   <i class="fa-solid fa-plus"></i>
                 </button>
               </div>
@@ -402,7 +396,7 @@ export async function renderTasks(container, initialFilter = null) {
                   </div>
                 `).join('')}
 
-                <button type="button" class="notion-btn-add-card" onclick="window.openNewTaskModal('${col.id}')">
+                <button type="button" class="notion-btn-add-card" onclick="window.openCreateTaskModal('${col.id}')">
                   <i class="fa-solid fa-plus"></i> ${isVi ? 'Thêm thẻ mới' : 'Add card'}
                 </button>
               </div>
@@ -549,29 +543,180 @@ export async function renderTasks(container, initialFilter = null) {
     setTimeout(() => document.addEventListener('click', closePicker), 50);
   };
 
-  function showQuickCreatePrompt() {
-    const title = prompt('Nhập tiêu đề nhiệm vụ mới:');
-    if (!title || !title.trim()) return;
-    const newTask = {
-      id: `tsk-custom-${Date.now()}`,
-      team_id: 'team-smartgrid',
-      title: title.trim(),
-      description: '',
-      status: 'in_progress',
-      priority: 'medium',
-      assignee_names: ['Tu Pham Anh', 'Long'],
-      due_date: new Date(Date.now() + 14 * 86400000).toISOString().split('T')[0],
-      updated_at: Math.floor(Date.now() / 1000)
-    };
-    tasksData.unshift(newTask);
-    renderCurrentView();
-    showToast('Đã tạo nhiệm vụ mới thành công!');
-    try {
-      API.post('/api/tasks', newTask);
-    } catch(e) {}
+  // 7. Dedicated Notion Task Creation Modal
+  function openNotionCreateTaskModal(defaultStatus = 'in_progress') {
+    // Remove existing modals
+    document.querySelectorAll('.notion-modal-backdrop').forEach(m => m.remove());
+
+    let memberList = [...labMembers];
+    if (memberList.length === 0) {
+      memberList = [
+        { id: 'usr-smartgrid-1788108587815', display_name: 'Pham Anh Tu', name: 'Pham Anh Tu', team: 'Smart Grid' },
+        { id: 'usr-smartgrid-1788099630575', display_name: 'Nguyễn Quý Long', name: 'Nguyễn Quý Long', team: 'Smart Grid' },
+        { id: 'usr-smartgrid-1788099612925', display_name: 'Đỗ Đắc Hiếu', name: 'Đỗ Đắc Hiếu', team: 'Smart Grid' },
+        { id: 'usr-res-14', display_name: 'Tran Thi Hong Vinh', name: 'Tran Thi Hong Vinh', team: 'BESS' },
+        { id: 'usr-res-05', display_name: 'Duong Minh Hai', name: 'Duong Minh Hai', team: 'Smart Grid' },
+        { id: 'usr-res-01', display_name: 'Bui Quang Hai', name: 'Bui Quang Hai', team: 'AI' },
+        { id: 'usr-ldr-01', display_name: 'Dr. Ngo Tri Duc', name: 'Dr. Ngo Tri Duc', team: 'PV' },
+        { id: 'usr-ldr-02', display_name: 'Dr. Trinh Minh Phuong', name: 'Dr. Trinh Minh Phuong', team: 'BESS' },
+        { id: 'usr-sup-01', display_name: 'Assoc. Prof. Nguyen Duc Tuyen', name: 'Assoc. Prof. Nguyen Duc Tuyen', team: 'Supervisor' }
+      ];
+    }
+
+    const modal = document.createElement('div');
+    modal.className = 'notion-modal-backdrop';
+    modal.innerHTML = `
+      <div class="notion-modal-dialog">
+        <div class="notion-modal-header">
+          <h3 class="notion-modal-title">
+            <i class="fa-solid fa-square-check" style="color:var(--notion-blue);"></i> ${isVi ? 'Tạo Nhiệm Vụ Mới' : 'Create New Task'}
+          </h3>
+          <button type="button" class="notion-modal-close" id="btnModalClose">&times;</button>
+        </div>
+
+        <form id="notionCreateTaskForm">
+          <div class="notion-modal-body">
+            <div class="notion-form-group">
+              <label class="notion-form-label"><i class="fa-solid fa-font"></i> ${isVi ? 'Tên nhiệm vụ / Đề tài' : 'Task Title'} <span style="color:#ef4444;">*</span></label>
+              <input type="text" id="nTaskTitle" class="notion-form-input" placeholder="${isVi ? 'VD: Sửa đổi thuật toán điều khiển microgrid...' : 'e.g. Implement RegD frequency control...'}" required autofocus>
+            </div>
+
+            <div class="notion-form-row">
+              <div class="notion-form-group">
+                <label class="notion-form-label"><i class="fa-solid fa-users-viewfinder"></i> ${isVi ? 'Nhóm Nghiên Cứu' : 'Research Team'}</label>
+                <select id="nTaskTeam" class="notion-form-select">
+                  <option value="team-smartgrid">⚡ Smart Grid Team</option>
+                  <option value="team-ai">🤖 AI Team</option>
+                  <option value="team-bess">🔋 BESS Team</option>
+                  <option value="team-pv">☀️ PV Team</option>
+                  <option value="team-wind">💨 Wind Team</option>
+                  <option value="team-ev">🚗 Electric Vehicle Team</option>
+                  <option value="team-hydrogen">💧 Hydrogen Team</option>
+                  <option value="team-dr_uc">📈 Demand Response & UC</option>
+                </select>
+              </div>
+
+              <div class="notion-form-group">
+                <label class="notion-form-label"><i class="fa-regular fa-circle-dot"></i> ${isVi ? 'Trạng thái ban đầu' : 'Status'}</label>
+                <select id="nTaskStatus" class="notion-form-select">
+                  <option value="in_progress" ${defaultStatus === 'in_progress' ? 'selected' : ''}>● Đang thực hiện (In Progress)</option>
+                  <option value="todo" ${defaultStatus === 'todo' ? 'selected' : ''}>● Chưa bắt đầu (To Do)</option>
+                  <option value="review" ${defaultStatus === 'review' ? 'selected' : ''}>● Chờ duyệt (Review)</option>
+                  <option value="done" ${defaultStatus === 'done' ? 'selected' : ''}>● Hoàn thành (Done)</option>
+                  <option value="cancelled" ${defaultStatus === 'cancelled' ? 'selected' : ''}>● Cancel</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="notion-form-row">
+              <div class="notion-form-group">
+                <label class="notion-form-label"><i class="fa-solid fa-bullseye"></i> ${isVi ? 'Mức độ ưu tiên' : 'Priority'}</label>
+                <select id="nTaskPriority" class="notion-form-select">
+                  <option value="high">🔴 Cao (High)</option>
+                  <option value="medium" selected>🟠 Trung bình (Medium)</option>
+                  <option value="low">🟢 Thấp (Low)</option>
+                  <option value="urgent">🟣 Khẩn cấp (Urgent)</option>
+                </select>
+              </div>
+
+              <div class="notion-form-group">
+                <label class="notion-form-label"><i class="fa-regular fa-calendar"></i> ${isVi ? 'Hạn chót (Due Date)' : 'Due Date'}</label>
+                <input type="date" id="nTaskDueDate" class="notion-form-input" value="${new Date(Date.now() + 14 * 86400000).toISOString().split('T')[0]}">
+              </div>
+            </div>
+
+            <div class="notion-form-group">
+              <label class="notion-form-label"><i class="fa-solid fa-user-check"></i> ${isVi ? 'Chọn người được giao (Thành viên Lab)' : 'Assign Lab Members'}</label>
+              <div class="notion-member-checklist" id="nTaskMembersChecklist">
+                ${memberList.map(m => {
+                  const mName = m.display_name || m.name || 'Member';
+                  const initial = mName.trim().charAt(0);
+                  const isChecked = mName.toLowerCase().includes('long') || mName.toLowerCase().includes('tu');
+                  return `
+                    <label class="notion-member-check-item">
+                      <input type="checkbox" class="n-member-cb" value="${escapeHtml(mName)}" data-id="${m.id}" ${isChecked ? 'checked' : ''}>
+                      <span class="notion-avatar-circle">${escapeHtml(initial)}</span>
+                      <span>${escapeHtml(mName)}</span>
+                    </label>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+
+            <div class="notion-form-group">
+              <label class="notion-form-label"><i class="fa-solid fa-bars-staggered"></i> ${isVi ? 'Mô tả & Ghi chú nhiệm vụ' : 'Description & Notes'}</label>
+              <textarea id="nTaskDesc" class="notion-form-textarea" rows="3" placeholder="${isVi ? 'Ghi chú chi tiết mục tiêu nghiên cứu hoặc yêu cầu kỹ thuật...' : 'Detailed experimental objectives or instructions...'}"></textarea>
+            </div>
+          </div>
+
+          <div class="notion-modal-footer">
+            <button type="button" class="notion-btn-cancel" id="btnModalCancel">${isVi ? 'Hủy' : 'Cancel'}</button>
+            <button type="submit" class="notion-btn-submit"><i class="fa-solid fa-plus"></i> ${isVi ? 'Tạo Nhiệm Vụ' : 'Create Task'}</button>
+          </div>
+        </form>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    const closeBtn = modal.querySelector('#btnModalClose');
+    const cancelBtn = modal.querySelector('#btnModalCancel');
+    const form = modal.querySelector('#notionCreateTaskForm');
+
+    function closeModal() {
+      modal.remove();
+    }
+
+    closeBtn.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const title = modal.querySelector('#nTaskTitle').value.trim();
+      if (!title) return;
+
+      const team_id = modal.querySelector('#nTaskTeam').value;
+      const status = modal.querySelector('#nTaskStatus').value;
+      const priority = modal.querySelector('#nTaskPriority').value;
+      const due_date = modal.querySelector('#nTaskDueDate').value || null;
+      const description = modal.querySelector('#nTaskDesc').value.trim();
+
+      const selectedCbs = Array.from(modal.querySelectorAll('.n-member-cb:checked'));
+      const selectedNames = selectedCbs.map(cb => cb.value);
+      const firstId = selectedCbs.length > 0 ? selectedCbs[0].getAttribute('data-id') : null;
+
+      const newTask = {
+        id: `tsk-custom-${Date.now()}`,
+        team_id,
+        title,
+        description,
+        status,
+        priority,
+        assigned_to: firstId,
+        assignee_names: selectedNames.length > 0 ? selectedNames : ['Unassigned'],
+        due_date,
+        created_at: Math.floor(Date.now() / 1000),
+        updated_at: Math.floor(Date.now() / 1000)
+      };
+
+      tasksData.unshift(newTask);
+      renderCurrentView();
+      closeModal();
+      showToast(`Đã tạo nhiệm vụ "${title}" thành công!`);
+
+      try {
+        await API.post('/api/tasks', newTask);
+      } catch (err) {}
+    });
   }
 
-  // 7. Event Bindings
+  window.openCreateTaskModal = openNotionCreateTaskModal;
+  window.openNewTaskModal = openNotionCreateTaskModal;
+
+  // 8. Event Bindings
   const tabAll = container.querySelector('#tabAllTasks');
   const tabStatus = container.querySelector('#tabStatusBoard');
   const tabMe = container.querySelector('#tabMyTasks');
@@ -625,11 +770,7 @@ export async function renderTasks(container, initialFilter = null) {
 
   if (btnNewTask) {
     btnNewTask.addEventListener('click', () => {
-      if (typeof window.openNewTaskModal === 'function') {
-        window.openNewTaskModal();
-      } else {
-        showQuickCreatePrompt();
-      }
+      openNotionCreateTaskModal();
     });
   }
 
