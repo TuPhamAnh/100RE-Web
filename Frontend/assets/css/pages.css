@@ -116,12 +116,12 @@
 .stat-card {
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-top: 4px solid #16a34a;
+  border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
   padding: 28px 20px;
   text-align: center;
   border-radius: 0px;
   box-shadow: var(--shadow-sm);
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
 }
 
 .stat-card:hover {
@@ -158,12 +158,12 @@
 .research-card {
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-top: 4px solid #16a34a;
+  border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
   border-radius: 0px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
 }
 
 .research-card:hover {
@@ -205,7 +205,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  border-left: 3px solid #16a34a;
+  border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
@@ -355,7 +355,7 @@
 .timeline-content {
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-left: 4px solid #16a34a;
+  border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
   padding: 24px;
   border-radius: 0px;
   box-shadow: var(--shadow-sm);
@@ -489,7 +489,7 @@
 .pub-item {
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-left: 4px solid #16a34a;
+  border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
   padding: 22px 26px;
   border-radius: 0px;
   box-shadow: var(--shadow-sm);
@@ -702,14 +702,14 @@
 .project-card, .achievement-card {
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-top: 4px solid #16a34a;
+  border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
   padding: 28px;
   border-radius: 0px;
   display: flex;
   flex-direction: column;
   gap: 12px;
   box-shadow: var(--shadow-sm);
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
 }
 
 .project-card:hover, .achievement-card:hover {
@@ -784,7 +784,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
   box-shadow: var(--shadow-sm);
 }
 
@@ -854,7 +854,7 @@
 .equipment-card {
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-top: 3px solid #16a34a;
+  border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
   padding: 22px;
   border-radius: 0px;
   display: flex;
@@ -1147,7 +1147,7 @@
   grid-template-columns: 1.2fr 1fr;
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-left: 5px solid #16a34a;
+  border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
   box-shadow: var(--shadow-md);
   margin-bottom: 40px;
   overflow: hidden;
@@ -1512,7 +1512,7 @@
   margin: 32px 0;
   padding: 20px 24px;
   background: #f0fdf4;
-  border-left: 4px solid #16a34a;
+  border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
   font-size: 1.15rem;
   font-style: italic;
   color: #15803d;

@@ -608,6 +608,65 @@
     </div>
   </div>
 
+    <!-- SCINOTE SUPERVISOR ELECTRONIC SIGN-OFF MODAL -->
+  <div class="ws-modal-backdrop" id="modalSciNoteSignoff">
+    <div class="ws-modal-content" style="max-width: 580px; border-radius: 12px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);">
+      <div style="background: #1e3a4a; color: #ffffff; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <i class="fa-solid fa-stamp" style="font-size: 1.4rem; color: #10b981;"></i>
+          <div>
+            <h3 style="font-size: 1.15rem; font-weight: 700; color: #ffffff; margin: 0;">Supervisor Electronic Sign-Off</h3>
+            <p style="font-size: 0.78rem; color: #94a3b8; margin: 2px 0 0 0;">100RE Laboratory SciNote Quality &amp; Experimental Assurance</p>
+          </div>
+        </div>
+        <button class="ws-btn-icon" style="color: #ffffff; background: rgba(255,255,255,0.15);" onclick="closeModal('modalSciNoteSignoff')">&times;</button>
+      </div>
+      
+      <div style="padding: 24px; background: #ffffff;">
+        <div style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 14px; margin-bottom: 20px;">
+          <strong style="font-size: 0.9rem; color: #166534; display: flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-certificate"></i> Official Lab Experimental Certification
+          </strong>
+          <p style="font-size: 0.825rem; color: #166534; margin: 6px 0 0 0; line-height: 1.5;">
+            By signing off, you officially certify that the experimental methodology, numerical parameters, and data logs adhere to 100RE Lab scientific standards.
+          </p>
+        </div>
+
+        <div style="margin-bottom: 18px;">
+          <label style="font-size: 0.85rem; font-weight: 700; color: #0f172a; margin-bottom: 8px; display: block;">Verification Checklist</label>
+          <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem; color: #334155;">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="checkbox" id="chkDataValid" checked style="width: 16px; height: 16px; accent-color: #16a34a;">
+              <span>Protocol execution steps and telemetry measurements verified</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="checkbox" id="chkCodeAttached" checked style="width: 16px; height: 16px; accent-color: #16a34a;">
+              <span>Simulation models / HIL hardware parameters documented</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="checkbox" id="chkSafetyOk" checked style="width: 16px; height: 16px; accent-color: #16a34a;">
+              <span>Safety regulations &amp; equipment calibration checked</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="ws-form-group">
+          <label class="ws-form-label" style="font-weight: 700;">Supervisor / Team Leader Evaluation &amp; Comments</label>
+          <textarea id="signoffCommentsInput" class="ws-form-textarea" rows="3" placeholder="Nhận xét phê duyệt kết quả thực nghiệm và phê chuẩn hướng tiếp theo...">Kết quả thực nghiệm đã được kiểm tra đạt chuẩn khoa học 100RE Laboratory.</textarea>
+        </div>
+
+        <input type="hidden" id="signoffTargetTaskId" value="">
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px;">
+          <button type="button" class="btn-ws-ghost" onclick="closeModal('modalSciNoteSignoff')">Hủy Bỏ</button>
+          <button type="button" class="btn-ws-primary" id="btnConfirmSciNoteSignoff" style="background: #16a34a; padding: 8px 20px; font-weight: 700;">
+            <i class="fa-solid fa-signature"></i> Ký Duyệt &amp; Phê Chuẩn
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- TOAST NOTIFICATION -->
   <div class="ws-toast" id="wsToast">
     <i class="fa-solid fa-circle-check" id="wsToastIcon"></i>

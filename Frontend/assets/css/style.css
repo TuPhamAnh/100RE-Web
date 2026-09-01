@@ -3,35 +3,51 @@
    Theme: Academic Clean Energy, Oswald & Roboto Condensed Typography
 */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&family=Oswald:wght@300;400;500;600;700&family=Roboto+Condensed:ital,wght@0,300;0,400;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 :root {
   --primary: #16a34a;
   --primary-hover: #15803d;
   --primary-light: #f0fdf4;
-  --wix-banner-bg: #81a2b1;
-  --wix-title-dark: #1b384c;
-  --wix-red: #df3336;
+  --banner-bg: #1e3a4a;
+  --wix-banner-bg: #1e3a4a;
+  --wix-title-dark: #0f172a;
+  --wix-red: #16a34a;
+  --nav-active: #16a34a;
   --accent: #10b981;
+  --accent-solar: #f59e0b;
   --dark-bg: #0f172a;
   --header-bg: #ffffff;
   --card-bg: #ffffff;
   --card-border: #e2e8f0;
-  --card-hover-border: #81a2b1;
-  --text-main: #1f2937;
-  --text-muted: #4b5563;
-  --text-light: #6b7280;
+  --card-hover-border: #16a34a;
+  --text-main: #0f172a;
+  --text-muted: #475569;
+  --text-light: #64748b;
   --bg-main: #ffffff;
   --bg-alt: #f8fafc;
-  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
-  --shadow-md: 0 4px 12px -2px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
-  --shadow-lg: 0 12px 24px -4px rgba(15, 23, 42, 0.12), 0 4px 8px -2px rgba(15, 23, 42, 0.04);
-  --shadow-xl: 0 20px 32px -6px rgba(15, 23, 42, 0.16), 0 8px 16px -4px rgba(15, 23, 42, 0.06);
-  --radius-sm: 0px;
-  --radius-md: 0px;
-  --radius-lg: 0px;
-  --radius-xl: 0px;
-  --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 4px 14px -2px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 12px 24px -4px rgba(15, 23, 42, 0.10), 0 4px 8px -2px rgba(15, 23, 42, 0.04);
+  --shadow-xl: 0 20px 32px -6px rgba(15, 23, 42, 0.12), 0 8px 16px -4px rgba(15, 23, 42, 0.06);
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: var(--text-main);
+  background-color: var(--bg-main);
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, .section-title, .page-hero-title, .hero-title, .brand-title {
+  font-family: 'Outfit', 'Inter', sans-serif !important;
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
 *, *::before, *::after {
@@ -168,7 +184,7 @@ img {
   font-weight: 500;
   color: #1f2937;
   letter-spacing: 0.3px;
-  border-radius: 0px;
+  border-radius: var(--radius-md);
   transition: var(--transition);
 }
 
@@ -202,10 +218,10 @@ img {
   left: 0;
   min-width: 250px;
   background: #ffffff;
-  border-radius: 0px;
+  border-radius: var(--radius-md);
   box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
   border: 1px solid #e2e8f0;
-  border-top: 3px solid #16a34a;
+  border: 1px solid #e2e8f0; box-shadow: var(--shadow-lg);
   padding: 8px 0;
   list-style: none;
   opacity: 0;
@@ -254,7 +270,7 @@ img {
   color: #0f172a;
   cursor: pointer;
   padding: 8px 12px;
-  border-radius: 0px;
+  border-radius: var(--radius-md);
   transition: all 0.2s ease;
 }
 
@@ -319,7 +335,7 @@ img {
     box-shadow: none;
     border: none;
     background: #f8fafc;
-    border-left: 2px solid #16a34a;
+    border-left: 2px solid transparent;
     padding-left: 10px;
     margin: 4px 0 8px;
     display: none;
@@ -332,7 +348,7 @@ img {
     color: #0f172a !important;
     font-size: 1.1rem !important;
     padding: 10px 14px;
-    border-radius: 0px;
+    border-radius: var(--radius-md);
     justify-content: space-between;
   }
   .nav-menu .nav-link:hover,
@@ -376,7 +392,7 @@ img {
   background: #f0fdf4;
   border: 1px solid #bbf7d0;
   padding: 4px 14px;
-  border-radius: 0px;
+  border-radius: var(--radius-md);
   font-size: 0.825rem;
   font-weight: 700;
   letter-spacing: 0.5px;
@@ -411,7 +427,7 @@ img {
 /* SEARCH & FILTER BAR */
 .control-bar {
   background: #ffffff;
-  border-radius: 0px;
+  border-radius: var(--radius-md);
   padding: 14px 18px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   display: flex;
@@ -430,7 +446,7 @@ img {
   background: #f8fafc;
   border: 1px solid #cbd5e1;
   padding: 8px 14px;
-  border-radius: 0px;
+  border-radius: var(--radius-md);
   flex: 1;
   min-width: 260px;
 }
@@ -462,7 +478,7 @@ img {
   color: #475569;
   background: #f1f5f9;
   border: 1px solid #e2e8f0;
-  border-radius: 0px;
+  border-radius: var(--radius-md);
   cursor: pointer;
   transition: var(--transition);
   white-space: nowrap;
@@ -502,7 +518,7 @@ img {
 .section-icon {
   width: 40px;
   height: 40px;
-  border-radius: 0px;
+  border-radius: var(--radius-md);
   background: var(--wix-banner-bg);
   color: #ffffff;
   display: flex;
@@ -526,7 +542,7 @@ img {
   color: #4b5563;
   background: #f1f5f9;
   padding: 4px 12px;
-  border-radius: 0px;
+  border-radius: var(--radius-md);
 }
 
 /* WIX DISTINCTIVE STEEL BLUE TEAM BANNER */
@@ -540,7 +556,7 @@ img {
   align-items: center;
   justify-content: center;
   position: relative;
-  border-radius: 0px;
+  border-radius: var(--radius-md);
 }
 
 .team-header-banner .team-title {
@@ -569,7 +585,7 @@ img {
 
 .supervisor-card {
   background: #ffffff;
-  border-radius: 0px;
+  border-radius: var(--radius-md);
   border: 1px solid #e2e8f0;
   box-shadow: var(--shadow-sm);
   padding: 24px 28px;
@@ -595,7 +611,7 @@ img {
   aspect-ratio: 3 / 4;
   object-fit: cover;
   object-position: center top;
-  border-radius: 0px;
+  border-radius: var(--radius-md);
   border: 1px solid #cbd5e1;
 }
 
@@ -607,7 +623,7 @@ img {
   background: rgba(27, 56, 76, 0.9);
   color: #ffffff;
   padding: 4px 8px;
-  border-radius: 0px;
+  border-radius: var(--radius-md);
   font-size: 0.75rem;
   font-weight: 600;
   text-align: center;
@@ -645,7 +661,7 @@ img {
   gap: 8px;
   background: #fafbfc;
   padding: 14px 18px;
-  border-radius: 0px;
+  border-radius: var(--radius-md);
   border: 1px solid #e2e8f0;
 }
 
@@ -712,7 +728,7 @@ img {
   align-items: center;
   gap: 8px;
   padding: 6px 14px;
-  border-radius: 0px;
+  border-radius: var(--radius-md);
   font-size: 0.825rem;
   font-weight: 600;
   transition: var(--transition);
@@ -747,7 +763,7 @@ img {
 .team-block {
   margin-bottom: 45px;
   background: #ffffff;
-  border-radius: 0px;
+  border-radius: var(--radius-md);
   border: 1px solid #e2e8f0;
   box-shadow: var(--shadow-sm);
   overflow: hidden;
@@ -795,7 +811,7 @@ img {
   backdrop-filter: blur(6px);
   color: #ffffff;
   padding: 4px 14px;
-  border-radius: 0px;
+  border-radius: var(--radius-md);
   font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.5px;
@@ -812,7 +828,7 @@ img {
 .member-card {
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 0px;
+  border-radius: var(--radius-md);
   overflow: hidden;
   transition: var(--transition);
   display: flex;
@@ -856,7 +872,7 @@ img {
   font-size: 0.725rem;
   font-weight: 700;
   padding: 2px 8px;
-  border-radius: 0px;
+  border-radius: var(--radius-md);
 }
 
 .member-content {
@@ -889,7 +905,7 @@ img {
   background: #f0fdf4;
   border: 1px solid #bbf7d0;
   padding: 2px 8px;
-  border-radius: 0px;
+  border-radius: var(--radius-md);
   margin-bottom: 6px;
 }
 
@@ -901,7 +917,7 @@ img {
   color: #475569;
   background: #f8fafc;
   border: 1px solid #e2e8f0;
-  border-radius: 0px;
+  border-radius: var(--radius-md);
   cursor: pointer;
   transition: var(--transition);
   display: inline-flex;
@@ -939,7 +955,7 @@ img {
 
 .modal-card {
   background: #ffffff;
-  border-radius: 0px;
+  border-radius: var(--radius-md);
   max-width: 600px;
   width: 100%;
   max-height: 90vh;
@@ -964,7 +980,7 @@ img {
   border: none;
   width: 36px;
   height: 36px;
-  border-radius: 0px;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1048,7 +1064,7 @@ img {
   width: 32px;
   height: 3px;
   background: var(--accent);
-  border-radius: 0px;
+  border-radius: var(--radius-md);
 }
 
 .footer-info-list {
@@ -1106,7 +1122,7 @@ img {
 .social-link {
   width: 36px;
   height: 36px;
-  border-radius: 0px;
+  border-radius: var(--radius-md);
   background: rgba(255, 255, 255, 0.08);
   display: flex;
   align-items: center;
@@ -1130,7 +1146,7 @@ img {
   background: var(--primary);
   color: #ffffff;
   border: none;
-  border-radius: 0px;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1222,7 +1238,7 @@ body.admin-mode .control-actions {
   gap: 8px;
   transition: var(--transition);
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
-  border-radius: 0px;
+  border-radius: var(--radius-md);
 }
 
 .btn-action-add-member:hover {
@@ -1251,7 +1267,7 @@ body.admin-mode .control-actions {
   align-items: center;
   gap: 6px;
   transition: var(--transition);
-  border-radius: 0px;
+  border-radius: var(--radius-md);
 }
 
 body.admin-mode .btn-team-add-member {
@@ -1543,7 +1559,7 @@ body.admin-mode .card-admin-actions {
   box-sizing: border-box;
   outline: none;
   transition: var(--transition);
-  border-radius: 0px;
+  border-radius: var(--radius-md);
 }
 
 .form-input:focus, .form-select:focus, .form-textarea:focus {
@@ -1586,7 +1602,7 @@ body.admin-mode .card-admin-actions {
   border: none;
   cursor: pointer;
   transition: var(--transition);
-  border-radius: 0px;
+  border-radius: var(--radius-md);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1630,7 +1646,7 @@ body.admin-mode .card-admin-actions {
   font-size: 0.9rem;
   font-weight: 500;
   border-left: 4px solid #10b981;
-  border-radius: 0px;
+  border-radius: var(--radius-md);
   animation: slideInToast 0.3s ease;
 }
 

@@ -27,43 +27,44 @@ window.LAB_DATA = {
       futureDirections: "Large-scale community solar sharing, multi-terminal hybrid inverter integration with BESS and EV charging stations."
     },
     {
-      id: "ai",
-      slug: "ai",
-      title: "Artificial Intelligence",
-      team: "AI Team",
-      leader: "Nguyen Trong Thanh",
-      icon: "fa-brain",
-      heroImage: "assets/images/banner_ai.jpg",
-      summary: "Deep Learning, Neural Networks, and AI algorithms applied to renewable energy forecasting and system stability.",
-      vision: "Pioneering intelligent data-driven intelligence for clean energy grids, predictive maintenance, and energy markets.",
+      id: "wind",
+      slug: "wind",
+      title: "Wind Energy",
+      team: "Wind Team",
+      leader: "Nguyen Hoang Nam",
+      icon: "fa-wind",
+      heroImage: "assets/images/banner_wind.jpg",
+      summary: "Wind turbine aerodynamics, Low Voltage Ride Through (LVRT), output smoothing, and hybrid wind-storage systems.",
+      vision: "Maximizing wind energy harvest with superior fault ride-through and ultra-smooth grid injection.",
       topics: [
-        "Solar irradiance and wind speed/power forecasting",
-        "Deep Learning architectures: ANN, RNN, LSTM, CNN-LSTM, SAM-LSTM, EDSACL",
-        "PV fault detection and life-expectancy prediction",
-        "Blockchain and AI for decentralized peer-to-peer energy trading",
-        "Real-time grid stability assessment via neural networks"
+        "Wind turbine power curve forecasting and wake effect modeling",
+        "Low Voltage Ride Through (LVRT) capability enhancement",
+        "Output power smoothing using integrated hybrid BESS",
+        "Grid-connected simulation under turbulent wind conditions"
       ],
-      conducted: "Solar radiation forecasting software winning 2nd prize in MOET National Scientific Research Contest 2021; SVNCKH2022 3rd place.",
-      futureDirections: "Edge-AI embedded micro-controllers for sub-second inverter protection and autonomous microgrid dispatching."
+      conducted: "Tokyo University of Science & NEDO small wind turbine PCS testing; MATLAB/Simulink wind farm grid integration models.",
+      futureDirections: "Offshore floating wind turbine wake optimization and hybrid deep-sea wind-hydrogen platforms."
     },
     {
-      id: "unit-commitment",
-      slug: "unit-commitment",
-      title: "Unit Commitment & Power Dispatch",
-      team: "Unit Commitment Team",
+      id: "unit-commitment-demand-response",
+      slug: "unit-commitment-demand-response",
+      title: "Unit Commitment & Demand Response (UCDR)",
+      team: "Unit Commitment & Demand Response Team",
       leader: "Nguyen Tuan Anh",
       icon: "fa-sliders",
       heroImage: "assets/images/banner_dr_uc.jpg",
-      summary: "Mathematical optimization, generator scheduling, economic dispatch, and microgrid unit commitment under uncertainty.",
-      vision: "Achieving optimal multi-period generation scheduling that minimizes operational cost while guaranteeing 100% reliability.",
+      summary: "Mathematical optimization, generator scheduling, economic dispatch, dynamic pricing, and microgrid demand-side flexibility.",
+      vision: "Achieving optimal multi-period generation scheduling and demand-side elasticity that minimizes cost while guaranteeing 100% reliability.",
       topics: [
         "Microgrid Unit Commitment with high renewable penetration",
         "Mixed-Integer Linear Programming (MILP) vs Genetic Algorithm (GA)",
         "Stochastic UC considering wind/PV probabilistic uncertainty",
-        "Joint optimization of Unit Commitment with BESS and Demand Response"
+        "Joint optimization of Unit Commitment with BESS and Demand Response",
+        "Incentive-based and dynamic pricing Demand Response programs",
+        "Consumer satisfaction modeling and social welfare maximization"
       ],
-      conducted: "Stochastic UC algorithms incorporating dynamic demand response and energy storage constraints; HUST campus dispatch models.",
-      futureDirections: "Quantum-inspired optimization algorithms and rolling-horizon dispatching for 100% renewable power systems."
+      conducted: "Stochastic UC algorithms incorporating dynamic demand response and energy storage constraints; HUST campus microgrid dispatch models.",
+      futureDirections: "Quantum-inspired optimization algorithms, automated IoT-enabled demand response, and rolling-horizon dispatching for 100% renewable power systems."
     },
     {
       id: "smart-grid",
@@ -83,6 +84,25 @@ window.LAB_DATA = {
       ],
       conducted: "GIZ Smart Grid Roadmap for Vietnam, SCADA/DCS assessment for National Load Dispatch Center (A0), Microgrid testbed.",
       futureDirections: "Zero-inertia grid control algorithms, digital twins of national power transmission networks."
+    },
+    {
+      id: "electric-vehicle",
+      slug: "electric-vehicle",
+      title: "Electric Vehicle (EV)",
+      team: "Electric Vehicle Team",
+      leader: "Dao Quoc Khanh",
+      icon: "fa-car-battery",
+      heroImage: "assets/images/banner_ev.jpg",
+      summary: "EV charging infrastructure, Vehicle-to-Grid (V2G) interaction, smart charging scheduling, and distribution impact.",
+      vision: "Transforming the transportation sector into a dynamic, flexible grid-balancing asset through bidirectional charging.",
+      topics: [
+        "EV charging station impact on distribution voltage and power quality",
+        "Smart charging scheduling algorithms to minimize peak demand",
+        "Vehicle-to-Grid (V2G) and Vehicle-to-Home (V2H) bidirectional power flow",
+        "Electricity market incentives and charging pricing mechanisms"
+      ],
+      conducted: "EV development implications and incentive policy framework for GreenID; charging load forecasting for Hanoi city.",
+      futureDirections: "Autonomous coordinated V2G aggregators participating in national ancillary services."
     },
     {
       id: "hydrogen",
@@ -123,61 +143,24 @@ window.LAB_DATA = {
       futureDirections: "Second-life EV battery repurposing for grid storage and sodium-ion battery grid-scale trials."
     },
     {
-      id: "electric-vehicle",
-      slug: "electric-vehicle",
-      title: "Electric Vehicle (EV)",
-      team: "Electric Vehicle Team",
-      leader: "Dao Quoc Khanh",
-      icon: "fa-car-battery",
-      heroImage: "assets/images/banner_ev.jpg",
-      summary: "EV charging infrastructure, Vehicle-to-Grid (V2G) interaction, smart charging scheduling, and distribution impact.",
-      vision: "Transforming the transportation sector into a dynamic, flexible grid-balancing asset through bidirectional charging.",
+      id: "ai",
+      slug: "ai",
+      title: "Artificial Intelligence",
+      team: "AI Team",
+      leader: "Nguyen Trong Thanh",
+      icon: "fa-brain",
+      heroImage: "assets/images/banner_ai.jpg",
+      summary: "Deep Learning, Neural Networks, and AI algorithms applied to renewable energy forecasting and system stability.",
+      vision: "Pioneering intelligent data-driven intelligence for clean energy grids, predictive maintenance, and energy markets.",
       topics: [
-        "EV charging station impact on distribution voltage and power quality",
-        "Smart charging scheduling algorithms to minimize peak demand",
-        "Vehicle-to-Grid (V2G) and Vehicle-to-Home (V2H) bidirectional power flow",
-        "Electricity market incentives and charging pricing mechanisms"
+        "Solar irradiance and wind speed/power forecasting",
+        "Deep Learning architectures: ANN, RNN, LSTM, CNN-LSTM, SAM-LSTM, EDSACL",
+        "PV fault detection and life-expectancy prediction",
+        "Blockchain and AI for decentralized peer-to-peer energy trading",
+        "Real-time grid stability assessment via neural networks"
       ],
-      conducted: "EV development implications and incentive policy framework for GreenID; charging load forecasting for Hanoi city.",
-      futureDirections: "Autonomous coordinated V2G aggregators participating in national ancillary services."
-    },
-    {
-      id: "wind",
-      slug: "wind",
-      title: "Wind Energy",
-      team: "Wind Team",
-      leader: "Nguyen Hoang Nam",
-      icon: "fa-wind",
-      heroImage: "assets/images/banner_wind.jpg",
-      summary: "Wind turbine aerodynamics, Low Voltage Ride Through (LVRT), output smoothing, and hybrid wind-storage systems.",
-      vision: "Maximizing wind energy harvest with superior fault ride-through and ultra-smooth grid injection.",
-      topics: [
-        "Wind turbine power curve forecasting and wake effect modeling",
-        "Low Voltage Ride Through (LVRT) capability enhancement",
-        "Output power smoothing using integrated hybrid BESS",
-        "Grid-connected simulation under turbulent wind conditions"
-      ],
-      conducted: "Tokyo University of Science & NEDO small wind turbine PCS testing; MATLAB/Simulink wind farm grid integration models.",
-      futureDirections: "Offshore floating wind turbine wake optimization and hybrid deep-sea wind-hydrogen platforms."
-    },
-    {
-      id: "demand-response",
-      slug: "demand-response",
-      title: "Demand Response",
-      team: "Demand Response Team",
-      leader: "Ta Xuan Hung",
-      icon: "fa-chart-line",
-      heroImage: "assets/images/banner_dr_uc.jpg",
-      summary: "Incentive-based DR program design, dynamic electricity pricing, consumer satisfaction modeling, and social welfare.",
-      vision: "Unlocking demand-side flexibility to enable 100% renewable grid operation without costly peak peaker plants.",
-      topics: [
-        "Incentive-based and price-based Demand Response programs",
-        "Consumer satisfaction function and behavioral elasticity modeling",
-        "Interaction between DR aggregators, consumers, and grid operators",
-        "Advanced mathematical solvers for social welfare maximization"
-      ],
-      conducted: "Incentive pricing mechanism based on customer satisfaction functions; DSM projects in Northern Vietnam.",
-      futureDirections: "Automated IoT-enabled home energy management systems (HEMS) with real-time dynamic tariff tracking."
+      conducted: "Solar radiation forecasting software winning 2nd prize in MOET National Scientific Research Contest 2021; SVNCKH2022 3rd place.",
+      futureDirections: "Edge-AI embedded micro-controllers for sub-second inverter protection and autonomous microgrid dispatching."
     }
   ],
 

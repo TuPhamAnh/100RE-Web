@@ -52,7 +52,7 @@ export async function renderExperiments(container) {
           const team = teams.find(t => t.id === proj.team_id) || { name: 'General', slug: 'all' };
 
           return `
-            <div class="ws-card" style="margin-bottom:0; border-left:4px solid var(--ws-primary);">
+            <div class="ws-card" style="margin-bottom:0; border:1px solid var(--ws-border); box-shadow: 0 1px 3px rgba(15,23,42,0.06);">
               <!-- Project Header Card -->
               <div style="padding:20px; border-bottom:1px solid var(--ws-border); background:#fbfcfd; display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px;">
                 <div>

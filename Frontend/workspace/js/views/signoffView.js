@@ -59,7 +59,7 @@ export async function renderSignoffs(container) {
         ` : `
           <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(420px, 1fr)); gap:18px;">
             ${reviewTasks.map(t => `
-              <div class="ws-card" style="margin-bottom:0; border-left:4px solid #f59e0b;">
+              <div class="ws-card" style="margin-bottom:0; border:1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(15,23,42,0.06);">
                 <div style="padding:20px;">
                   <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
                     <span class="ws-badge ws-badge-in_progress">${escapeHtml(t.team?.name || 'Research Team')}</span>
@@ -138,20 +138,10 @@ export async function renderSignoffs(container) {
 
     // Sign & Approve Button Handler
     container.querySelectorAll('[data-action="approve-task"]').forEach(btn => {
-      btn.addEventListener('click', async () => {
+      btn.addEventListener('click', () => {
         const taskId = btn.getAttribute('data-task-id');
-        const comments = prompt('Nhập nhận xét / phê duyệt của Thầy / Trưởng nhóm:', 'Kết quả thực nghiệm và số liệu đo đạc đạt yêu cầu chất lượng của Lab.');
-        if (comments === null) return;
-
-        try {
-          await API.post(`/api/tasks/${taskId}/sign-off`, {
-            status: 'approved',
-            comments: comments
-          });
-          showToast('Đã ký duyệt kết quả thực nghiệm thành công!');
-          renderSignoffs(container);
-        } catch (e) {
-          showToast('Lỗi phê duyệt: ' + e.message, true);
+        if (taskId && typeof window.openSciNoteSignoffModal === 'function') {
+          window.openSciNoteSignoffModal(taskId);
         }
       });
     });
