@@ -15,81 +15,58 @@
   <link rel="stylesheet" href="assets/css/pages.css">
 
   <style>
-    /* Blurred Camera Bokeh / Transparent Frosted Glass Background */
     body {
-      position: relative;
-      background-color: transparent !important;
+      background-color: #f8fafc;
     }
-    
-    .page-bg-fixed {
-      position: fixed;
-      top: -25px;
-      left: -25px;
-      right: -25px;
-      bottom: -25px;
-      background: #f8fafc;
-      filter: blur(6px);
-      -webkit-filter: blur(6px);
-      transform: scale(1.05);
-      z-index: -2;
-      pointer-events: none;
-    }
-
-    .page-bg-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.08); /* Transparent subtle ambient layer, not white */
-      backdrop-filter: blur(2px);
-      -webkit-backdrop-filter: blur(2px);
-      z-index: -1;
-      pointer-events: none;
-    }
-
     .hero-section {
-      background: transparent !important;
-      border-bottom: none !important;
-      padding: 55px 0 25px !important;
+      background: #ffffff;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 40px 0 25px;
     }
-
     .hero-title {
-      color: #0f172a !important;
-      text-shadow: 0 2px 10px rgba(255, 255, 255, 0.85);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      color: #0f172a;
+      font-size: 2.2rem;
+      margin-bottom: 12px;
     }
-
     .hero-desc {
-      color: #1e293b !important;
-      font-weight: 500 !important;
-      text-shadow: 0 1px 6px rgba(255, 255, 255, 0.85);
+      color: #475569;
+      font-size: 1rem;
+      max-width: 800px;
+      line-height: 1.6;
     }
-
     .control-bar {
-      background: rgba(255, 255, 255, 0.88) !important;
-      
-      -webkit-
-      border: 1px solid rgba(255, 255, 255, 0.6) !important;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12) !important;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      margin-top: 24px;
     }
-
     .team-block {
-      background: rgba(255, 255, 255, 0.86) !important;
-      
-      -webkit-
-      border: 1px solid rgba(255, 255, 255, 0.6) !important;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08) !important;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 36px;
+      overflow: hidden;
     }
-
     .supervisor-card {
-      background: rgba(255, 255, 255, 0.88) !important;
-      
-      -webkit-
-      border: 1px solid rgba(255, 255, 255, 0.7) !important;
-      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08) !important;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
     }
-
     .member-card {
-      background: rgba(255, 255, 255, 0.94) !important;
-      border: 1px solid rgba(255, 255, 255, 0.8) !important;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+    }
+    .member-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-3px);
     }
   </style>
   <link rel="stylesheet" href="assets/css/ai_chat.css">
@@ -97,8 +74,8 @@
 <body>
 
   <!-- BLURRED OUT-OF-FOCUS SOLAR FIELD BACKGROUND -->
-  <div class="page-bg-fixed" aria-hidden="true"></div>
-  <div class="page-bg-overlay" aria-hidden="true"></div>
+  
+  
 
   <!-- ADMIN STATUS TOOLBAR -->
   <div class="admin-topbar" id="adminTopbar">
@@ -115,49 +92,67 @@
   </div>
 
   <!-- NAVIGATION BAR -->
-  <header class="navbar">
+    <header class="navbar">
     <div class="container nav-container">
       <a href="index.html" class="logo-wrapper" title="100RE Laboratory - Toward 100% Renewable Energy">
         <img src="assets/images/logo.jpg" alt="100RE Laboratory Logo" class="logo-img">
       </a>
       <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation"><i class="fa-solid fa-bars"></i></button>
-      <nav>
-        <ul class="nav-menu" id="navMenu">
-          <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
-          <li class="nav-item">
-            <a href="research-areas.html" class="nav-link">Research <i class="fa-solid fa-chevron-down dropdown-icon"></i></a>
-            <ul class="dropdown-menu">
-              <li class="dropdown-item"><a href="research-areas.html"><i class="fa-solid fa-atom"></i> Research Areas</a></li>
-              <li class="dropdown-item"><a href="research-experiences.html"><i class="fa-solid fa-flask"></i> Research Experiences</a></li>
-              <li class="dropdown-item"><a href="publications.html"><i class="fa-solid fa-book-bookmark"></i> Publications</a></li>
-              <li class="dropdown-item"><a href="collaborations.html"><i class="fa-solid fa-handshake"></i> Collaborations</a></li>
-            </ul>
-          </li>
-          <li class="nav-item"><a href="projects.html" class="nav-link">Project</a></li>
-          <li class="nav-item"><a href="news.html" class="nav-link">News</a></li>
-          <li class="nav-item"><a href="journey.html" class="nav-link">Journey</a></li>
-          <li class="nav-item">
-            <a href="members.html" class="nav-link active">Member <i class="fa-solid fa-chevron-down dropdown-icon"></i></a>
-            <ul class="dropdown-menu">
-              <li class="dropdown-item"><a href="members.html"><i class="fa-solid fa-users"></i> Our Team</a></li>
-              <li class="dropdown-item"><a href="alumni.html"><i class="fa-solid fa-user-graduate"></i> Alumni</a></li>
-            </ul>
-          </li>
-          <li class="nav-item"><a href="photos.html" class="nav-link">Photos</a></li>
-          <li class="nav-item">
-            <a href="#" class="nav-link">Others <i class="fa-solid fa-chevron-down dropdown-icon"></i></a>
-            <ul class="dropdown-menu">
-              <li class="dropdown-item"><a href="mini-scada.html"><i class="fa-solid fa-network-wired"></i> Mini Scada</a></li>
-              <li class="dropdown-item"><a href="fund-raise.html"><i class="fa-solid fa-hand-holding-dollar"></i> Fund Raise</a></li>
-              <li class="dropdown-item"><a href="join-us.html"><i class="fa-solid fa-user-plus"></i> How to be one of us?</a></li>
-              <li class="dropdown-item"><a href="useful-links.html"><i class="fa-solid fa-link"></i> Useful Links</a></li>
-              <li class="dropdown-item"><a href="lab-equipment.html"><i class="fa-solid fa-microchip"></i> Lab Equipment</a></li>
-            </ul>
-          </li>
-          <li class="nav-item" id="loginNavItem">
-            <button class="nav-link btn-nav-login" id="navLoginBtn"><i class="fa-solid fa-lock"></i> Login</button>
-          </li>
-        </ul>
+      <!-- Modern 4-Category Distilled Navigation -->
+      <nav class="nav-links" id="navLinks">
+        <!-- 1. About & People -->
+        <li class="nav-item has-dropdown">
+          <a href="about.html" class="nav-link active">
+            <i class="fa-solid fa-circle-info"></i> About &amp; People <i class="fa-solid fa-chevron-down dropdown-icon"></i>
+          </a>
+          <ul class="dropdown-menu">
+            <li class="dropdown-item"><a href="about.html"><i class="fa-solid fa-building-columns"></i> About Lab</a></li>
+            <li class="dropdown-item"><a href="members.html" class="active"><i class="fa-solid fa-users"></i> Researchers &amp; Members</a></li>
+            <li class="dropdown-item"><a href="alumni.html"><i class="fa-solid fa-user-graduate"></i> Lab Alumni</a></li>
+            <li class="dropdown-item"><a href="journey.html"><i class="fa-solid fa-route"></i> Lab Journey</a></li>
+            <li class="dropdown-item"><a href="photos.html"><i class="fa-solid fa-images"></i> Gallery &amp; Activities</a></li>
+          </ul>
+        </li>
+
+        <!-- 2. Research & Publications -->
+        <li class="nav-item has-dropdown">
+          <a href="research-areas.html" class="nav-link">
+            <i class="fa-solid fa-flask"></i> Research &amp; Publications <i class="fa-solid fa-chevron-down dropdown-icon"></i>
+          </a>
+          <ul class="dropdown-menu">
+            <li class="dropdown-item"><a href="research-areas.html"><i class="fa-solid fa-microscope"></i> 8 Research Teams</a></li>
+            <li class="dropdown-item"><a href="publications.html"><i class="fa-solid fa-book-open"></i> Publications &amp; Papers</a></li>
+            <li class="dropdown-item"><a href="projects.html"><i class="fa-solid fa-diagram-project"></i> Research Projects</a></li>
+            <li class="dropdown-item"><a href="research-experiences.html"><i class="fa-solid fa-timeline"></i> Academic Timeline</a></li>
+            <li class="dropdown-item"><a href="collaborations.html"><i class="fa-solid fa-handshake"></i> International Collaborations</a></li>
+          </ul>
+        </li>
+
+        <!-- 3. News -->
+        <li class="nav-item">
+          <a href="news.html" class="nav-link">
+            <i class="fa-solid fa-newspaper"></i> News
+          </a>
+        </li>
+
+        <!-- 4. Lab & Join -->
+        <li class="nav-item has-dropdown">
+          <a href="lab-equipment.html" class="nav-link">
+            <i class="fa-solid fa-solar-panel"></i> Lab &amp; Join <i class="fa-solid fa-chevron-down dropdown-icon"></i>
+          </a>
+          <ul class="dropdown-menu">
+            <li class="dropdown-item"><a href="lab-equipment.html"><i class="fa-solid fa-screwdriver-wrench"></i> Equipment &amp; Testbeds</a></li>
+            <li class="dropdown-item"><a href="mini-scada.html"><i class="fa-solid fa-chart-line"></i> Mini SCADA Testbed</a></li>
+            <li class="dropdown-item"><a href="fund-raise.html"><i class="fa-solid fa-hand-holding-dollar"></i> Fund Raising</a></li>
+            <li class="dropdown-item"><a href="join-us.html"><i class="fa-solid fa-user-plus"></i> Join Our Team</a></li>
+            <li class="dropdown-item"><a href="useful-links.html"><i class="fa-solid fa-link"></i> Useful Links</a></li>
+          </ul>
+        </li>
+
+        <!-- User / Login Action -->
+        <li class="nav-item" id="loginNavItem">
+          <button class="nav-link btn-nav-login" id="navLoginBtn"><i class="fa-solid fa-lock"></i> Login</button>
+        </li>
       </nav>
     </div>
   </header>

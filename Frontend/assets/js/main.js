@@ -160,8 +160,22 @@ document.addEventListener('DOMContentLoaded', () => {
   // 3. Load & Render Members from API
   // ==========================================
   async function loadMembers() {
+    // 1. Immediately render default members so page is NEVER blank
+    const saved = localStorage.getItem('100re_local_members');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        allMembers = Array.isArray(parsed) && parsed.length > 0 ? parsed : DEFAULT_MEMBERS;
+      } catch (err) {
+        allMembers = DEFAULT_MEMBERS;
+      }
+    } else {
+      allMembers = DEFAULT_MEMBERS;
+    }
+    renderAllTeamGrids();
+
+    // 2. Fetch fresh members from Cloudflare KV API and update
     try {
-      // Add timestamp to prevent browser & proxy cache on other devices
       const res = await fetch(`${API_BASE}/api/public/members?_t=${Date.now()}`, {
         headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
       });
@@ -169,28 +183,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = await res.json();
         const list = Array.isArray(data) ? data : (data && Array.isArray(data.members) ? data.members : null);
         if (list && list.length > 0) {
-          allMembers = list;
+          // Merge API list with DEFAULT_MEMBERS to ensure no missing profiles
+          const map = new Map(DEFAULT_MEMBERS.map(m => [String(m.id), { ...m }]));
+          list.forEach(m => {
+            if (m && m.id) {
+              const existing = map.get(String(m.id)) || {};
+              map.set(String(m.id), { ...existing, ...m });
+            }
+          });
+          allMembers = Array.from(map.values());
           safeSaveLocalStorage('100re_local_members', JSON.stringify(allMembers));
           renderAllTeamGrids();
-          return;
         }
       }
     } catch (e) {
-      console.warn('Could not load from API, using cached/default members:', e);
+      console.warn('API fetch failed, maintained default members:', e);
     }
-
-    // Fallback to localStorage or default dataset
-    const saved = localStorage.getItem('100re_local_members');
-    if (saved) {
-      try { 
-        allMembers = JSON.parse(saved); 
-      } catch (err) { 
-        allMembers = DEFAULT_MEMBERS; 
-      }
-    } else {
-      allMembers = DEFAULT_MEMBERS;
-    }
-    renderAllTeamGrids();
   }
 
   function renderAllTeamGrids() {
@@ -201,7 +209,19 @@ document.addEventListener('DOMContentLoaded', () => {
       const countBadge = document.getElementById(`count-${teamKey}`);
       if (!grid) return;
 
-      const teamMembers = allMembers.filter(m => m.team === teamKey && !m.is_alumni && m.team !== 'alumni');
+      let teamMembers = allMembers.filter(m => {
+        const matchesTeam = (m.team === teamKey) || 
+          (teamKey === 'dr_uc' && (m.team === 'dr_uc' || m.team === 'ucdr' || m.team === 'unit-commitment' || m.team === 'demand-response'));
+        return matchesTeam && !m.is_alumni && m.team !== 'alumni';
+      });
+
+      // Fallback: If no active members found in custom dataset, fetch from DEFAULT_MEMBERS
+      if (teamMembers.length === 0) {
+        teamMembers = DEFAULT_MEMBERS.filter(m => {
+          return (m.team === teamKey) || 
+            (teamKey === 'dr_uc' && (m.team === 'dr_uc' || m.team === 'ucdr'));
+        });
+      }
       
       // Update count badge
       if (countBadge) {
