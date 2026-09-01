@@ -414,11 +414,53 @@
   <script src="assets/js/data.js"></script>
   <script src="assets/js/main.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
       const featContainer = document.getElementById('featuredAlumniContainer');
       const teamContainer = document.getElementById('teamAlumniContainer');
       const searchInput = document.getElementById('alumniSearch');
       const filterBtns = document.querySelectorAll('[data-alumni-filter]');
+
+      // Load dynamically transferred alumni from Cloudflare KV / API
+      try {
+        const res = await fetch('/api/public/members?_t=' + Date.now());
+        if (res.ok) {
+          const members = await res.json();
+          if (Array.isArray(members)) {
+            const movedAlumni = members.filter(m => m.is_alumni || m.team === 'alumni');
+            movedAlumni.forEach(ma => {
+              if (window.LAB_DATA && window.LAB_DATA.teamAlumni) {
+                if (!window.LAB_DATA.teamAlumni.some(ta => ta.name === ma.name)) {
+                  window.LAB_DATA.teamAlumni.unshift({
+                    name: ma.name,
+                    team: ma.teamName || (ma.alumni_team ? ma.alumni_team.toUpperCase() + ' Team' : '100RE Lab Alumni'),
+                    teamCode: ma.alumni_team || 'all',
+                    image: ma.image || 'assets/images/logo.jpg'
+                  });
+                }
+              }
+            });
+          }
+        }
+      } catch(e) {}
+
+      // Also check local storage cache
+      try {
+        const localAlumni = JSON.parse(localStorage.getItem('100re_content_alumni') || '[]');
+        if (Array.isArray(localAlumni) && localAlumni.length > 0) {
+          localAlumni.forEach(la => {
+            if (window.LAB_DATA && window.LAB_DATA.teamAlumni) {
+              if (!window.LAB_DATA.teamAlumni.some(ta => ta.name === la.name)) {
+                window.LAB_DATA.teamAlumni.unshift({
+                  name: la.name,
+                  team: la.team || '100RE Lab Alumni',
+                  teamCode: la.teamCode || 'all',
+                  image: la.image || 'assets/images/logo.jpg'
+                });
+              }
+            }
+          });
+        }
+      } catch(e) {}
 
       function renderAllAlumni() {
         if (!window.LAB_DATA) return;

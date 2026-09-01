@@ -6,39 +6,119 @@
 import { RBAC } from '../rbac.js';
 import { logActivity } from '../activity.js';
 
+const INITIAL_SEED_MEMBERS = [
+  { id: "pv-1", name: "Ngô Trí Đức", team: "pv", teamName: "PV Team", role: "PV Team", image: "assets/images/ngo_tri_duc.png", bio: "Researcher in the PV Team at 100RE Laboratory. Focusing on photovoltaic systems modeling, performance analysis, and optimization." },
+  { id: "pv-2", name: "Bui Quang Minh", team: "pv", teamName: "PV Team", role: "PV Team", image: "assets/images/bui_quang_minh.jpg", bio: "Researcher in the PV Team at 100RE Laboratory. Dedicated to solar irradiance modeling and high-efficiency photovoltaic integration." },
+  { id: "ai-1", name: "Bui Quang Hai", team: "ai", teamName: "AI Team", role: "AI Team", image: "assets/images/bui_quang_hai.jpg", bio: "Researcher in the AI Team at 100RE Laboratory. Specializing in Artificial Intelligence, Deep Learning, and Neural Network applications for renewable energy systems." },
+  { id: "dr_uc-1", name: "Nguyen Tuan Anh", team: "dr_uc", teamName: "Demand Response and Unit Commitment Team", role: "Unit Commitment Team", image: "assets/images/nguyen_tuan_anh.jpg", bio: "Researcher at 100RE Laboratory. Research focus: Unit commitment optimization, demand response mechanisms, power dispatch algorithms. Contact: Tel: +84 974 812 546 | Email: anh.nt196322@sis.hust.edu.vn" },
+  { id: "dr_uc-2", name: "Le Anh Quan", team: "dr_uc", teamName: "Demand Response and Unit Commitment Team", role: "Unit Commitment Team", image: "assets/images/le_anh_quan.png", bio: "Researcher in Demand Response & Unit Commitment Team at 100RE Laboratory. Focusing on mathematical modeling, power system economic dispatch, and load curve optimization." },
+  { id: "wind-1", name: "Nguyen Hoang Nam", team: "wind", teamName: "Wind Team", role: "Wind Team", image: "assets/images/nguyen_hoang_nam.jpg", bio: "Researcher in the Wind Energy Team at 100RE Laboratory. Researching wind turbine aerodynamics, power curve forecasting, and grid integration." },
+  { id: "wind-2", name: "Nguyễn Như Tùng", team: "wind", teamName: "Wind Team", role: "Wind Team", image: "assets/images/nguyen_nhu_tung.png", bio: "Researcher in the Wind Team at 100RE Laboratory. Focusing on wind farm layout optimization and wake effect modeling." },
+  { id: "smartgrid-1", name: "Le Ngoc Dung", team: "smartgrid", teamName: "Smart Grid Team", role: "Smart Grid Team", image: "assets/images/le_ngoc_dung.jpg", bio: "Researcher in the Smart Grid Team at 100RE Laboratory. Researching microgrid management, communication protocols, and grid automation." },
+  { id: "smartgrid-2", name: "Duong Minh Hai", team: "smartgrid", teamName: "Smart Grid Team", role: "Smart Grid Team", image: "assets/images/duong_minh_hai.png", bio: "Researcher in the Smart Grid Team at 100RE Laboratory. Focused on real-time SCADA monitoring, voltage stability, and active distribution networks." },
+  { id: "smartgrid-3", name: "Vu Tien Dung", team: "smartgrid", teamName: "Smart Grid Team", role: "Smart Grid Team", image: "assets/images/vu_tien_dung.png", bio: "Researcher in the Smart Grid Team at 100RE Laboratory. Investigating power quality improvement, inverter control, and distributed energy resources." },
+  { id: "ev-1", name: "Le The Cuong", team: "ev", teamName: "Electric Vehicle", role: "Electric Vehicle Team", image: "assets/images/le_the_cuong.jpg", bio: "Researcher in the Electric Vehicle Team at 100RE Laboratory. Specializing in EV charging infrastructure, V2G (Vehicle-to-Grid) interactions, and power electronics." },
+  { id: "ev-2", name: "Dao Quoc Khanh", team: "ev", teamName: "Electric Vehicle", role: "Electric Vehicle Team", image: "assets/images/dao_quoc_khanh.jpg", bio: "Researcher in the Electric Vehicle Team at 100RE Laboratory. Focused on smart charging scheduling and EV battery health degradation modeling." },
+  { id: "hydrogen-1", name: "Nguyen Hoang Anh", team: "hydrogen", teamName: "Hydrogen Team", role: "Hydrogen Team", image: "assets/images/nguyen_hoang_anh.jpg", bio: "Researcher in the Hydrogen Team at 100RE Laboratory. Exploring Green Hydrogen production via water electrolysis, fuel cell efficiency, and hydrogen storage supply chains." },
+  { id: "bess-1", name: "Trinh Minh Phuong", team: "bess", teamName: "BESS Team", role: "BESS Team", image: "assets/images/trinh_minh_phuong.jpg", bio: "Researcher in the BESS Team at 100RE Laboratory. Dedicated to battery state of charge (SoC) estimation, state of health (SoH), and energy storage economics." },
+  { id: "bess-2", name: "Nguyen Quang Anh", team: "bess", teamName: "BESS Team", role: "BESS Team", image: "assets/images/nguyen_quang_anh.png", bio: "Researcher in the BESS Team at 100RE Laboratory. Working on battery energy management systems (BEMS) and hybrid renewable storage systems." },
+  { id: "bess-3", name: "Tran Thi Hong Vinh", team: "bess", teamName: "BESS Team", role: "BESS Team", image: "assets/images/tran_thi_hong_vinh.png", bio: "Researcher in the BESS Team at 100RE Laboratory. Specializing in battery degradation models, thermal management, and energy storage peak shaving strategies." }
+];
+
+function getMergedMembers(customList) {
+  if (!Array.isArray(customList) || customList.length === 0) return INITIAL_SEED_MEMBERS;
+  const map = new Map(INITIAL_SEED_MEMBERS.map(m => [String(m.id), { ...m }]));
+  for (const cm of customList) {
+    if (cm && cm.id) {
+      const existing = map.get(String(cm.id)) || {};
+      map.set(String(cm.id), { ...existing, ...cm });
+    }
+  }
+  return Array.from(map.values());
+}
+
 export async function handlePublicMembers(request, env) {
   const method = request.method;
+  const url = new URL(request.url);
+  const pathParts = url.pathname.split('/').filter(Boolean);
+  const isMoveToAlumni = url.pathname.endsWith('/move-to-alumni');
 
-  const INITIAL_SEED_MEMBERS = [
-    { id: "pv-1", name: "Ngô Trí Đức", team: "pv", teamName: "PV Team", role: "PV Team", image: "assets/images/ngo_tri_duc.png", bio: "Researcher in the PV Team at 100RE Laboratory. Focusing on photovoltaic systems modeling, performance analysis, and optimization." },
-    { id: "pv-2", name: "Bui Quang Minh", team: "pv", teamName: "PV Team", role: "PV Team", image: "assets/images/bui_quang_minh.jpg", bio: "Researcher in the PV Team at 100RE Laboratory. Dedicated to solar irradiance modeling and high-efficiency photovoltaic integration." },
-    { id: "ai-1", name: "Bui Quang Hai", team: "ai", teamName: "AI Team", role: "AI Team", image: "assets/images/bui_quang_hai.jpg", bio: "Researcher in the AI Team at 100RE Laboratory. Specializing in Artificial Intelligence, Deep Learning, and Neural Network applications for renewable energy systems." },
-    { id: "dr_uc-1", name: "Nguyen Tuan Anh", team: "dr_uc", teamName: "Demand Response and Unit Commitment Team", role: "Unit Commitment Team", image: "assets/images/nguyen_tuan_anh.jpg", bio: "Researcher at 100RE Laboratory. Research focus: Unit commitment optimization, demand response mechanisms, power dispatch algorithms. Contact: Tel: +84 974 812 546 | Email: anh.nt196322@sis.hust.edu.vn" },
-    { id: "dr_uc-2", name: "Le Anh Quan", team: "dr_uc", teamName: "Demand Response and Unit Commitment Team", role: "Unit Commitment Team", image: "assets/images/le_anh_quan.png", bio: "Researcher in Demand Response & Unit Commitment Team at 100RE Laboratory. Focusing on mathematical modeling, power system economic dispatch, and load curve optimization." },
-    { id: "wind-1", name: "Nguyen Hoang Nam", team: "wind", teamName: "Wind Team", role: "Wind Team", image: "assets/images/nguyen_hoang_nam.jpg", bio: "Researcher in the Wind Energy Team at 100RE Laboratory. Researching wind turbine aerodynamics, power curve forecasting, and grid integration." },
-    { id: "wind-2", name: "Nguyễn Như Tùng", team: "wind", teamName: "Wind Team", role: "Wind Team", image: "assets/images/nguyen_nhu_tung.png", bio: "Researcher in the Wind Team at 100RE Laboratory. Focusing on wind farm layout optimization and wake effect modeling." },
-    { id: "smartgrid-1", name: "Le Ngoc Dung", team: "smartgrid", teamName: "Smart Grid Team", role: "Smart Grid Team", image: "assets/images/le_ngoc_dung.jpg", bio: "Researcher in the Smart Grid Team at 100RE Laboratory. Researching microgrid management, communication protocols, and grid automation." },
-    { id: "smartgrid-2", name: "Duong Minh Hai", team: "smartgrid", teamName: "Smart Grid Team", role: "Smart Grid Team", image: "assets/images/duong_minh_hai.png", bio: "Researcher in the Smart Grid Team at 100RE Laboratory. Focused on real-time SCADA monitoring, voltage stability, and active distribution networks." },
-    { id: "smartgrid-3", name: "Vu Tien Dung", team: "smartgrid", teamName: "Smart Grid Team", role: "Smart Grid Team", image: "assets/images/vu_tien_dung.png", bio: "Researcher in the Smart Grid Team at 100RE Laboratory. Investigating power quality improvement, inverter control, and distributed energy resources." },
-    { id: "ev-1", name: "Le The Cuong", team: "ev", teamName: "Electric Vehicle", role: "Electric Vehicle Team", image: "assets/images/le_the_cuong.jpg", bio: "Researcher in the Electric Vehicle Team at 100RE Laboratory. Specializing in EV charging infrastructure, V2G (Vehicle-to-Grid) interactions, and power electronics." },
-    { id: "ev-2", name: "Dao Quoc Khanh", team: "ev", teamName: "Electric Vehicle", role: "Electric Vehicle Team", image: "assets/images/dao_quoc_khanh.jpg", bio: "Researcher in the Electric Vehicle Team at 100RE Laboratory. Focused on smart charging scheduling and EV battery health degradation modeling." },
-    { id: "hydrogen-1", name: "Nguyen Hoang Anh", team: "hydrogen", teamName: "Hydrogen Team", role: "Hydrogen Team", image: "assets/images/nguyen_hoang_anh.jpg", bio: "Researcher in the Hydrogen Team at 100RE Laboratory. Exploring Green Hydrogen production via water electrolysis, fuel cell efficiency, and hydrogen storage supply chains." },
-    { id: "bess-1", name: "Trinh Minh Phuong", team: "bess", teamName: "BESS Team", role: "BESS Team", image: "assets/images/trinh_minh_phuong.jpg", bio: "Researcher in the BESS Team at 100RE Laboratory. Dedicated to battery state of charge (SoC) estimation, state of health (SoH), and energy storage economics." },
-    { id: "bess-2", name: "Nguyen Quang Anh", team: "bess", teamName: "BESS Team", role: "BESS Team", image: "assets/images/nguyen_quang_anh.png", bio: "Researcher in the BESS Team at 100RE Laboratory. Working on battery energy management systems (BEMS) and hybrid renewable storage systems." },
-    { id: "bess-3", name: "Tran Thi Hong Vinh", team: "bess", teamName: "BESS Team", role: "BESS Team", image: "assets/images/tran_thi_hong_vinh.png", bio: "Researcher in the BESS Team at 100RE Laboratory. Specializing in battery degradation models, thermal management, and energy storage peak shaving strategies." }
-  ];
-
-  function getMergedMembers(customList) {
-    if (!Array.isArray(customList) || customList.length === 0) return INITIAL_SEED_MEMBERS;
-    const map = new Map(INITIAL_SEED_MEMBERS.map(m => [String(m.id), { ...m }]));
-    for (const cm of customList) {
-      if (cm && cm.id) {
-        const existing = map.get(String(cm.id)) || {};
-        map.set(String(cm.id), { ...existing, ...cm });
+  if (isMoveToAlumni && (method === 'POST' || method === 'PUT')) {
+    try {
+      const memberId = pathParts[pathParts.length - 2];
+      let current = INITIAL_SEED_MEMBERS;
+      if (env && env.MEMBERS_KV) {
+        const custom = (await env.MEMBERS_KV.get('members_list')) || (await env.MEMBERS_KV.get('members_data'));
+        if (custom) {
+          try { current = getMergedMembers(JSON.parse(custom)); } catch(e) {}
+        }
       }
+
+      let movedMember = null;
+      const targetIdx = current.findIndex(m => String(m.id) === String(memberId));
+      if (targetIdx !== -1) {
+        current[targetIdx].is_alumni = true;
+        current[targetIdx].alumni_team = current[targetIdx].team;
+        current[targetIdx].former_role = current[targetIdx].role || current[targetIdx].teamName || 'Former Researcher';
+        current[targetIdx].team = 'alumni';
+        current[targetIdx].alumni_at = Math.floor(Date.now() / 1000);
+        movedMember = current[targetIdx];
+      } else {
+        // Create alumni placeholder if not found
+        movedMember = {
+          id: memberId,
+          name: '100RE Member',
+          team: 'alumni',
+          alumni_team: 'smartgrid',
+          is_alumni: true,
+          role: 'Alumnus',
+          former_role: 'Former Researcher',
+          image: 'assets/images/logo.jpg',
+          bio: 'Distinguished alumnus of 100RE Laboratory.',
+          alumni_at: Math.floor(Date.now() / 1000)
+        };
+        current.push(movedMember);
+      }
+
+      if (env && env.MEMBERS_KV) {
+        await env.MEMBERS_KV.put('members_list', JSON.stringify(current));
+
+        // Sync into Cloudflare KV alumni dataset
+        let alumniList = [];
+        try {
+          const alumniRaw = await env.MEMBERS_KV.get('content_alumni');
+          if (alumniRaw) alumniList = JSON.parse(alumniRaw);
+        } catch(e) {}
+        if (!Array.isArray(alumniList)) alumniList = [];
+
+        if (movedMember) {
+          const newAlumnus = {
+            id: `alumni-${movedMember.id}`,
+            name: movedMember.name,
+            team: movedMember.teamName || (movedMember.alumni_team ? movedMember.alumni_team.toUpperCase() + ' Team' : '100RE Lab Alumni'),
+            teamCode: movedMember.alumni_team || 'all',
+            formerRole: movedMember.former_role || movedMember.role || 'Former Researcher',
+            currentPos: 'Alumnus of 100RE Laboratory',
+            labPeriod: '2023 – 2026',
+            image: movedMember.image || 'assets/images/logo.jpg',
+            bio: movedMember.bio || `Distinguished alumnus of 100RE Laboratory, previously conducting research with the ${movedMember.alumni_team || 'Lab'} team.`,
+            email: movedMember.email || '',
+            phone: movedMember.phone || ''
+          };
+          alumniList = alumniList.filter(a => a.name !== movedMember.name && a.id !== newAlumnus.id);
+          alumniList.unshift(newAlumnus);
+          await env.MEMBERS_KV.put('content_alumni', JSON.stringify(alumniList));
+        }
+      }
+
+      return { success: true, member: movedMember, members: current, message: 'Đã chuyển thành viên sang Alumni thành công.' };
+    } catch(e) {
+      return { error: 'Failed to move member to alumni: ' + e.message };
     }
-    return Array.from(map.values());
   }
+
+
+  
 
   if (method === 'GET') {
     let membersToReturn = INITIAL_SEED_MEMBERS;

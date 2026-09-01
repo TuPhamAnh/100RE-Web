@@ -1473,19 +1473,20 @@ body.admin-mode .card-admin-actions {
   display: flex;
 }
 
-.btn-card-edit, .btn-card-delete {
+.btn-card-edit, .btn-card-alumni, .btn-card-delete {
   flex: 1;
-  padding: 5px 8px;
-  font-size: 0.75rem;
+  padding: 5px 6px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 0.725rem;
   font-weight: 600;
   border: none;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  transition: var(--transition);
-  border-radius: 0px;
+  gap: 3px;
+  transition: all 0.15s ease;
+  border-radius: 4px;
 }
 
 .btn-card-edit {
@@ -1494,6 +1495,16 @@ body.admin-mode .card-admin-actions {
 }
 .btn-card-edit:hover {
   background: #d97706;
+  transform: translateY(-1px);
+}
+
+.btn-card-alumni {
+  background: #0284c7;
+  color: #ffffff;
+}
+.btn-card-alumni:hover {
+  background: #0369a1;
+  transform: translateY(-1px);
 }
 
 .btn-card-delete {
@@ -1502,6 +1513,7 @@ body.admin-mode .card-admin-actions {
 }
 .btn-card-delete:hover {
   background: #dc2626;
+  transform: translateY(-1px);
 }
 
 /* Modal Form Styles */

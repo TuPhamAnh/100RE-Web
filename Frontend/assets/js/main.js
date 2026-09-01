@@ -201,7 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const countBadge = document.getElementById(`count-${teamKey}`);
       if (!grid) return;
 
-      const teamMembers = allMembers.filter(m => m.team === teamKey);
+      const teamMembers = allMembers.filter(m => m.team === teamKey && !m.is_alumni && m.team !== 'alumni');
       
       // Update count badge
       if (countBadge) {
@@ -237,8 +237,11 @@ document.addEventListener('DOMContentLoaded', () => {
               <i class="fa-solid fa-id-card"></i> View Profile
             </button>
             <div class="card-admin-actions">
-              <button class="btn-card-edit" type="button" title="Sửa thành viên">
+              <button class="btn-card-edit" type="button" title="Sửa thông tin thành viên">
                 <i class="fa-solid fa-pen-to-square"></i> Sửa
+              </button>
+              <button class="btn-card-alumni" type="button" title="Chuyển thành viên sang mục Alumni">
+                <i class="fa-solid fa-user-graduate"></i> Alumni
               </button>
               <button class="btn-card-delete" type="button" title="Xóa thành viên">
                 <i class="fa-solid fa-trash"></i> Xóa
@@ -255,16 +258,28 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const editBtn = card.querySelector('.btn-card-edit');
-        editBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          openEditMemberModal(member);
-        });
+        if (editBtn) {
+          editBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            openEditMemberModal(member);
+          });
+        }
+
+        const alumniBtn = card.querySelector('.btn-card-alumni');
+        if (alumniBtn) {
+          alumniBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            handleMoveMemberToAlumni(member);
+          });
+        }
 
         const deleteBtn = card.querySelector('.btn-card-delete');
-        deleteBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          handleDeleteMember(member);
-        });
+        if (deleteBtn) {
+          deleteBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            handleDeleteMember(member);
+          });
+        }
 
         grid.appendChild(card);
       });
@@ -917,6 +932,78 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     });
+  }
+
+  // Delete Member Handler
+    // Move Member to Alumni Handler
+  async function handleMoveMemberToAlumni(member) {
+    const confirmed = await window.showConfirmModal({
+      title: 'Chuyển Sang Cựu Thành Viên (Alumni)',
+      message: `Bạn có chắc chắn muốn chuyển thành viên "${member.name}" sang danh sách Alumni (Cựu thành viên) của 100RE Lab không? Thông tin thành viên sẽ được lưu vĩnh viễn vào cơ sở dữ liệu.`,
+      confirmText: 'Chuyển Sang Alumni',
+      cancelText: 'Hủy Bỏ',
+      type: 'info',
+      icon: 'fa-user-graduate'
+    });
+    if (!confirmed) return;
+
+    // 1. Update local state immediately
+    const target = allMembers.find(m => String(m.id) === String(member.id));
+    if (target) {
+      target.is_alumni = true;
+      target.alumni_team = target.team;
+      target.former_role = target.role || target.teamName || 'Former Researcher';
+      target.team = 'alumni';
+      target.alumni_at = Math.floor(Date.now() / 1000);
+    }
+    safeSaveLocalStorage('100re_local_members', JSON.stringify(allMembers));
+
+    // Also sync into local alumni cache
+    try {
+      let localAlumni = JSON.parse(localStorage.getItem('100re_content_alumni') || '[]');
+      if (!Array.isArray(localAlumni)) localAlumni = [];
+      const newAlumnus = {
+        id: `alumni-${member.id}`,
+        name: member.name,
+        team: member.teamName || (member.team ? member.team.toUpperCase() + ' Team' : '100RE Lab Alumni'),
+        teamCode: member.team || 'all',
+        formerRole: member.role || member.teamName || 'Former Researcher',
+        currentPos: 'Alumnus of 100RE Laboratory',
+        labPeriod: '2023 – 2026',
+        image: member.image || 'assets/images/logo.jpg',
+        bio: member.bio || `Distinguished alumnus of 100RE Laboratory, previously conducting research with the ${member.team || 'Lab'} team.`,
+        email: member.email || '',
+        phone: member.phone || ''
+      };
+      localAlumni = localAlumni.filter(a => a.name !== member.name && a.id !== newAlumnus.id);
+      localAlumni.unshift(newAlumnus);
+      localStorage.setItem('100re_content_alumni', JSON.stringify(localAlumni));
+    } catch(e) {}
+
+    renderAllTeamGrids();
+    showToast(`Đã chuyển thành viên "${member.name}" sang danh sách Alumni thành công!`);
+
+    // 2. Sync to Backend Database (Cloudflare KV & D1)
+    const tokenToSend = currentAuthToken || localStorage.getItem('100re_token') || '100re_admin_session';
+    try {
+      await fetch(`${API_BASE}/api/public/members/${encodeURIComponent(member.id)}/move-to-alumni`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${tokenToSend}`
+        },
+        body: JSON.stringify({
+          id: member.id,
+          name: member.name,
+          team: member.team,
+          role: member.role,
+          image: member.image,
+          bio: member.bio
+        })
+      });
+    } catch (e) {
+      console.warn('Background KV alumni move note:', e);
+    }
   }
 
   // Delete Member Handler

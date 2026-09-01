@@ -381,6 +381,30 @@ async function runTests() {
     }
   });
 
+  // 21. Move Member to Alumni Database & Cloudflare KV Persistence Test
+  await test('Move Member to Alumni: POST /api/public/members/:id/move-to-alumni updates KV & marks alumni', async () => {
+    const moveReq = new Request('http://localhost/api/public/members/pv-2/move-to-alumni', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer 100re_token' }
+    });
+    const res = await worker.fetch(moveReq, mockEnv);
+    const data = await res.json();
+
+    if (!data.success || !data.member || data.member.team !== 'alumni' || !data.member.is_alumni) {
+      throw new Error(`Expected member to be moved to alumni in database, got ${JSON.stringify(data)}`);
+    }
+
+    // Verify GET /api/public/members reflects alumni status
+    const getReq = new Request('http://localhost/api/public/members');
+    const getRes = await worker.fetch(getReq, mockEnv);
+    const members = await getRes.json();
+    const updatedMember = members.find(m => m.id === 'pv-2');
+
+    if (!updatedMember || updatedMember.team !== 'alumni' || !updatedMember.is_alumni) {
+      throw new Error(`Expected member pv-2 in KV to have team=alumni, got ${JSON.stringify(updatedMember)}`);
+    }
+  });
+
   console.log(`\n==============================================`);
   console.log(`Test Summary: ${passed} Passed, ${failed} Failed`);
   console.log(`==============================================\n`);
