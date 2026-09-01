@@ -15,58 +15,100 @@
   <link rel="stylesheet" href="assets/css/pages.css">
 
   <style>
+    /* Premium Clean Solar Bokeh Glassmorphism Background */
     body {
-      background-color: #f8fafc;
+      position: relative;
+      background-color: transparent !important;
     }
+    
+    .page-bg-fixed {
+      position: fixed;
+      top: -25px;
+      left: -25px;
+      right: -25px;
+      bottom: -25px;
+      background: url('assets/images/bg_solar_member.jpg') center center / cover no-repeat;
+      filter: blur(6px);
+      -webkit-filter: blur(6px);
+      transform: scale(1.05);
+      z-index: -2;
+      pointer-events: none;
+    }
+
+    .page-bg-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.08); /* Subtle crisp ambient layer */
+      backdrop-filter: blur(3px);
+      -webkit-backdrop-filter: blur(3px);
+      z-index: -1;
+      pointer-events: none;
+    }
+
     .hero-section {
-      background: #ffffff;
-      border-bottom: 1px solid #e2e8f0;
-      padding: 40px 0 25px;
+      background: transparent !important;
+      border-bottom: none !important;
+      padding: 50px 0 25px !important;
     }
+
     .hero-title {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 700;
-      color: #0f172a;
-      font-size: 2.2rem;
-      margin-bottom: 12px;
+      font-family: 'Outfit', sans-serif !important;
+      font-weight: 700 !important;
+      color: #0f172a !important;
+      text-shadow: 0 2px 12px rgba(255, 255, 255, 0.9);
+      font-size: 2.3rem;
+      margin-bottom: 8px;
     }
+
     .hero-desc {
-      color: #475569;
-      font-size: 1rem;
-      max-width: 800px;
+      color: #1e293b !important;
+      font-weight: 500 !important;
+      text-shadow: 0 1px 8px rgba(255, 255, 255, 0.9);
+      font-size: 1.05rem;
       line-height: 1.6;
     }
+
     .control-bar {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
+      background: rgba(255, 255, 255, 0.92) !important;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.8) !important;
+      box-shadow: 0 8px 30px rgba(15, 23, 42, 0.12) !important;
       border-radius: var(--radius-md);
-      box-shadow: var(--shadow-sm);
       margin-top: 24px;
     }
+
     .team-block {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
+      background: rgba(255, 255, 255, 0.90) !important;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.8) !important;
+      box-shadow: 0 10px 32px rgba(15, 23, 42, 0.08) !important;
       border-radius: var(--radius-md);
-      box-shadow: var(--shadow-sm);
       margin-bottom: 36px;
       overflow: hidden;
     }
+
     .supervisor-card {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
+      background: rgba(255, 255, 255, 0.92) !important;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.85) !important;
+      box-shadow: 0 8px 28px rgba(15, 23, 42, 0.08) !important;
       border-radius: var(--radius-md);
-      box-shadow: var(--shadow-sm);
     }
+
     .member-card {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
+      background: rgba(255, 255, 255, 0.96) !important;
+      border: 1px solid rgba(255, 255, 255, 0.9) !important;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
       border-radius: var(--radius-md);
-      box-shadow: var(--shadow-sm);
       transition: var(--transition);
     }
+
     .member-card:hover {
-      box-shadow: var(--shadow-md);
-      transform: translateY(-3px);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
     }
   </style>
   <link rel="stylesheet" href="assets/css/ai_chat.css">
@@ -74,8 +116,8 @@
 <body>
 
   <!-- BLURRED OUT-OF-FOCUS SOLAR FIELD BACKGROUND -->
-  
-  
+  <div class="page-bg-fixed" aria-hidden="true"></div>
+  <div class="page-bg-overlay" aria-hidden="true"></div>
 
   <!-- ADMIN STATUS TOOLBAR -->
   <div class="admin-topbar" id="adminTopbar">
