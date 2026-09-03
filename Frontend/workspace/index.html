@@ -13,6 +13,22 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
+    <!-- Instant Theme Initializer (Prevents FOUC) -->
+  <script>
+    (function() {
+      try {
+        var theme = localStorage.getItem('100re_ws_theme');
+        if (theme === 'dark' || (!theme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark-mode');
+          document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+          document.documentElement.classList.remove('dark-mode');
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      } catch (e) {}
+    })();
+  </script>
+
   <!-- Workspace Modular Styles -->
   <link rel="stylesheet" href="css/workspace.css">
   <link rel="stylesheet" href="css/kanban.css">
@@ -201,7 +217,13 @@
         </div>
 
         <div class="ws-topbar-right">
-          <!-- Language Switcher (Tiếng Việt / English) -->
+                    <!-- Dark / Light Mode Toggle -->
+          <button class="btn-ws-theme-toggle" id="btnThemeToggle" type="button" aria-label="Toggle Dark Mode" title="Chuyển chế độ Sáng / Tối (Ctrl+Shift+D)">
+            <i class="fa-solid fa-moon" id="themeToggleIcon"></i>
+            <span class="theme-toggle-text hide-mobile" id="themeToggleText">Tối</span>
+          </button>
+
+<!-- Language Switcher (Tiếng Việt / English) -->
           <div class="ws-lang-switcher" id="wsLangSwitcher" title="Đổi Ngôn Ngữ / Switch Language">
             <button class="btn-ws-lang active" id="btnLangVi" data-lang="vi" type="button" title="Tiếng Việt">
               <span class="lang-flag">🇻🇳</span> <span class="lang-text">VI</span>

@@ -13,7 +13,7 @@
 }
 
 .ws-kanban-col {
-  background: #f8fafc;
+  background: var(--ws-bg-subtle);
   border: 1px solid var(--ws-border);
   border-radius: var(--ws-radius-lg);
   display: flex;
@@ -28,7 +28,7 @@
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid var(--ws-border);
-  background: #ffffff;
+  background: var(--ws-bg-surface);
   border-top-left-radius: var(--ws-radius-lg);
   border-top-right-radius: var(--ws-radius-lg);
 }
@@ -68,7 +68,7 @@
 }
 
 .ws-kanban-card {
-  background: #ffffff;
+  background: var(--ws-bg-surface);
   border: 1px solid var(--ws-border);
   border-radius: var(--ws-radius-md);
   padding: 12px 14px;

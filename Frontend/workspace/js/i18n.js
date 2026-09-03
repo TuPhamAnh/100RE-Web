@@ -31,6 +31,8 @@ export const DICTIONARY = {
     top_public_web: "Web Công Khai",
     top_dev_role: "DEV ROLE:",
     top_switch_lang: "Đổi Ngôn Ngữ",
+    top_theme_dark: "Chế độ Tối",
+    top_theme_light: "Chế độ Sáng",
 
     // Common Actions & Buttons
     btn_save: "Lưu Thay Đổi",
@@ -152,6 +154,8 @@ export const DICTIONARY = {
     top_public_web: "Public Web",
     top_dev_role: "DEV ROLE:",
     top_switch_lang: "Switch Language",
+    top_theme_dark: "Dark Mode",
+    top_theme_light: "Light Mode",
 
     // Common Actions & Buttons
     btn_save: "Save Changes",

@@ -57,6 +57,7 @@ async function initApp() {
   });
 
   bindGlobalEvents();
+  initTheme();
   populateDevSwitcher();
 
   // 4. Initial Route
@@ -820,4 +821,65 @@ async function updateProjectDropdown(teamId, selectedProjId = null, selectEl = n
   } catch (e) {
     dropdown.innerHTML = '<option value="">-- General Task --</option>';
   }
+}
+
+// =========================================================================
+// DARK MODE / THEME ENGINE
+// =========================================================================
+function initTheme() {
+  const toggleBtn = document.getElementById('btnThemeToggle');
+  const icon = document.getElementById('themeToggleIcon');
+  const text = document.getElementById('themeToggleText');
+
+  function updateThemeUI(theme) {
+    const isDark = theme === 'dark';
+    const isVi = i18n.getLanguage() === 'vi';
+    if (isDark) {
+      document.documentElement.classList.add('dark-mode');
+      document.body.classList.add('dark-mode');
+      document.documentElement.setAttribute('data-theme', 'dark');
+      if (icon) icon.className = 'fa-solid fa-sun';
+      if (text) text.textContent = isVi ? 'Sáng' : 'Light';
+      if (toggleBtn) toggleBtn.setAttribute('title', isVi ? 'Chuyển sang chế độ Sáng (Ctrl+Shift+D)' : 'Switch to Light Mode (Ctrl+Shift+D)');
+    } else {
+      document.documentElement.classList.remove('dark-mode');
+      document.body.classList.remove('dark-mode');
+      document.documentElement.setAttribute('data-theme', 'light');
+      if (icon) icon.className = 'fa-solid fa-moon';
+      if (text) text.textContent = isVi ? 'Tối' : 'Dark';
+      if (toggleBtn) toggleBtn.setAttribute('title', isVi ? 'Chuyển sang chế độ Tối (Ctrl+Shift+D)' : 'Switch to Dark Mode (Ctrl+Shift+D)');
+    }
+    localStorage.setItem('100re_ws_theme', theme);
+  }
+
+  const savedTheme = localStorage.getItem('100re_ws_theme') ||
+    (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  updateThemeUI(savedTheme);
+
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', () => {
+      const isCurrentlyDark = document.documentElement.classList.contains('dark-mode');
+      const nextTheme = isCurrentlyDark ? 'light' : 'dark';
+      updateThemeUI(nextTheme);
+      const isVi = i18n.getLanguage() === 'vi';
+      showToast(nextTheme === 'dark' 
+        ? (isVi ? 'Đã kích hoạt Giao diện Tối (Dark Mode) 🌙' : 'Dark Mode activated 🌙')
+        : (isVi ? 'Đã kích hoạt Giao diện Sáng (Light Mode) ☀️' : 'Light Mode activated ☀️')
+      );
+    });
+  }
+
+  // Keyboard shortcut: Ctrl/Cmd + Shift + D for instant theme toggle
+  window.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'D' || e.key === 'd')) {
+      e.preventDefault();
+      toggleBtn?.click();
+    }
+  });
+
+  // Re-sync label on language change
+  window.addEventListener('workspace-lang-change', () => {
+    const currentTheme = document.documentElement.classList.contains('dark-mode') ? 'dark' : 'light';
+    updateThemeUI(currentTheme);
+  });
 }
