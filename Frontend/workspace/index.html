@@ -608,7 +608,108 @@
     </div>
   </div>
 
-    <!-- SCINOTE SUPERVISOR ELECTRONIC SIGN-OFF MODAL -->
+      <!-- D. LAB INSTRUMENT / EQUIPMENT MODAL (Add / Edit) -->
+  <div class="ws-modal-backdrop" id="modalInstrumentForm">
+    <div class="ws-modal-dialog" style="max-width: 680px;">
+      <div class="ws-modal-header">
+        <h3 class="ws-modal-title" id="modalInstrumentTitle"><i class="fa-solid fa-microchip"></i> Thêm Thiết Bị Phòng Thí Nghiệm</h3>
+        <button class="ws-modal-close-btn" data-close-modal="modalInstrumentForm">&times;</button>
+      </div>
+      <form id="formInstrument" class="ws-modal-form">
+        <input type="hidden" id="instFormId">
+        
+        <div class="form-group">
+          <label for="instFormName">Tên Thiết Bị / Hệ Thống <span class="required">*</span></label>
+          <input type="text" id="instFormName" class="form-control" placeholder="ví dụ: DLXNY-ST02 Solar Power Teaching Experiment Platform" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="instFormCode">Mã Thiết Bị (Code) <span class="required">*</span></label>
+            <input type="text" id="instFormCode" class="form-control" placeholder="ví dụ: 100RE-DLXNY-ST02" required>
+          </div>
+          <div class="form-group flex-1">
+            <label for="instFormModel">Model / Phiên Bản</label>
+            <input type="text" id="instFormModel" class="form-control" placeholder="ví dụ: DLXNY-ST02 Biaxial Tracking System">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="instFormManufacturer">Hãng Sản Xuất / Nguồn Gốc</label>
+            <input type="text" id="instFormManufacturer" class="form-control" placeholder="ví dụ: Shandong Dolang Technology Equipment Co., Ltd">
+          </div>
+          <div class="form-group flex-1">
+            <label for="instFormSerial">Số Serial</label>
+            <input type="text" id="instFormSerial" class="form-control" placeholder="ví dụ: DOLANG-ST02-VN-2026">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="instFormCategory">Phân Loại Thiết Bị <span class="required">*</span></label>
+            <select id="instFormCategory" class="form-control" required>
+              <option value="solar_pv">☀️ Solar PV &amp; Inverters</option>
+              <option value="training_platform">🔬 Training &amp; Teaching Platforms</option>
+              <option value="testbed">🔋 Battery &amp; Testbeds</option>
+              <option value="simulator">💻 HIL &amp; Real-Time Simulators</option>
+              <option value="measurement">📊 Precision Measurement &amp; Analyzers</option>
+              <option value="power_source">⚡ Power Sources &amp; Electronic Loads</option>
+              <option value="software">📁 Simulation Licenses &amp; DAQ</option>
+            </select>
+          </div>
+          <div class="form-group flex-1">
+            <label for="instFormTeam">Nhóm Nghiên Cứu Phụ Trách</label>
+            <select id="instFormTeam" class="form-control">
+              <option value="team-pv">☀️ PV Team</option>
+              <option value="team-wind">💨 Wind Team</option>
+              <option value="team-dr_uc">⚡ Unit Commitment &amp; DR (UCDR)</option>
+              <option value="team-smartgrid">🌐 Smart Grid &amp; Microgrid</option>
+              <option value="team-ev">🚗 Electric Vehicle</option>
+              <option value="team-hydrogen">💧 Green Hydrogen</option>
+              <option value="team-bess">🔋 BESS Storage</option>
+              <option value="team-ai">🤖 AI Team</option>
+              <option value="all">🏢 Toàn Phòng Lab (General)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="instFormLocation">Vị Trí Lắp Đặt <span class="required">*</span></label>
+            <input type="text" id="instFormLocation" class="form-control" placeholder="ví dụ: Lab C7-503 / D9-300, HUST" required>
+          </div>
+          <div class="form-group flex-1">
+            <label for="instFormStatus">Trạng Thái Khả Dụng <span class="required">*</span></label>
+            <select id="instFormStatus" class="form-control" required>
+              <option value="available" selected>🟢 Sẵn sàng (Available)</option>
+              <option value="in_use">🔴 Đang thực nghiệm (In Use)</option>
+              <option value="maintenance">🟡 Bảo trì / Hiệu chuẩn (Maintenance)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="instFormSpecs">Thông Số Kỹ Thuật Chi Tiết (Specifications)</label>
+          <textarea id="instFormSpecs" class="form-control" rows="3" placeholder="Nhập thông số công suất, điện áp, góc xoay bám mặt trời, độ chính xác cảm biến, giao tiếp SCADA..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="instFormDocUrl">Link Tài Liệu / Datasheet / Hãng Sản Xuất</label>
+          <input type="url" id="instFormDocUrl" class="form-control" placeholder="https://www.dolangeducation.com/renewable-energy-training-equipment/dlxny-st02-solar-power-teaching-experiment-platform.html">
+        </div>
+
+        <div class="ws-modal-footer">
+          <button type="button" class="btn-ws-ghost" data-close-modal="modalInstrumentForm">Hủy Bỏ</button>
+          <button type="submit" class="btn-ws-primary" id="btnSubmitInstrument">
+            <i class="fa-solid fa-floppy-disk"></i> Lưu Thiết Bị Vào Database
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- SCINOTE SUPERVISOR ELECTRONIC SIGN-OFF MODAL -->
   <div class="ws-modal-backdrop" id="modalSciNoteSignoff">
     <div class="ws-modal-content" style="max-width: 580px; border-radius: 12px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);">
       <div style="background: #1e3a4a; color: #ffffff; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center;">

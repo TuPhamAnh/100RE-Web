@@ -324,10 +324,102 @@ export const SEED_DATASETS = [
 ];
 
 export const SEED_INSTRUMENTS = [
-  { id: 'inst-01', name: 'Chroma 17020 Regenerative Battery Pack Test System', model: 'Chroma 17020 (60V/300A/10kW)', serial_number: 'CHR-2024-VN-089', team_id: 'team-bess', location: 'Lab C7-201 Hardware Bench 1', status: 'in_use', specs: 'Multi-channel energy regenerative test system, 1ms sampling, simulated driving profiles.', created_at: 1704067200 },
-  { id: 'inst-02', name: 'OPAL-RT OP5707 Real-Time Digital Simulator', model: 'OP5707 FPGA Virtex-7', serial_number: 'OPAL-5707-HUST-01', team_id: 'team-smartgrid', location: 'Lab C7-204 HIL Rack 2', status: 'available', specs: 'Real-time eMEGAsim & RT-LAB, 32 analog out, 64 digital I/O, sub-10us timestep.', created_at: 1704067200 },
-  { id: 'inst-03', name: 'Kipp & Zonen CMP11 Pyranometer & Total Sky Imager', model: 'CMP11 Class A + TSI-440', serial_number: 'KZ-CMP11-9921', team_id: 'team-pv', location: 'C7 Building Rooftop Mast A', status: 'in_use', specs: 'Secondary standard ISO 9060 pyranometer with automated hemispherical fish-eye cloud camera.', created_at: 1704067200 },
-  { id: 'inst-04', name: 'Yokogawa WT5000 Precision Power Analyzer', model: 'WT5000 7-Channel Input', serial_number: 'YOKO-WT-44120', team_id: 'team-smartgrid', location: 'Lab C7-202 Grid Bench', status: 'available', specs: '0.03% power measurement accuracy, 10MS/s 18-bit ADC, harmonic analysis up to 500th order.', created_at: 1704067200 }
+  {
+    id: 'inst-rooftop-pv-01',
+    code: '100RE-PV-ROOFTOP',
+    name: 'HUST D9 Rooftop Solar PV & Inverter SCADA System',
+    model: 'Growatt 3600MTL-S Inverter & 3.6kWp Monocrystalline Array',
+    manufacturer: 'Growatt / HUST 100RE Lab',
+    serial_number: 'HUST-PV-D9-2024-001',
+    category: 'solar_pv',
+    team_id: 'team-pv',
+    location: 'Building D9 Rooftop & Lab D9-300, HUST',
+    status: 'in_use',
+    specs: '3.6 kWp Monocrystalline PV Rooftop Array, Multi-MPPT Grid-Tied Smart Inverter (Growatt 3600MTL-S), Automated Relay Matrix for Dynamic Array Reconfiguration under Partial Shading, Modbus RS-485/Ethernet DAQ Telemetry.',
+    documentation_url: 'https://www.100relab.com/lab-equipment.html',
+    created_at: 1704067200,
+    updated_at: 1704067200
+  },
+  {
+    id: 'inst-dlxny-st02',
+    code: '100RE-DLXNY-ST02',
+    name: 'DLXNY-ST02 Solar Power Teaching Experiment Platform',
+    model: 'DLXNY-ST02 Biaxial Automatic Tracking & Inverter System',
+    manufacturer: 'Shandong Dolang Technology Equipment Co., Ltd',
+    serial_number: 'DOLANG-ST02-VN-2026',
+    category: 'training_platform',
+    team_id: 'team-pv',
+    location: 'Lab C7-503 / D9-300, HUST',
+    status: 'available',
+    specs: '4x Industrial Solar Modules (Voc 21.5V, Isc 0.72A configurable series/parallel), Biaxial automatic tracking system (360° horizontal, 180° elevation, 0.5° precision, light + time dual tracking), Solar MPPT Controller & Off-Grid Inverter, Illuminometer (200Lx-200KLx resolution 0.1Lx), Resistive/Inductive load regulation module, PC-based SCADA acquisition.',
+    documentation_url: 'https://www.dolangeducation.com/renewable-energy-training-equipment/dlxny-st02-solar-power-teaching-experiment-platform.html',
+    created_at: 1704067200,
+    updated_at: 1704067200
+  },
+  {
+    id: 'inst-01',
+    code: '100RE-CHROMA-17020',
+    name: 'Chroma 17020 Regenerative Battery Pack Test System',
+    model: 'Chroma 17020 (60V/300A/10kW)',
+    manufacturer: 'Chroma ATE Inc.',
+    serial_number: 'CHR-2024-VN-089',
+    category: 'testbed',
+    team_id: 'team-bess',
+    location: 'Lab C7-201 Hardware Bench 1',
+    status: 'in_use',
+    specs: 'Multi-channel energy regenerative test system, 1ms sampling, simulated driving profiles & PJM RegD tracking.',
+    documentation_url: '',
+    created_at: 1704067200,
+    updated_at: 1704067200
+  },
+  {
+    id: 'inst-02',
+    code: '100RE-OPAL-5707',
+    name: 'OPAL-RT OP5707 Real-Time Digital Simulator',
+    model: 'OP5707 FPGA Virtex-7',
+    manufacturer: 'OPAL-RT Technologies',
+    serial_number: 'OPAL-5707-HUST-01',
+    category: 'simulator',
+    team_id: 'team-smartgrid',
+    location: 'Lab C7-204 HIL Rack 2',
+    status: 'available',
+    specs: 'Real-time eMEGAsim & RT-LAB, 32 analog out, 64 digital I/O, sub-10us timestep.',
+    documentation_url: '',
+    created_at: 1704067200,
+    updated_at: 1704067200
+  },
+  {
+    id: 'inst-03',
+    code: '100RE-KZ-CMP11',
+    name: 'Kipp & Zonen CMP11 Pyranometer & Total Sky Imager',
+    model: 'CMP11 Class A + TSI-440',
+    manufacturer: 'OTT HydroMet / Kipp & Zonen',
+    serial_number: 'KZ-CMP11-9921',
+    category: 'measurement',
+    team_id: 'team-pv',
+    location: 'C7 Building Rooftop Mast A',
+    status: 'in_use',
+    specs: 'Secondary standard ISO 9060 pyranometer with automated hemispherical fish-eye cloud camera.',
+    documentation_url: '',
+    created_at: 1704067200,
+    updated_at: 1704067200
+  },
+  {
+    id: 'inst-04',
+    code: '100RE-YOKO-WT5000',
+    name: 'Yokogawa WT5000 Precision Power Analyzer',
+    model: 'WT5000 7-Channel Input',
+    manufacturer: 'Yokogawa Electric Corp.',
+    serial_number: 'YOKO-WT-44120',
+    category: 'measurement',
+    team_id: 'team-smartgrid',
+    location: 'Lab C7-202 Grid Bench',
+    status: 'available',
+    specs: '0.03% power measurement accuracy, 10MS/s 18-bit ADC, harmonic analysis up to 500th order.',
+    documentation_url: '',
+    created_at: 1704067200,
+    updated_at: 1704067200
+  }
 ];
 
 export const SEED_PROTOCOLS = [

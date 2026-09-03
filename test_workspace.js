@@ -405,6 +405,97 @@ async function runTests() {
     }
   });
 
+  // 22. Lab Inventory: GET /api/instruments returns Rooftop Solar & DLXNY-ST02
+  await test('Lab Inventory: GET /api/instruments returns primary solar testbeds', async () => {
+    const req = makeReq('/api/instruments', 'GET', null, { 'X-Dev-User-Id': 'usr-res-01' });
+    const res = await worker.fetch(req, mockEnv);
+    const data = await res.json();
+
+    if (!data.instruments || data.instruments.length === 0) {
+      throw new Error(`Expected instruments list, got ${JSON.stringify(data)}`);
+    }
+
+    const rooftop = data.instruments.find(i => i.id === 'inst-rooftop-pv-01' || i.name.includes('Rooftop Solar'));
+    const dlxny = data.instruments.find(i => i.id === 'inst-dlxny-st02' || i.name.includes('DLXNY-ST02'));
+
+    if (!rooftop) throw new Error('Expected Rooftop Solar PV & Inverter SCADA in instruments');
+    if (!dlxny) throw new Error('Expected DLXNY-ST02 Solar Power Teaching Experiment Platform in instruments');
+  });
+
+  // 23. Lab Inventory: POST /api/instruments creates new equipment in Database
+  await test('Lab Inventory: POST /api/instruments creates and persists new equipment', async () => {
+    const newInstData = {
+      id: 'inst-test-01',
+      code: '100RE-TEST-EQ',
+      name: 'Programmable AC/DC Microgrid Grid Simulator',
+      model: 'Chroma 61815 15kVA Grid Simulator',
+      manufacturer: 'Chroma ATE',
+      serial_number: 'CHR-61815-VN-99',
+      category: 'simulator',
+      team_id: 'team-smartgrid',
+      location: 'Lab C7-503',
+      status: 'available',
+      specs: '15kVA regenerative grid simulator, 0-350Vac, DC to 2.4kHz, anti-islanding test mode.',
+      documentation_url: 'https://www.chromaate.com'
+    };
+
+    const req = makeReq('/api/instruments', 'POST', newInstData, { 'X-Dev-User-Id': 'usr-ldr-01' });
+    const res = await worker.fetch(req, mockEnv);
+    const data = await res.json();
+
+    if (!data.success || !data.instrument || data.instrument.code !== '100RE-TEST-EQ') {
+      throw new Error(`Failed to create instrument: ${JSON.stringify(data)}`);
+    }
+
+    // Verify GET reflects the new instrument
+    const getReq = makeReq('/api/instruments/inst-test-01', 'GET', null, { 'X-Dev-User-Id': 'usr-res-01' });
+    const getRes = await worker.fetch(getReq, mockEnv);
+    const getData = await getRes.json();
+    if (!getData.instrument || getData.instrument.name !== newInstData.name) {
+      throw new Error(`Expected to retrieve created instrument, got ${JSON.stringify(getData)}`);
+    }
+  });
+
+  // 24. Lab Inventory: PATCH updates specs & toggles status
+  await test('Lab Inventory: PATCH updates equipment specs and status', async () => {
+    // 1. Update specs
+    const patchReq = makeReq('/api/instruments/inst-test-01', 'PATCH', {
+      specs: 'Updated specs: 15kVA 4-quadrant regenerative operation certified.',
+      location: 'Lab D9-300'
+    }, { 'X-Dev-User-Id': 'usr-ldr-01' });
+    const patchRes = await worker.fetch(patchReq, mockEnv);
+    const patchData = await patchRes.json();
+    if (!patchData.success) throw new Error(`Patch failed: ${JSON.stringify(patchData)}`);
+
+    // 2. Toggle status to in_use
+    const statusReq = makeReq('/api/instruments/inst-test-01/status', 'PATCH', {
+      status: 'in_use'
+    }, { 'X-Dev-User-Id': 'usr-res-01' });
+    const statusRes = await worker.fetch(statusReq, mockEnv);
+    const statusData = await statusRes.json();
+    if (!statusData.success || statusData.status !== 'in_use') {
+      throw new Error(`Status toggle failed: ${JSON.stringify(statusData)}`);
+    }
+  });
+
+  // 25. Lab Inventory: DELETE /api/instruments/:id permanently removes equipment
+  await test('Lab Inventory: DELETE /api/instruments/:id deletes equipment from Database', async () => {
+    const delReq = makeReq('/api/instruments/inst-test-01', 'DELETE', null, { 'X-Dev-User-Id': 'usr-ldr-01' });
+    const delRes = await worker.fetch(delReq, mockEnv);
+    const delData = await delRes.json();
+
+    if (!delData.success || delData.deleted_id !== 'inst-test-01') {
+      throw new Error(`Delete failed: ${JSON.stringify(delData)}`);
+    }
+
+    // Verify instrument is deleted from GET
+    const getReq = makeReq('/api/instruments/inst-test-01', 'GET', null, { 'X-Dev-User-Id': 'usr-res-01' });
+    const getRes = await worker.fetch(getReq, mockEnv);
+    if (getRes.status !== 404) {
+      throw new Error(`Expected 404 for deleted instrument, got status ${getRes.status}`);
+    }
+  });
+
   console.log(`\n==============================================`);
   console.log(`Test Summary: ${passed} Passed, ${failed} Failed`);
   console.log(`==============================================\n`);

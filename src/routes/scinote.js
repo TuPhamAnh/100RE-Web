@@ -99,23 +99,167 @@ export async function handleSciNoteRoutes(request, env, db, user, path, corsHead
     return jsonResponse({ experiment: exp, project, team, tasks, workflowNodes }, 200, corsHeaders);
   }
 
-  // 3. LAB INSTRUMENTS & INVENTORY
-  if (path === '/api/instruments') {
-    if (method === 'GET') {
-      const instruments = await db.all('SELECT * FROM instruments ORDER BY category ASC, name ASC');
+  // 3. LAB INSTRUMENTS & INVENTORY (Full CRUD with D1 & Cloudflare KV Persistence)
+  if (path === '/api/instruments' || path.startsWith('/api/instruments/')) {
+    const instId = path.split('/')[3];
+
+    // GET /api/instruments
+    if (method === 'GET' && !instId) {
+      let instruments = await db.all('SELECT * FROM instruments ORDER BY category ASC, name ASC');
+      if (env && env.MEMBERS_KV) {
+        try {
+          const kvRaw = await env.MEMBERS_KV.get('instruments_dataset');
+          if (kvRaw) {
+            const parsed = JSON.parse(kvRaw);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              instruments = parsed;
+            }
+          }
+        } catch(e) {}
+      }
       return jsonResponse({ instruments }, 200, corsHeaders);
     }
-  }
 
-  if (path.startsWith('/api/instruments/') && path.endsWith('/status') && method === 'PATCH') {
-    const instId = path.split('/')[3];
-    const body = await request.json();
-    const { status } = body;
-    const now = Math.floor(Date.now() / 1000);
-    const userId = status === 'in_use' ? user.id : null;
+    // GET /api/instruments/:id
+    if (method === 'GET' && instId && !path.endsWith('/status')) {
+      let inst = await db.first('SELECT * FROM instruments WHERE id = ?', [instId]);
+      if (!inst && env && env.MEMBERS_KV) {
+        try {
+          const kvRaw = await env.MEMBERS_KV.get('instruments_dataset');
+          if (kvRaw) {
+            const list = JSON.parse(kvRaw);
+            inst = list.find(i => i.id === instId);
+          }
+        } catch(e) {}
+      }
+      if (!inst) return jsonResponse({ error: 'Instrument not found' }, 404, corsHeaders);
+      return jsonResponse({ instrument: inst }, 200, corsHeaders);
+    }
 
-    await db.run('UPDATE instruments SET status = ?, current_user_id = ?, updated_at = ? WHERE id = ?', [status, userId, now, instId]);
-    return jsonResponse({ success: true }, 200, corsHeaders);
+    // POST /api/instruments (Create new equipment)
+    if (method === 'POST' && !instId) {
+      const body = await request.json();
+      const now = Math.floor(Date.now() / 1000);
+      const newId = body.id || `inst-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`;
+      const newInst = {
+        id: newId,
+        code: body.code || `100RE-EQ-${Date.now().toString().slice(-4)}`,
+        name: body.name || 'New Lab Equipment',
+        model: body.model || '',
+        manufacturer: body.manufacturer || '',
+        serial_number: body.serial_number || '',
+        category: body.category || 'testbed',
+        team_id: body.team_id || 'team-pv',
+        location: body.location || 'Lab D9 / C7, HUST',
+        status: body.status || 'available',
+        specs: body.specs || '',
+        documentation_url: body.documentation_url || '',
+        current_user_id: body.current_user_id || null,
+        created_at: now,
+        updated_at: now
+      };
+
+      try {
+        await db.run(
+          `INSERT INTO instruments (id, name, code, model, manufacturer, serial_number, category, team_id, location, status, specs, documentation_url, current_user_id, created_at, updated_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [newInst.id, newInst.name, newInst.code, newInst.model, newInst.manufacturer, newInst.serial_number, newInst.category, newInst.team_id, newInst.location, newInst.status, newInst.specs, newInst.documentation_url, newInst.current_user_id, newInst.created_at, newInst.updated_at]
+        );
+      } catch(e) {
+        await db.run('INSERT INTO instruments (id, name, code, category, location, status, specs, current_user_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+          [newInst.id, newInst.name, newInst.code, newInst.category, newInst.location, newInst.status, newInst.specs, newInst.current_user_id, newInst.created_at, newInst.updated_at]
+        ).catch(() => {});
+      }
+
+      // KV sync
+      if (env && env.MEMBERS_KV) {
+        try {
+          let list = [];
+          const kvRaw = await env.MEMBERS_KV.get('instruments_dataset');
+          if (kvRaw) list = JSON.parse(kvRaw);
+          else list = await db.all('SELECT * FROM instruments');
+          list = [newInst, ...list.filter(i => i.id !== newInst.id)];
+          await env.MEMBERS_KV.put('instruments_dataset', JSON.stringify(list));
+        } catch(e) {}
+      }
+
+      return jsonResponse({ success: true, instrument: newInst }, 201, corsHeaders);
+    }
+
+    // PATCH /api/instruments/:id/status
+    if (path.endsWith('/status') && method === 'PATCH') {
+      const body = await request.json();
+      const { status } = body;
+      const now = Math.floor(Date.now() / 1000);
+      const userId = status === 'in_use' ? (user ? user.id : 'usr-res-01') : null;
+
+      await db.run('UPDATE instruments SET status = ?, current_user_id = ?, updated_at = ? WHERE id = ?', [status, userId, now, instId]);
+
+      if (env && env.MEMBERS_KV) {
+        try {
+          let list = [];
+          const kvRaw = await env.MEMBERS_KV.get('instruments_dataset');
+          if (kvRaw) list = JSON.parse(kvRaw);
+          else list = await db.all('SELECT * FROM instruments');
+          const item = list.find(i => i.id === instId);
+          if (item) {
+            item.status = status;
+            item.current_user_id = userId;
+            item.updated_at = now;
+            await env.MEMBERS_KV.put('instruments_dataset', JSON.stringify(list));
+          }
+        } catch(e) {}
+      }
+
+      return jsonResponse({ success: true, status, current_user_id: userId }, 200, corsHeaders);
+    }
+
+    // PUT or PATCH /api/instruments/:id (Update equipment)
+    if ((method === 'PUT' || method === 'PATCH') && instId && !path.endsWith('/status')) {
+      const body = await request.json();
+      const now = Math.floor(Date.now() / 1000);
+
+      await db.run(
+        `UPDATE instruments SET name = ?, code = ?, model = ?, manufacturer = ?, serial_number = ?, category = ?, team_id = ?, location = ?, status = ?, specs = ?, documentation_url = ?, updated_at = ? WHERE id = ?`,
+        [body.name, body.code, body.model, body.manufacturer, body.serial_number, body.category, body.team_id, body.location, body.status, body.specs, body.documentation_url, now, instId]
+      ).catch(() => {});
+
+      let updated = null;
+      if (env && env.MEMBERS_KV) {
+        try {
+          let list = [];
+          const kvRaw = await env.MEMBERS_KV.get('instruments_dataset');
+          if (kvRaw) list = JSON.parse(kvRaw);
+          else list = await db.all('SELECT * FROM instruments');
+          const idx = list.findIndex(i => i.id === instId);
+          if (idx !== -1) {
+            list[idx] = { ...list[idx], ...body, updated_at: now };
+            updated = list[idx];
+            await env.MEMBERS_KV.put('instruments_dataset', JSON.stringify(list));
+          }
+        } catch(e) {}
+      }
+
+      return jsonResponse({ success: true, instrument: updated }, 200, corsHeaders);
+    }
+
+    // DELETE /api/instruments/:id (Delete equipment)
+    if (method === 'DELETE' && instId) {
+      await db.run('DELETE FROM instruments WHERE id = ?', [instId]).catch(() => {});
+
+      if (env && env.MEMBERS_KV) {
+        try {
+          let list = [];
+          const kvRaw = await env.MEMBERS_KV.get('instruments_dataset');
+          if (kvRaw) list = JSON.parse(kvRaw);
+          else list = await db.all('SELECT * FROM instruments');
+          list = list.filter(i => i.id !== instId);
+          await env.MEMBERS_KV.put('instruments_dataset', JSON.stringify(list));
+        } catch(e) {}
+      }
+
+      return jsonResponse({ success: true, deleted_id: instId }, 200, corsHeaders);
+    }
   }
 
   // 4. PROTOCOLS (SOPs)

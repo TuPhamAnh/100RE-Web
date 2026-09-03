@@ -324,13 +324,58 @@ function initDevStore() {
         return { changes: 1 };
       }
 
+      if (q.startsWith('INSERT INTO INSTRUMENTS') || q.startsWith('INSERT OR IGNORE INTO INSTRUMENTS')) {
+        let newInst;
+        if (params.length >= 10) {
+          newInst = {
+            id: params[0], name: params[1], code: params[2],
+            model: params[3] || '', manufacturer: params[4] || '', serial_number: params[5] || '',
+            category: params[6] || params[3], team_id: params[7] || 'team-pv', location: params[8] || params[4],
+            status: params[9] || params[5], specs: params[10] || params[6],
+            documentation_url: params[11] || '', current_user_id: params[12] || params[7] || null,
+            created_at: params[13] || params[8] || Math.floor(Date.now()/1000),
+            updated_at: params[14] || params[9] || Math.floor(Date.now()/1000)
+          };
+        } else {
+          newInst = {
+            id: params[0], name: params[1], code: params[2], category: params[3],
+            location: params[4], status: params[5], specs: params[6],
+            current_user_id: params[7] || null, created_at: params[8] || Math.floor(Date.now()/1000),
+            updated_at: params[9] || Math.floor(Date.now()/1000)
+          };
+        }
+        this.instruments.unshift(newInst);
+        return { changes: 1 };
+      }
+
+      if (q.startsWith('DELETE FROM INSTRUMENTS')) {
+        const id = params[0];
+        this.instruments = this.instruments.filter(i => i.id !== id);
+        return { changes: 1 };
+      }
+
       if (q.startsWith('UPDATE INSTRUMENTS')) {
         const id = params[params.length - 1];
         const inst = this.instruments.find(x => x.id === id);
         if (inst) {
-          inst.status = params[0];
-          inst.current_user_id = params[1];
-          inst.updated_at = params[2];
+          if (q.includes('SET STATUS = ?') && params.length <= 4) {
+            inst.status = params[0];
+            inst.current_user_id = params[1];
+            inst.updated_at = params[2];
+          } else {
+            if (params[0] !== undefined) inst.name = params[0] || inst.name;
+            if (params[1] !== undefined) inst.code = params[1] || inst.code;
+            if (params[2] !== undefined) inst.model = params[2] || inst.model;
+            if (params[3] !== undefined) inst.manufacturer = params[3] || inst.manufacturer;
+            if (params[4] !== undefined) inst.serial_number = params[4] || inst.serial_number;
+            if (params[5] !== undefined) inst.category = params[5] || inst.category;
+            if (params[6] !== undefined) inst.team_id = params[6] || inst.team_id;
+            if (params[7] !== undefined) inst.location = params[7] || inst.location;
+            if (params[8] !== undefined) inst.status = params[8] || inst.status;
+            if (params[9] !== undefined) inst.specs = params[9] || inst.specs;
+            if (params[10] !== undefined) inst.documentation_url = params[10] || inst.documentation_url;
+            inst.updated_at = params[11] || Math.floor(Date.now()/1000);
+          }
         }
         return { changes: 1 };
       }
