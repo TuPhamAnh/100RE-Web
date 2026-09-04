@@ -557,11 +557,7 @@ export const Auth = {
 
     const navItemTeams = document.getElementById('navItemTeams');
     if (navItemTeams) {
-      if (this.isSupervisor()) {
-        navItemTeams.style.display = 'block';
-      } else {
-        navItemTeams.style.display = 'none';
-      }
+      navItemTeams.style.display = 'block';
     }
 
         // 5. Show or hide Dev Role Switcher bar (ONLY for Supervisor and Admin)

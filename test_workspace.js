@@ -89,7 +89,7 @@ async function runTests() {
     const req = makeReq('/api/workspace/dashboard', 'GET', null, { 'X-Dev-User-Id': 'usr-sup-01' });
     const res = await worker.fetch(req, mockEnv);
     const data = await res.json();
-    if (!data.stats || data.stats.teamCount !== 9) {
+    if (!data.stats || data.stats.teamCount !== 8) {
       throw new Error(`Invalid dashboard stats: ${JSON.stringify(data.stats)}`);
     }
   });
@@ -493,6 +493,34 @@ async function runTests() {
     const getRes = await worker.fetch(getReq, mockEnv);
     if (getRes.status !== 404) {
       throw new Error(`Expected 404 for deleted instrument, got status ${getRes.status}`);
+    }
+  });
+
+  // 26. Research Teams: GET /api/teams & /api/teams/:id for canonical 8 teams
+  await test('Research Teams: GET /api/teams returns exact 8 teams & /api/teams/:slug returns team space', async () => {
+    // 1. All teams
+    const req = makeReq('/api/teams', 'GET', null, { 'X-Dev-User-Id': 'usr-res-01' });
+    const res = await worker.fetch(req, mockEnv);
+    const data = await res.json();
+
+    if (!data.success || !Array.isArray(data.teams) || data.teams.length !== 8) {
+      throw new Error(`Expected exactly 8 research teams, got ${data.teams ? data.teams.length : 0}`);
+    }
+
+    // 2. Team detail by slug (smartgrid)
+    const sgReq = makeReq('/api/teams/smartgrid', 'GET', null, { 'X-Dev-User-Id': 'usr-res-01' });
+    const sgRes = await worker.fetch(sgReq, mockEnv);
+    const sgData = await sgRes.json();
+    if (!sgData.success || !sgData.team || sgData.team.slug !== 'smartgrid') {
+      throw new Error(`Expected smartgrid team space, got ${JSON.stringify(sgData)}`);
+    }
+
+    // 3. Team detail for UCDR
+    const ucdrReq = makeReq('/api/teams/ucdr', 'GET', null, { 'X-Dev-User-Id': 'usr-res-01' });
+    const ucdrRes = await worker.fetch(ucdrReq, mockEnv);
+    const ucdrData = await ucdrRes.json();
+    if (!ucdrData.success || !ucdrData.team || ucdrData.team.slug !== 'ucdr') {
+      throw new Error(`Expected ucdr team space, got ${JSON.stringify(ucdrData)}`);
     }
   });
 

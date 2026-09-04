@@ -31,9 +31,8 @@ export const SEED_TEAMS = [
   { id: 'team-smartgrid', name: 'Smart Grid', slug: 'smartgrid', description: 'Microgrid energy management, real-time SCADA, active distribution networks and power quality control.', status: 'active', created_at: 1704067200, updated_at: 1704067200 },
   { id: 'team-ev', name: 'Electric Vehicle (EV)', slug: 'ev', description: 'V2G (Vehicle-to-Grid) bi-directional charging, smart charging scheduling, and battery health degradation.', status: 'active', created_at: 1704067200, updated_at: 1704067200 },
   { id: 'team-ai', name: 'Artificial Intelligence (AI)', slug: 'ai', description: 'Deep learning, neural networks, physics-informed AI, and reinforcement learning for energy systems.', status: 'active', created_at: 1704067200, updated_at: 1704067200 },
-  { id: 'team-ucdr', name: 'Unit Commitment', slug: 'uc', description: 'Security-constrained unit commitment, mixed-integer linear programming, power market clearing and dispatch.', status: 'active', created_at: 1704067200, updated_at: 1704067200 },
   { id: 'team-bess', name: 'Battery Energy Storage (BESS)', slug: 'bess', description: 'Li-ion battery SoC/SoH estimation, battery energy management systems (BEMS), degradation and peak shaving.', status: 'active', created_at: 1704067200, updated_at: 1704067200 },
-  { id: 'team-ucdr', name: 'Demand Response', slug: 'dr', description: 'Incentive-based demand response, commercial/industrial flexibility aggregation, and transactive energy.', status: 'active', created_at: 1704067200, updated_at: 1704067200 }
+  { id: 'team-ucdr', name: 'Unit Commitment & Demand Response (UCDR)', slug: 'ucdr', description: 'Security-constrained unit commitment (SCUC), mixed-integer linear programming, demand response flexibility and market dispatch.', status: 'active', created_at: 1704067200, updated_at: 1704067200 }
 ];
 
 export const SEED_TEAM_MEMBERS = [

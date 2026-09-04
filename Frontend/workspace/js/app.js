@@ -103,11 +103,6 @@ function handleRouting() {
       renderSignoffs(container);
       break;
     case 'teams':
-      if (!Auth.isSupervisor()) {
-        showToast(i18n.getLanguage() === 'vi' ? 'Chỉ Supervisor và Admin mới có quyền xem danh sách tất cả các nhóm.' : 'Only Supervisor and Admin can view all research teams.', true);
-        window.location.hash = '#tasks';
-        return;
-      }
       renderTeams(container, paramId);
       break;
     case 'projects':

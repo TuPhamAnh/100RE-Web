@@ -7,6 +7,18 @@ import { API } from '../api.js';
 import { Auth } from '../auth.js';
 import { renderPriorityBadge, renderStatusBadge, formatDate, escapeHtml, renderEmptyState, showToast } from '../components.js';
 
+export const FA_ICONS = {
+  'pv': '<i class="fa-solid fa-solar-panel" style="color:#f59e0b;"></i>',
+  'wind': '<i class="fa-solid fa-wind" style="color:#06b6d4;"></i>',
+  'hydrogen': '<i class="fa-solid fa-droplet" style="color:#3b82f6;"></i>',
+  'smartgrid': '<i class="fa-solid fa-network-wired" style="color:#0284c7;"></i>',
+  'ev': '<i class="fa-solid fa-charging-station" style="color:#ec4899;"></i>',
+  'ai': '<i class="fa-solid fa-brain" style="color:#8b5cf6;"></i>',
+  'bess': '<i class="fa-solid fa-car-battery" style="color:#10b981;"></i>',
+  'ucdr': '<i class="fa-solid fa-chart-line" style="color:#6366f1;"></i>'
+};
+
+
 export async function renderTeams(container, teamIdOrSlug = null) {
   if (teamIdOrSlug) {
     return renderTeamDetail(container, teamIdOrSlug);
@@ -101,28 +113,19 @@ export async function renderTeams(container, teamIdOrSlug = null) {
       }
 
       grid.innerHTML = list.map(t => {
-        const FA_ICONS = {
-          'pv': '<i class="fa-solid fa-solar-panel" style="color:#f59e0b;"></i>',
-          'wind': '<i class="fa-solid fa-wind" style="color:#06b6d4;"></i>',
-          'hydrogen': '<i class="fa-solid fa-droplet" style="color:#3b82f6;"></i>',
-          'smartgrid': '<i class="fa-solid fa-network-wired" style="color:#0284c7;"></i>',
-          'ev': '<i class="fa-solid fa-charging-station" style="color:#ec4899;"></i>',
-          'ai': '<i class="fa-solid fa-brain" style="color:#8b5cf6;"></i>',
-          'bess': '<i class="fa-solid fa-car-battery" style="color:#10b981;"></i>',
-          'ucdr': '<i class="fa-solid fa-chart-line" style="color:#6366f1;"></i>'
-        };
-        const iconHtml = FA_ICONS[cleanSlug] || '<i class="fa-solid fa-layer-group" style="color:#16a34a;"></i>';
+        const tSlug = (t.slug || t.id.replace(/^team-/, '')).toLowerCase();
+        const iconHtml = FA_ICONS[tSlug] || '<i class="fa-solid fa-layer-group" style="color:#16a34a;"></i>';
         return `
-          <div class="ws-card" style="margin-bottom:0; display:flex; flex-direction:column; justify-content:space-between; border-radius:12px; transition:transform 0.2s, box-shadow 0.2s; border:1px solid var(--ws-border);">
+          <div class="ws-card" style="margin-bottom:0; display:flex; flex-direction:column; justify-content:space-between; border-radius:12px; transition:transform 0.2s, box-shadow 0.2s; border:1px solid var(--ws-border); background:var(--ws-bg-surface);">
             <div style="padding:22px 20px 18px;">
               <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
                 <div style="display:flex; align-items:center; gap:12px;">
                   <div style="width:42px; height:42px; background:var(--ws-primary-light); color:var(--ws-primary); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.3rem; box-shadow:0 2px 6px rgba(22,163,74,0.15);">
-                    ${icon}
+                    ${iconHtml}
                   </div>
                   <div>
                     <h3 style="font-size:1.1rem; font-weight:700; color:var(--ws-dark); margin:0 0 2px;">${escapeHtml(t.name)}</h3>
-                    <span style="font-size:0.75rem; color:var(--ws-text-light); text-transform:uppercase; font-weight:700; letter-spacing:0.04em;">/${escapeHtml(t.slug || t.id.replace('team-', ''))}</span>
+                    <span style="font-size:0.75rem; color:var(--ws-text-light); text-transform:uppercase; font-weight:700; letter-spacing:0.04em;">/${escapeHtml(tSlug)}</span>
                   </div>
                 </div>
                 <span class="ws-badge ws-badge-done"><i class="fa-solid fa-shield"></i> ${isVi ? 'LAB TEAM' : 'MEMBER'}</span>
@@ -132,28 +135,28 @@ export async function renderTeams(container, teamIdOrSlug = null) {
                 ${escapeHtml(t.description || 'Nghiên cứu mô hình và công nghệ chuyên sâu')}
               </p>
 
-              <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:6px; background:#f8fafc; padding:10px 8px; border-radius:8px; text-align:center; font-size:0.75rem; border:1px solid #e2e8f0;">
+              <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:6px; background:var(--ws-bg-subtle); padding:10px 8px; border-radius:8px; text-align:center; font-size:0.75rem; border:1px solid var(--ws-border);">
                 <div>
                   <strong style="display:block; font-size:0.95rem; color:var(--ws-dark);">${t.memberCount || 3}</strong>
                   <span style="color:var(--ws-text-light); font-size:0.7rem;">${isVi ? 'Thành viên' : 'Members'}</span>
                 </div>
                 <div>
-                  <strong style="display:block; font-size:0.95rem; color:var(--ws-dark);">${t.projectCount || 1}</strong>
+                  <strong style="display:block; font-size:0.95rem; color:#2563eb;">${t.projectCount || 1}</strong>
                   <span style="color:var(--ws-text-light); font-size:0.7rem;">${isVi ? 'Đề tài' : 'Projects'}</span>
                 </div>
                 <div>
-                  <strong style="display:block; font-size:0.95rem; color:var(--ws-dark);">${t.openTaskCount || 2}</strong>
+                  <strong style="display:block; font-size:0.95rem; color:#16a34a;">${t.openTaskCount !== undefined ? t.openTaskCount : 2}</strong>
                   <span style="color:var(--ws-text-light); font-size:0.7rem;">${isVi ? 'Nhiệm vụ' : 'Tasks'}</span>
                 </div>
                 <div>
-                  <strong style="display:block; font-size:0.95rem; color:var(--ws-dark);">${t.datasetCount || 1}</strong>
+                  <strong style="display:block; font-size:0.95rem; color:#ca8a04;">${t.datasetCount || 1}</strong>
                   <span style="color:var(--ws-text-light); font-size:0.7rem;">${isVi ? 'Dữ liệu' : 'Data'}</span>
                 </div>
               </div>
             </div>
 
-            <div style="padding:14px 20px; border-top:1px solid var(--ws-border); background:#fafbfc; border-radius:0 0 12px 12px; display:flex; justify-content:space-between; align-items:center;">
-              <a href="#teams/${t.slug || t.id.replace('team-', '')}" class="btn-ws-primary btn-ws-sm" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+            <div style="padding:14px 20px; border-top:1px solid var(--ws-border); background:var(--ws-bg-subtle); border-radius:0 0 12px 12px; display:flex; justify-content:space-between; align-items:center;">
+              <a href="#teams/${tSlug}" class="btn-ws-primary btn-ws-sm" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
                 <span>${isVi ? 'Mở Không Gian Nhóm' : 'Open Team Space'}</span>
                 <i class="fa-solid fa-arrow-right"></i>
               </a>
@@ -503,7 +506,7 @@ async function renderTeamDetail(container, teamIdOrSlug) {
 
   container.innerHTML = `
     <!-- Team Space Top Header -->
-    <div class="ws-page-header" style="background:#ffffff; border:1px solid #e2e8f0; border-radius:14px; padding:24px; margin-bottom:20px; box-shadow:0 4px 12px rgba(15,23,42,0.03);">
+    <div class="ws-page-header" style="background:var(--ws-bg-surface); border:1px solid var(--ws-border); border-radius:14px; padding:24px; margin-bottom:20px; box-shadow:0 4px 12px rgba(15,23,42,0.03);">
       <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px;">
         <div>
           <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
@@ -515,7 +518,7 @@ async function renderTeamDetail(container, teamIdOrSlug) {
           </div>
 
           <div style="display:flex; align-items:center; gap:12px;">
-            <span style="font-size:1.8rem; display:inline-flex; align-items:center; justify-content:center;">${(FA_ICONS && FA_ICONS[cleanSlug]) || '<i class="fa-solid fa-layer-group"></i>'}</span>
+            <span style="font-size:1.8rem; display:inline-flex; align-items:center; justify-content:center;">${FA_ICONS[cleanSlug] || '<i class="fa-solid fa-layer-group"></i>'}</span>
             <h1 style="font-size:1.6rem; font-weight:800; color:var(--ws-dark); margin:0;">${escapeHtml(team.name)}</h1>
           </div>
 
@@ -539,24 +542,24 @@ async function renderTeamDetail(container, teamIdOrSlug) {
       </div>
 
       <!-- Quick KPI Counters -->
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:12px; margin-top:20px; padding-top:18px; border-top:1px solid #f1f5f9;">
-        <div style="background:#f8fafc; padding:10px 14px; border-radius:8px; border:1px solid #e2e8f0;">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:12px; margin-top:20px; padding-top:18px; border-top:1px solid var(--ws-border);">
+        <div style="background:var(--ws-bg-subtle); padding:10px 14px; border-radius:8px; border:1px solid var(--ws-border);">
           <div style="font-size:0.75rem; color:var(--ws-text-light); font-weight:600; text-transform:uppercase;">${isVi ? 'Thành Viên' : 'Members'}</div>
           <div style="font-size:1.3rem; font-weight:800; color:var(--ws-dark); margin-top:2px;">${members.length}</div>
         </div>
-        <div style="background:#f8fafc; padding:10px 14px; border-radius:8px; border:1px solid #e2e8f0;">
+        <div style="background:var(--ws-bg-subtle); padding:10px 14px; border-radius:8px; border:1px solid var(--ws-border);">
           <div style="font-size:0.75rem; color:var(--ws-text-light); font-weight:600; text-transform:uppercase;">${isVi ? 'Đề Tài' : 'Projects'}</div>
           <div style="font-size:1.3rem; font-weight:800; color:#2563eb; margin-top:2px;">${projects.length}</div>
         </div>
-        <div style="background:#f8fafc; padding:10px 14px; border-radius:8px; border:1px solid #e2e8f0;">
+        <div style="background:var(--ws-bg-subtle); padding:10px 14px; border-radius:8px; border:1px solid var(--ws-border);">
           <div style="font-size:0.75rem; color:var(--ws-text-light); font-weight:600; text-transform:uppercase;">${isVi ? 'Nhiệm Vụ' : 'Tasks'}</div>
           <div style="font-size:1.3rem; font-weight:800; color:#16a34a; margin-top:2px;">${tasks.length}</div>
         </div>
-        <div style="background:#f8fafc; padding:10px 14px; border-radius:8px; border:1px solid #e2e8f0;">
+        <div style="background:var(--ws-bg-subtle); padding:10px 14px; border-radius:8px; border:1px solid var(--ws-border);">
           <div style="font-size:0.75rem; color:var(--ws-text-light); font-weight:600; text-transform:uppercase;">${isVi ? 'Dataset' : 'Datasets'}</div>
           <div style="font-size:1.3rem; font-weight:800; color:#ca8a04; margin-top:2px;">${datasets.length}</div>
         </div>
-        <div style="background:#f8fafc; padding:10px 14px; border-radius:8px; border:1px solid #e2e8f0;">
+        <div style="background:var(--ws-bg-subtle); padding:10px 14px; border-radius:8px; border:1px solid var(--ws-border);">
           <div style="font-size:0.75rem; color:var(--ws-text-light); font-weight:600; text-transform:uppercase;">${isVi ? 'Tài Liệu' : 'Documents'}</div>
           <div style="font-size:1.3rem; font-weight:800; color:#7c3aed; margin-top:2px;">${documents.length}</div>
         </div>
@@ -599,7 +602,7 @@ async function renderTeamDetail(container, teamIdOrSlug) {
                   </div>
                 </div>
 
-                <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.75rem; color:var(--ws-text-light); border-top:1px solid #f1f5f9; padding-top:10px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.75rem; color:var(--ws-text-light); border-top:1px solid var(--ws-border); padding-top:10px;">
                   <span><i class="fa-regular fa-calendar" style="margin-right:4px;"></i> ${p.start_date || '2026-02-01'} &rarr; ${p.end_date || '2026-10-30'}</span>
                   <span style="color:#2563eb; font-weight:600;"><i class="fa-brands fa-google-drive"></i> Drive 5TB</span>
                 </div>

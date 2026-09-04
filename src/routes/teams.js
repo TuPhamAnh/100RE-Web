@@ -105,12 +105,14 @@ export async function handleTeams(request, user, db) {
 
   // 3. GET /api/teams/:id (Detail + Tabs)
   if (teamIdOrSlug && method === 'GET') {
-    let lookupIds = [teamIdOrSlug];
-    if (teamIdOrSlug === 'uc' || teamIdOrSlug === 'dr' || teamIdOrSlug === 'ucdr' || teamIdOrSlug === 'dr_uc' || teamIdOrSlug === 'team-uc' || teamIdOrSlug === 'team-dr' || teamIdOrSlug === 'team-ucdr' || teamIdOrSlug === 'team-dr_uc') {
+    let clean = String(teamIdOrSlug || '').replace(/^team-/, '').toLowerCase();
+    let lookupIds = [`team-${clean}`, teamIdOrSlug, clean];
+    if (['uc', 'dr', 'ucdr', 'dr_uc'].includes(clean)) {
       lookupIds = ['team-ucdr', 'team-uc', 'team-dr', 'team-dr_uc'];
+      clean = 'ucdr';
     }
 
-    let team = await db.first('SELECT * FROM teams WHERE id = ? OR slug = ?', [teamIdOrSlug, teamIdOrSlug]);
+    let team = await db.first('SELECT * FROM teams WHERE id = ? OR slug = ? OR id = ? OR slug = ?', [teamIdOrSlug, teamIdOrSlug, `team-${clean}`, clean]);
     if (!team) {
       if (lookupIds.includes('team-ucdr')) {
         team = {
