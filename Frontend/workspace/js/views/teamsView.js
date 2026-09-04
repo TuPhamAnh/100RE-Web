@@ -6,6 +6,7 @@
 import { API } from '../api.js';
 import { Auth } from '../auth.js';
 import { renderPriorityBadge, renderStatusBadge, formatDate, escapeHtml, renderEmptyState, showToast } from '../components.js';
+import { TaskStore } from '../taskStore.js';
 
 export const FA_ICONS = {
   'pv': '<i class="fa-solid fa-solar-panel" style="color:#f59e0b;"></i>',
@@ -104,6 +105,9 @@ export async function renderTeams(container, teamIdOrSlug = null) {
     // Final safety filter: remove any lingering separate team-uc or team-dr
     teams = teams.filter(t => t.id !== 'team-uc' && t.id !== 'team-dr' && t.slug !== 'uc' && t.slug !== 'dr');
 
+    await TaskStore.loadTasks();
+    const taskCounts = TaskStore.getTaskCountsByTeam();
+
     const grid = container.querySelector('#teamsGridContainer');
 
     function displayTeams(list) {
@@ -114,6 +118,8 @@ export async function renderTeams(container, teamIdOrSlug = null) {
 
       grid.innerHTML = list.map(t => {
         const tSlug = (t.slug || t.id.replace(/^team-/, '')).toLowerCase();
+        const canonicalSlug = TaskStore.normalizeTeamSlug(tSlug);
+        const teamTaskStat = taskCounts[canonicalSlug] || { total: 0, open: 0 };
         const iconHtml = FA_ICONS[tSlug] || '<i class="fa-solid fa-layer-group" style="color:#16a34a;"></i>';
         return `
           <div class="ws-card" style="margin-bottom:0; display:flex; flex-direction:column; justify-content:space-between; border-radius:12px; transition:transform 0.2s, box-shadow 0.2s; border:1px solid var(--ws-border); background:var(--ws-bg-surface);">
@@ -145,7 +151,7 @@ export async function renderTeams(container, teamIdOrSlug = null) {
                   <span style="color:var(--ws-text-light); font-size:0.7rem;">${isVi ? 'Đề tài' : 'Projects'}</span>
                 </div>
                 <div>
-                  <strong style="display:block; font-size:0.95rem; color:#16a34a;">${t.openTaskCount !== undefined ? t.openTaskCount : 2}</strong>
+                  <strong style="display:block; font-size:0.95rem; color:#16a34a;" title="${teamTaskStat.open} ${isVi ? 'đang mở' : 'open'} / ${teamTaskStat.total} ${isVi ? 'tổng' : 'total'}">${teamTaskStat.total}</strong>
                   <span style="color:var(--ws-text-light); font-size:0.7rem;">${isVi ? 'Nhiệm vụ' : 'Tasks'}</span>
                 </div>
                 <div>
@@ -470,7 +476,6 @@ async function renderTeamDetail(container, teamIdOrSlug) {
     description: teamMeta.description
   };
   let projects = [...teamMeta.projects];
-  let tasks = [...teamMeta.tasks];
   let datasets = [...teamMeta.datasets];
   let documents = [...teamMeta.documents];
   let members = [...teamMeta.members];
@@ -483,7 +488,6 @@ async function renderTeamDetail(container, teamIdOrSlug) {
     if (res && res.team) {
       team = { ...team, ...res.team };
       if (res.projects && res.projects.length > 0) projects = res.projects;
-      if (res.tasks && res.tasks.length > 0) tasks = res.tasks;
       if (res.datasets && res.datasets.length > 0) datasets = res.datasets;
       if (res.documents && res.documents.length > 0) documents = res.documents;
       if (res.members && res.members.length > 0) members = res.members;
@@ -493,16 +497,9 @@ async function renderTeamDetail(container, teamIdOrSlug) {
     console.warn('Backend API note for team detail:', e);
   }
 
-  // Also merge any local tasks for this team
-  try {
-    const localTasks = JSON.parse(localStorage.getItem('100re_custom_tasks') || '[]');
-    localTasks.forEach(lt => {
-      const ltSlug = (lt.team_id || '').replace(/^team-/, '');
-      if (ltSlug === cleanSlug && !tasks.some(t => t.id === lt.id)) {
-        tasks.unshift(lt);
-      }
-    });
-  } catch(e) {}
+  // Load unified tasks from TaskStore (Single Source of Truth)
+  await TaskStore.loadTasks();
+  let tasks = TaskStore.getTasksForTeam(cleanSlug);
 
   container.innerHTML = `
     <!-- Team Space Top Header Card -->
@@ -626,12 +623,13 @@ async function renderTeamDetail(container, teamIdOrSlug) {
                     <th>${isVi ? 'Người Được Giao' : 'Assignees'}</th>
                     <th>${isVi ? 'Hạn Chót' : 'Due Date'}</th>
                     <th>${isVi ? 'Trạng Thái' : 'Status'}</th>
-                    <th>${isVi ? 'Chi Tiết' : 'Action'}</th>
+                    <th style="text-align:right;">${isVi ? 'Thao Tác' : 'Action'}</th>
                   </tr>
                 </thead>
                 <tbody>
                   ${tasks.map(t => {
                     const assignees = t.assignee_names || (t.assignee ? [t.assignee.display_name || t.assignee.name] : ['Chưa giao']);
+                    const st = (t.status || 'todo').toLowerCase();
                     return `
                       <tr>
                         <td>
@@ -645,11 +643,24 @@ async function renderTeamDetail(container, teamIdOrSlug) {
                           </div>
                         </td>
                         <td><span style="font-family:monospace; font-size:0.8rem;">${t.due_date ? formatDate(t.due_date) : '-'}</span></td>
-                        <td>${renderStatusBadge(t.status)}</td>
                         <td>
-                          <button class="btn-ws-ghost btn-ws-sm" onclick="window.openTaskDetail('${t.id}')" title="Mở sổ tay SciNote">
-                            <i class="fa-solid fa-arrow-up-right-from-square"></i> Open
-                          </button>
+                          <select class="notion-pill-status status-${st}" data-task-id="${t.id}" onchange="window.handleTeamTaskStatusChange(this, '${t.id}')" style="font-size:0.75rem; padding:3px 8px; border-radius:14px; font-weight:600; cursor:pointer;">
+                            <option value="cancelled" ${st === 'cancelled' || st === 'cancel' ? 'selected' : ''}>● Cancel</option>
+                            <option value="in_progress" ${st === 'in_progress' || st === 'dang-thuc-hien' ? 'selected' : ''}>● Đang thực hiện</option>
+                            <option value="todo" ${st === 'todo' || st === 'chua-bat-dau' ? 'selected' : ''}>● Chưa bắt đầu</option>
+                            <option value="review" ${st === 'review' || st === 'cho-duyet' ? 'selected' : ''}>● Chờ duyệt</option>
+                            <option value="done" ${st === 'done' || st === 'hoan-thanh' ? 'selected' : ''}>● Hoàn thành</option>
+                          </select>
+                        </td>
+                        <td style="text-align:right;">
+                          <div style="display:inline-flex; align-items:center; gap:6px;">
+                            <button class="btn-ws-ghost btn-ws-sm" onclick="window.openTaskDetail('${t.id}')" title="Mở sổ tay SciNote">
+                              <i class="fa-solid fa-arrow-up-right-from-square"></i> Open
+                            </button>
+                            <button class="btn-ws-ghost btn-ws-sm" style="color:#ef4444;" onclick="window.deleteTaskFromTeamView('${t.id}', '${escapeHtml((t.title || '').replace(/'/g, "\\'"))}')" title="Xóa nhiệm vụ">
+                              <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     `;
@@ -799,4 +810,34 @@ async function renderTeamDetail(container, teamIdOrSlug) {
       }
     });
   }
+
+  // Window functions for Team View Task Actions
+  window.handleTeamTaskStatusChange = async function(selectEl, taskId) {
+    const newStatus = selectEl.value;
+    await TaskStore.updateTask(taskId, { status: newStatus });
+    showToast(`Đã đổi trạng thái sang: ${newStatus}`);
+  };
+
+  window.deleteTaskFromTeamView = async function(taskId, taskTitle) {
+    const confirmed = typeof window.showConfirmModal === 'function' ? await window.showConfirmModal({
+      title: 'Xác Nhận Xóa Nhiệm Vụ',
+      message: `Bạn có chắc chắn muốn xóa nhiệm vụ "${taskTitle || 'này'}" khỏi nhóm nghiên cứu không? Thao tác này sẽ đồng bộ xóa trên toàn bộ phòng Lab.`,
+      confirmText: 'Xóa Nhiệm Vụ',
+      cancelText: 'Hủy Bỏ',
+      type: 'danger'
+    }) : true;
+
+    if (confirmed) {
+      await TaskStore.deleteTask(taskId);
+      showToast('Đã xóa nhiệm vụ thành công.');
+    }
+  };
+
+  // Re-render when tasks are created/updated/deleted across any view
+  const onTasksUpdated = () => {
+    if (container && container.isConnected) {
+      renderTeamDetail(container, teamIdOrSlug);
+    }
+  };
+  window.addEventListener('100re:tasks-updated', onTasksUpdated, { once: true });
 }

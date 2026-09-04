@@ -11,6 +11,7 @@
 import { API } from '../api.js';
 import { Auth } from '../auth.js';
 import { formatDate, escapeHtml, renderEmptyState, showToast } from '../components.js';
+import { TaskStore } from '../taskStore.js';
 
 export async function renderTasks(container, initialFilter = null) {
   const isVi = (window.i18n ? window.i18n.getLanguage() : 'vi') === 'vi';
@@ -173,7 +174,7 @@ export async function renderTasks(container, initialFilter = null) {
   const pageIconEl = container.querySelector('#notionTitleIcon');
   const supervisorSwitcher = container.querySelector('#supervisorTeamSwitcher');
 
-  // Load Data from API + Local Storage
+  // Load Data from API + Local Storage via unified TaskStore
   try {
     try {
       const teamsRes = await API.get('/api/teams');
@@ -185,84 +186,10 @@ export async function renderTasks(container, initialFilter = null) {
       labMembers = membersRes.members || membersRes.users || [];
     } catch (e) {}
 
-    try {
-      const tasksRes = await API.get('/api/tasks');
-      tasksData = tasksRes.tasks || [];
-    } catch (e) {
-      console.warn('API error loading tasks:', e);
-    }
-
-    // Deleted tasks blacklist from localStorage
-    let deletedTaskIds = [];
-    try {
-      deletedTaskIds = JSON.parse(localStorage.getItem('100re_deleted_task_ids') || '[]');
-      if (!Array.isArray(deletedTaskIds)) deletedTaskIds = [];
-    } catch(e) {}
-
-    // Filter out deleted tasks from API response
-    tasksData = tasksData.filter(t => !deletedTaskIds.includes(t.id));
-
-    // Sync with persistent local custom tasks
-    try {
-      const localCustom = JSON.parse(localStorage.getItem('100re_custom_tasks') || '[]');
-      if (Array.isArray(localCustom) && localCustom.length > 0) {
-        localCustom.forEach(ct => {
-          if (!deletedTaskIds.includes(ct.id) && !tasksData.some(t => t.id === ct.id)) {
-            tasksData.unshift(ct);
-          }
-        });
-      }
-    } catch(e) {}
-
-    // Comprehensive Fallback Tasks for ALL Teams
-    const ALL_SEED_TASKS = [
-      // Smart Grid Team
-      { id: 'tsk-sg-01', team_id: 'team-smartgrid', title: 'Sửa miniscada', description: 'Tìm hiểu toàn bộ lỗi và lên danh sách thiết bị', status: 'cancelled', priority: 'low', assigned_to: 'usr-smartgrid-1788099630575', assignee_names: ['Long', 'Hiếu Đỗ', 'Tu Pham Anh'], due_date: '2026-06-24', updated_at: 1720975680 },
-      { id: 'tsk-sg-02', team_id: 'team-smartgrid', title: 'Severless Cloud Computing', description: 'Test thử full mạch cứng', status: 'cancelled', priority: 'medium', assigned_to: 'usr-smartgrid-1788099630575', assignee_names: ['Long', 'Vinh Hồng'], due_date: '2026-07-30', updated_at: 1721588580 },
-      { id: 'tsk-sg-03', team_id: 'team-smartgrid', title: 'Project Smartgrid T5-8', description: 'D2', status: 'in_progress', priority: 'high', assigned_to: 'usr-smartgrid-1788108587815', assignee_names: ['Tu Pham Anh', 'Long'], due_date: '2026-07-22', updated_at: 1720893480 },
-      { id: 'tsk-sg-04', team_id: 'team-smartgrid', title: 'Bằng sáng chế - Build Application', description: 'Tìm hiểu: Backend + Frontend, API, Database', status: 'in_progress', priority: 'high', assigned_to: 'usr-smartgrid-1788099612925', assignee_names: ['Hiếu Đỗ', 'Tu Pham Anh', 'Long'], due_date: '2026-07-30', updated_at: 1723054080 },
-      { id: 'tsk-sg-05', team_id: 'team-smartgrid', title: 'Data Center - RL', description: 'First Draft', status: 'in_progress', priority: 'high', assigned_to: 'usr-smartgrid-1788099630575', assignee_names: ['Long', 'Hiếu Đỗ', 'Tu Pham Anh'], due_date: '2026-08-03', updated_at: 1719684540 },
-      { id: 'tsk-sg-06', team_id: 'team-smartgrid', title: 'Sửa review PowerCon', description: 'Hoàn thiện bản sửa đổi bài báo PowerCon gửi ban biên tập', status: 'in_progress', priority: 'low', assigned_to: 'usr-smartgrid-1788099630575', assignee_names: ['Long', 'Tu Pham Anh', 'Hiếu Đỗ', 'Vinh Hồng'], due_date: '2026-09-01', updated_at: 1720880220 },
-      { id: 'tsk-sg-07', team_id: 'team-smartgrid', title: 'Slide PowerCon', description: 'Thiết kế slide thuyết trình báo cáo PowerCon', status: 'in_progress', priority: 'low', assigned_to: 'usr-res-05', assignee_names: ['Hai Duong Minh', 'Hiếu Đỗ', 'Tu Pham Anh'], due_date: '2026-09-20', updated_at: 1721498100 },
-      { id: 'tsk-sg-08', team_id: 'team-smartgrid', title: 'Data Center - Review', description: 'Đánh giá cấu trúc mạng và phân tích hiệu năng Data Center', status: 'in_progress', priority: 'low', assigned_to: 'usr-smartgrid-1788099612925', assignee_names: ['Hiếu Đỗ', 'Vinh Hồng'], due_date: '2026-09-15', updated_at: 1721587020 },
-      { id: 'tsk-sg-10', team_id: 'team-smartgrid', title: 'Distributed Controller - RNN', description: 'Sửa lại ICGEA để Long test HIL bên Đài', status: 'todo', priority: 'medium', assigned_to: 'usr-smartgrid-1788099630575', assignee_names: ['Long', 'Tu Pham Anh', 'Hiếu Đỗ'], due_date: '2026-09-01', updated_at: 1720893420 },
-
-      // PV Team
-      { id: 'tsk-pv-01', team_id: 'team-pv', title: 'Deploy Spatio-temporal Transformer for 15-min Solar Forecasting', description: 'Train Vision Transformer with Sky Imager footage and Pyranometer irradiance log.', status: 'in_progress', priority: 'high', assigned_to: 'usr-ldr-01', assignee_names: ['Dr. Ngo Tri Duc', 'Bui Quang Minh'], due_date: '2026-09-20', updated_at: 1721600000 },
-      { id: 'tsk-pv-02', team_id: 'team-pv', title: 'Calibrate Rooftop Pyranometer & Inverter Sensors', description: 'Clean sensor optics and perform 24-hour baseline irradiance calibration on C7 rooftop.', status: 'todo', priority: 'medium', assigned_to: 'usr-res-08', assignee_names: ['Bui Quang Minh', 'Dr. Ngo Tri Duc'], due_date: '2026-09-28', updated_at: 1721700000 },
-
-      // BESS Team
-      { id: 'tsk-bess-01', team_id: 'team-bess', title: 'Implement RegD frequency regulation control algorithm', description: 'Develop MATLAB/Simulink and Python controller for fast 2-second response to PJM RegD automatic generation control signals.', status: 'in_progress', priority: 'urgent', assigned_to: 'usr-ldr-02', assignee_names: ['Dr. Trinh Minh Phuong', 'Tran Thi Hong Vinh'], due_date: '2026-09-15', updated_at: 1721500000 },
-      { id: 'tsk-sg-09', team_id: 'team-bess', title: 'Nafosted BESS State-of-Charge & Degradation Modeling', description: 'Nghiên cứu mô hình lưu trữ năng lượng pin BESS đề tài Nafosted', status: 'in_progress', priority: 'high', assigned_to: 'usr-res-14', assignee_names: ['Tran Thi Hong Vinh', 'Dr. Trinh Minh Phuong'], due_date: '2026-07-30', updated_at: 1721500800 },
-
-      // AI Team
-      { id: 'tsk-ai-01', team_id: 'team-ai', title: 'Huấn luyện mạng Neural dự báo phụ tải đỉnh Microgrid', description: 'Tối ưu hóa siêu tham số mô hình LSTM và Transformer dự báo công suất đỉnh', status: 'in_progress', priority: 'high', assigned_to: 'usr-res-01', assignee_names: ['Bui Quang Hai'], due_date: '2026-09-25', updated_at: 1721800000 },
-
-      // Wind Team
-      { id: 'tsk-wind-01', team_id: 'team-wind', title: 'Optimal pitch angle controller under turbulent wind gusts', description: 'Simulate FAST aerodynamic turbine model and test fuzzy pitch angle controller in Simulink.', status: 'in_progress', priority: 'medium', assigned_to: 'usr-res-10', assignee_names: ['Nguyen Nhu Tung', 'Nguyen Hoang Nam'], due_date: '2026-10-05', updated_at: 1721850000 },
-
-      // EV Team
-      { id: 'tsk-ev-01', team_id: 'team-ev', title: 'V2G smart charging optimization for campus microgrid', description: 'Formulate mixed-integer linear programming (MILP) scheduler for 20 EV charging stations.', status: 'in_progress', priority: 'high', assigned_to: 'usr-res-11', assignee_names: ['Dao Quoc Khanh', 'Le The Cuong'], due_date: '2026-10-10', updated_at: 1721900000 },
-
-      // Hydrogen Team
-      { id: 'tsk-h2-01', team_id: 'team-hydrogen', title: 'PEM electrolyzer dynamic response & fuel cell scheduling', description: 'Model green hydrogen production from surplus solar energy with dynamic power curtailment.', status: 'in_progress', priority: 'medium', assigned_to: 'usr-res-12', assignee_names: ['Nguyen Hoang Anh'], due_date: '2026-10-20', updated_at: 1721950000 },
-
-      // Unit Commitment & Demand Response
-      { id: 'tsk-dr-01', team_id: 'team-ucdr', title: 'Dynamic pricing demand response for industrial loads', description: 'Design incentive-based demand response algorithm for industrial microgrid consumers.', status: 'in_progress', priority: 'medium', assigned_to: 'usr-res-09', assignee_names: ['Dr. Le Anh Quan', 'Nguyen Tuan Anh'], due_date: '2026-10-25', updated_at: 1722000000 },
-
-      // General Tasks (Cross-Team)
-      { id: 'tsk-gen-01', team_id: 'team-general', title: 'Báo cáo mua sắm thiết bị & kinh phí Quý 3 Lab', description: 'Tổng hợp chi phí linh kiện thí nghiệm và dự trù kinh phí Quý 3 phòng Lab C7', status: 'in_progress', priority: 'high', assigned_to: 'usr-smartgrid-1788108587815', assignee_names: ['Tu Pham Anh', 'Long'], due_date: '2026-09-30', updated_at: 1721800000 },
-      { id: 'tsk-gen-02', team_id: 'team-general', title: 'Chuẩn bị hồ sơ nghiệm thu đề tài cấp Bộ', description: 'Hoàn thiện thuyết minh kỹ thuật và biên bản thử nghiệm HIL phục vụ nghiệm thu', status: 'in_progress', priority: 'urgent', assigned_to: 'usr-smartgrid-1788099612925', assignee_names: ['Hiếu Đỗ', 'Vinh Hồng'], due_date: '2026-10-15', updated_at: 1721900000 }
-    ];
-
-    ALL_SEED_TASKS.forEach(st => {
-      if (!deletedTaskIds.includes(st.id) && !tasksData.some(t => t.id === st.id)) {
-        tasksData.push(st);
-      }
-    });
-
+    tasksData = await TaskStore.loadTasks();
   } catch (e) {
     console.warn('Data initialization warning:', e);
+    tasksData = TaskStore.getAllTasks();
   }
 
   // Filtering Logic
@@ -355,33 +282,10 @@ export async function renderTasks(container, initialFilter = null) {
     }) : true;
 
     if (confirmed) {
-      // 1. Add to permanent deleted blacklist immediately
-      try {
-        let curDeleted = JSON.parse(localStorage.getItem('100re_deleted_task_ids') || '[]');
-        if (!Array.isArray(curDeleted)) curDeleted = [];
-        if (!curDeleted.includes(taskId)) curDeleted.push(taskId);
-        localStorage.setItem('100re_deleted_task_ids', JSON.stringify(curDeleted));
-
-        // Remove from custom local storage
-        let curCustom = JSON.parse(localStorage.getItem('100re_custom_tasks') || '[]');
-        if (Array.isArray(curCustom)) {
-          curCustom = curCustom.filter(t => t.id !== taskId);
-          localStorage.setItem('100re_custom_tasks', JSON.stringify(curCustom));
-        }
-      } catch (e) {}
-
-      // 2. Remove immediately from memory & re-render view
-      tasksData = tasksData.filter(t => t.id !== taskId);
+      await TaskStore.deleteTask(taskId);
+      tasksData = TaskStore.getAllTasks();
       applyFilterAndRender();
-
-      // 3. Send delete request to backend database
-      try {
-        await API.delete(`/api/tasks/${taskId}`);
-        if (typeof showToast === 'function') showToast('Đã xóa nhiệm vụ thành công.');
-      } catch (e) {
-        console.warn('Backend delete sync note:', e);
-        if (typeof showToast === 'function') showToast('Đã xóa nhiệm vụ khỏi danh sách.');
-      }
+      if (typeof showToast === 'function') showToast('Đã xóa nhiệm vụ thành công.');
     }
   };
 
@@ -770,8 +674,28 @@ export async function renderTasks(container, initialFilter = null) {
   };
 
   // Dedicated Notion Task Creation Modal
-  function openNotionCreateTaskModal(defaultStatus = 'in_progress') {
+  function openNotionCreateTaskModal(param1 = 'in_progress', param2 = null) {
     document.querySelectorAll('.notion-modal-backdrop').forEach(m => m.remove());
+
+    let defaultStatus = 'in_progress';
+    let defaultTeam = null;
+
+    if (typeof param1 === 'string') {
+      const p1Clean = TaskStore.normalizeTeamSlug(param1);
+      if (param1.startsWith('team-') || ['pv', 'smartgrid', 'bess', 'ai', 'wind', 'ev', 'hydrogen', 'ucdr', 'general'].includes(p1Clean)) {
+        defaultTeam = TaskStore.toFullTeamId(param1);
+        if (param2 && typeof param2 === 'string') defaultStatus = param2;
+      } else {
+        defaultStatus = param1;
+        if (param2 && typeof param2 === 'string') defaultTeam = TaskStore.toFullTeamId(param2);
+      }
+    }
+
+    if (!defaultTeam) {
+      defaultTeam = activeTab === 'general' ? 'team-general' : (isSuper && supervisorSelectedTeam !== 'all' ? supervisorSelectedTeam : userPrimaryTeam);
+    }
+
+    const defaultTeamForCreate = defaultTeam;
 
     let memberList = [...labMembers];
     if (memberList.length === 0) {
@@ -787,8 +711,6 @@ export async function renderTasks(container, initialFilter = null) {
         { id: 'usr-sup-01', display_name: 'Assoc. Prof. Nguyen Duc Tuyen', name: 'Assoc. Prof. Nguyen Duc Tuyen', team: 'Supervisor' }
       ];
     }
-
-    const defaultTeamForCreate = activeTab === 'general' ? 'team-general' : (isSuper && supervisorSelectedTeam !== 'all' ? supervisorSelectedTeam : userPrimaryTeam);
 
     const modal = document.createElement('div');
     modal.className = 'notion-modal-backdrop';
@@ -916,34 +838,21 @@ export async function renderTasks(container, initialFilter = null) {
       const selectedNames = selectedCbs.map(cb => cb.value);
       const firstId = selectedCbs.length > 0 ? selectedCbs[0].getAttribute('data-id') : null;
 
-      const newTask = {
-        id: `tsk-custom-${Date.now()}`,
+      const newTask = await TaskStore.createTask({
         team_id,
         title,
         description,
         status,
         priority,
         assigned_to: firstId,
-        assignee_names: selectedNames.length > 0 ? selectedNames : ['Unassigned'],
-        due_date,
-        created_at: Math.floor(Date.now() / 1000),
-        updated_at: Math.floor(Date.now() / 1000)
-      };
+        assignee_names: selectedNames.length > 0 ? selectedNames : ['Chưa giao'],
+        due_date
+      });
 
-      tasksData.unshift(newTask);
-      try {
-        const localCustom = JSON.parse(localStorage.getItem('100re_custom_tasks') || '[]');
-        localCustom.unshift(newTask);
-        localStorage.setItem('100re_custom_tasks', JSON.stringify(localCustom));
-      } catch(e) {}
-
+      tasksData = TaskStore.getAllTasks();
       renderCurrentView();
       closeModal();
       showToast(`Đã tạo nhiệm vụ "${title}" thành công!`);
-
-      try {
-        await API.post('/api/tasks', newTask);
-      } catch (err) {}
     });
   }
 
@@ -1004,17 +913,20 @@ export async function renderTasks(container, initialFilter = null) {
   // Window global status changer
   window.handleNotionStatusChange = async function(selectEl, taskId) {
     const newStatus = selectEl.value;
-    const task = tasksData.find(t => t.id === taskId);
-    if (task) {
-      task.status = newStatus;
-      task.updated_at = Math.floor(Date.now() / 1000);
-      showToast(`Đã đổi trạng thái sang: ${newStatus}`);
-      renderCurrentView();
-      try {
-        await API.patch(`/api/tasks/${taskId}`, { status: newStatus });
-      } catch(e) {}
+    await TaskStore.updateTask(taskId, { status: newStatus });
+    tasksData = TaskStore.getAllTasks();
+    showToast(`Đã đổi trạng thái sang: ${newStatus}`);
+    renderCurrentView();
+  };
+
+  // Listen for realtime cross-view updates
+  const onTasksUpdated = () => {
+    tasksData = TaskStore.getAllTasks();
+    if (container && container.isConnected) {
+      applyFilterAndRender();
     }
   };
+  window.addEventListener('100re:tasks-updated', onTasksUpdated);
 
   // Initial render
   renderCurrentView();

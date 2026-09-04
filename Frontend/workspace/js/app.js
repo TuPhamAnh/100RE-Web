@@ -6,6 +6,7 @@
 import { API } from './api.js';
 import { Auth } from './auth.js';
 import { i18n } from './i18n.js';
+import { TaskStore } from './taskStore.js';
 import { openModal, closeModal, showToast, formatDate, formatBytes, renderPriorityBadge, renderStatusBadge, escapeHtml } from './components.js';
 
 import { renderDashboard } from './views/dashboardView.js';
@@ -46,6 +47,11 @@ async function initApp() {
   } catch (e) {
     console.warn('Initial cache fetch warning:', e);
   }
+
+  // Preload unified tasks
+  try {
+    await TaskStore.loadTasks();
+  } catch (e) {}
 
   // 3. Bind Global Navigation, Routing & Language events
   window.addEventListener('hashchange', handleRouting);
@@ -266,10 +272,10 @@ function bindGlobalEvents() {
 
       try {
         if (id) {
-          await API.put(`/api/tasks/${id}`, { title, team_id, project_id, assigned_to, priority, status, due_date, description });
+          await TaskStore.updateTask(id, { title, team_id, project_id, assigned_to, priority, status, due_date, description });
           showToast('Cập nhật nhiệm vụ thành công!');
         } else {
-          await API.post('/api/tasks', { title, team_id, project_id, assigned_to, priority, status, due_date, description });
+          await TaskStore.createTask({ title, team_id, project_id, assigned_to, priority, status, due_date, description });
           showToast('Tạo nhiệm vụ thành công!');
         }
         closeModal('modalTask');
@@ -404,14 +410,19 @@ window.openTaskDetail = async function(taskId) {
     documents = res.documents || [];
     datasets = res.datasets || [];
   } catch (e) {
-    task = {
-      id: taskId,
-      team_id: 'team-smartgrid',
-      title: 'Nhiệm Vụ Nghiên Cứu Lab',
-      description: 'Chi tiết quy trình thực nghiệm và sổ tay điện tử 100RE SciNote.',
-      status: 'in_progress',
-      priority: 'medium'
-    };
+    const storeTask = TaskStore.getTaskById(taskId);
+    if (storeTask) {
+      task = { ...storeTask };
+    } else {
+      task = {
+        id: taskId,
+        team_id: 'team-smartgrid',
+        title: 'Nhiệm Vụ Nghiên Cứu Lab',
+        description: 'Chi tiết quy trình thực nghiệm và sổ tay điện tử 100RE SciNote.',
+        status: 'in_progress',
+        priority: 'medium'
+      };
+    }
     steps = [
       { id: `step-${taskId}-1`, task_id: taskId, step_order: 1, title: 'Chuẩn bị dữ liệu đầu vào & thiết lập mô hình tính toán', instruction: 'Kiểm tra thông số đường dây, tải và nguồn điện trong phần mềm mô phỏng.', is_completed: 1 },
       { id: `step-${taskId}-2`, task_id: taskId, step_order: 2, title: 'Chạy thuật toán tối ưu hóa & đo đạc thông số thực nghiệm', instruction: 'Ghi nhận điện áp, công suất và dung lượng lưu trữ theo chu kỳ 15 phút.', is_completed: 0 },
@@ -609,25 +620,8 @@ window.openTaskDetail = async function(taskId) {
         }) : true;
 
         if (confirmed) {
-          try {
-            let curDeleted = JSON.parse(localStorage.getItem('100re_deleted_task_ids') || '[]');
-            if (!Array.isArray(curDeleted)) curDeleted = [];
-            if (!curDeleted.includes(taskId)) curDeleted.push(taskId);
-            localStorage.setItem('100re_deleted_task_ids', JSON.stringify(curDeleted));
-
-            let curCustom = JSON.parse(localStorage.getItem('100re_custom_tasks') || '[]');
-            if (Array.isArray(curCustom)) {
-              curCustom = curCustom.filter(t => t.id !== taskId);
-              localStorage.setItem('100re_custom_tasks', JSON.stringify(curCustom));
-            }
-          } catch(e) {}
-
-          try {
-            await API.delete(`/api/tasks/${taskId}`);
-            showToast('Đã xóa nhiệm vụ thành công.');
-          } catch (e) {
-            showToast('Đã xóa nhiệm vụ khỏi danh sách.');
-          }
+          await TaskStore.deleteTask(taskId);
+          showToast('Đã xóa nhiệm vụ thành công.');
           closeModal('modalTaskDetail');
           handleRouting();
         }
@@ -647,8 +641,18 @@ window.openTaskDetail = async function(taskId) {
   }
 };
 
-window.openCreateTaskModal = function(colStatus) { window.openNewTaskModal(colStatus); };
-window.openNewTaskModal = function(preselectedTeamId = null, preselectedProjectId = null) {
+window.openCreateTaskModal = function(colStatus) { window.openNewTaskModal(null, null, colStatus); };
+window.openNewTaskModal = function(preselectedTeamId = null, preselectedProjectId = null, defaultStatus = 'in_progress') {
+  let teamId = preselectedTeamId;
+  let status = defaultStatus;
+  if (typeof preselectedTeamId === 'string' && ['in_progress', 'todo', 'review', 'done', 'cancelled'].includes(preselectedTeamId)) {
+    status = preselectedTeamId;
+    teamId = null;
+  }
+  if (teamId) {
+    teamId = TaskStore.toFullTeamId(teamId);
+  }
+
   const form = document.getElementById('formTask');
   if (form) form.reset();
   const idInput = document.getElementById('taskFormId');
@@ -657,14 +661,18 @@ window.openNewTaskModal = function(preselectedTeamId = null, preselectedProjectI
   const teamSelect = document.getElementById('taskFormTeam');
   const projSelect = document.getElementById('taskFormProject');
   const assigneeSelect = document.getElementById('taskFormAssignee');
+  const statusSelect = document.getElementById('taskFormStatus');
+  if (statusSelect && status) statusSelect.value = status;
 
-  populateSelect(teamSelect, currentTeamsCache, preselectedTeamId);
+  populateSelect(teamSelect, currentTeamsCache, teamId);
   populateSelect(assigneeSelect, currentUsersCache.map(u => ({ id: u.id, name: u.display_name || u.name })));
-  updateProjectDropdown(preselectedTeamId || teamSelect.value, preselectedProjectId, projSelect);
+  updateProjectDropdown(teamId || (teamSelect ? teamSelect.value : null), preselectedProjectId, projSelect);
 
-  teamSelect.onchange = () => {
-    updateProjectDropdown(teamSelect.value, null, projSelect);
-  };
+  if (teamSelect) {
+    teamSelect.onchange = () => {
+      updateProjectDropdown(teamSelect.value, null, projSelect);
+    };
+  }
 
   openModal('modalTask');
 };

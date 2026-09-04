@@ -114,6 +114,22 @@ function initDevStore() {
       
       // USERS
       if (q.includes('FROM USERS')) {
+        if (q.includes('JOIN TEAM_MEMBERS')) {
+          const valids = params.filter(Boolean);
+          const tms = this.team_members.filter(tm => valids.includes(tm.team_id));
+          return tms.map(tm => {
+            const u = this.users.find(x => x.id === tm.user_id) || {};
+            return {
+              id: u.id || tm.user_id,
+              name: u.name || 'Member',
+              email: u.email || '',
+              avatar_url: u.avatar_url || '',
+              global_role: u.role || 'researcher',
+              team_role: tm.team_role || 'member',
+              joined_at: tm.joined_at || 1704067200
+            };
+          });
+        }
         if (q.includes('WHERE EMAIL =') || q.includes('WHERE EMAIL=?')) {
           const email = params[0]?.toLowerCase();
           return this.users.filter(u => u.email.toLowerCase() === email);
@@ -143,6 +159,10 @@ function initDevStore() {
 
       // TEAM_MEMBERS
       if (q.includes('FROM TEAM_MEMBERS')) {
+        if (q.includes('TEAM_ID IN') || q.includes('WHERE TEAM_ID IN')) {
+          const valids = params.filter(Boolean);
+          return this.team_members.filter(tm => valids.includes(tm.team_id));
+        }
         if (q.includes('USER_ID =') || q.includes('USER_ID=?') || q.includes('USER_ID')) {
           return this.team_members.filter(tm => tm.user_id === params[0]);
         }
@@ -167,6 +187,10 @@ function initDevStore() {
       if (q.includes('FROM PROJECTS')) {
         if (q.includes('WHERE ID =') || q.includes('WHERE ID=?')) {
           return this.projects.filter(p => p.id === params[0]);
+        }
+        if (q.includes('WHERE TEAM_ID IN') || q.includes('TEAM_ID IN')) {
+          const valids = params.filter(Boolean);
+          return this.projects.filter(p => valids.includes(p.team_id));
         }
         if (q.includes('WHERE TEAM_ID =') || q.includes('WHERE TEAM_ID=?')) {
           return this.projects.filter(p => p.team_id === params[0]);
@@ -247,6 +271,10 @@ function initDevStore() {
           if (q.includes('WHERE EXPERIMENT_ID =') || q.includes('WHERE EXPERIMENT_ID=?')) {
             return list.filter(t => t.experiment_id === params[0]);
           }
+          if (q.includes('WHERE TEAM_ID IN') || q.includes('TEAM_ID IN')) {
+            const valids = params.filter(Boolean);
+            return list.filter(t => valids.includes(t.team_id));
+          }
           if (q.includes('WHERE TEAM_ID =') || q.includes('WHERE TEAM_ID=?')) {
             return list.filter(t => t.team_id === params[0]);
           }
@@ -267,6 +295,13 @@ function initDevStore() {
         if (q.includes('WHERE ID =') || q.includes('WHERE ID=?')) {
           return this.documents.filter(d => d.id === params[0]);
         }
+        if (q.includes('WHERE TEAM_ID IN') || q.includes('TEAM_ID IN')) {
+          const valids = params.filter(Boolean);
+          return this.documents.filter(d => valids.includes(d.team_id));
+        }
+        if (q.includes('WHERE TEAM_ID =') || q.includes('WHERE TEAM_ID=?')) {
+          return this.documents.filter(d => d.team_id === params[0]);
+        }
         return [...this.documents];
       }
 
@@ -274,6 +309,13 @@ function initDevStore() {
       if (q.includes('FROM DATASETS')) {
         if (q.includes('WHERE ID =') || q.includes('WHERE ID=?')) {
           return this.datasets.filter(d => d.id === params[0]);
+        }
+        if (q.includes('WHERE TEAM_ID IN') || q.includes('TEAM_ID IN')) {
+          const valids = params.filter(Boolean);
+          return this.datasets.filter(d => valids.includes(d.team_id));
+        }
+        if (q.includes('WHERE TEAM_ID =') || q.includes('WHERE TEAM_ID=?')) {
+          return this.datasets.filter(d => d.team_id === params[0]);
         }
         return [...this.datasets];
       }
