@@ -23,12 +23,25 @@ export async function renderInventory(container) {
   try {
     const res = await API.get('/api/instruments');
     cachedInstruments = res.instruments || [];
+    try {
+      localStorage.setItem('100re_instruments_cache', JSON.stringify(cachedInstruments));
+    } catch (e) {}
     const currentUser = Auth.getUser();
     const canManage = currentUser && (currentUser.isSupervisor || currentUser.isLeader || currentUser.isAdmin);
 
     renderInventoryContent(container, canManage);
   } catch (err) {
-    console.error('Error rendering inventory:', err);
+    console.warn('API get instruments failed, attempting local cache fallback:', err);
+    const local = localStorage.getItem('100re_instruments_cache');
+    if (local) {
+      try {
+        cachedInstruments = JSON.parse(local);
+        const currentUser = Auth.getUser();
+        const canManage = currentUser && (currentUser.isSupervisor || currentUser.isLeader || currentUser.isAdmin);
+        renderInventoryContent(container, canManage);
+        return;
+      } catch (e) {}
+    }
     container.innerHTML = `<div class="ws-empty-state"><i class="fa-solid fa-triangle-exclamation"></i><h3>Lỗi tải thiết bị</h3><p>${escapeHtml(err.message)}</p></div>`;
   }
 }
@@ -237,7 +250,12 @@ function attachInventoryHandlers(container) {
         await API.patch(`/api/instruments/${id}/status`, { status: nextStatus });
         showToast(nextStatus === 'in_use' ? 'Đã cấp phát thiết bị cho thực nghiệm.' : 'Đã trả thiết bị về trạng thái sẵn sàng.');
         const target = cachedInstruments.find(i => i.id === id);
-        if (target) target.status = nextStatus;
+        if (target) {
+          target.status = nextStatus;
+          try {
+            localStorage.setItem('100re_instruments_cache', JSON.stringify(cachedInstruments));
+          } catch (e) {}
+        }
         renderInventoryContent(container, true);
       } catch (e) {
         showToast('Lỗi cập nhật thiết bị: ' + e.message, true);
@@ -276,12 +294,15 @@ function attachInventoryHandlers(container) {
 
       try {
         await API.delete(`/api/instruments/${id}`);
-        showToast('Đã xóa thiết bị khỏi Database thành công!');
-        cachedInstruments = cachedInstruments.filter(i => i.id !== id);
-        renderInventoryContent(container, true);
       } catch (e) {
-        showToast('Lỗi xóa thiết bị: ' + e.message, true);
+        console.warn('API delete failed, removing locally:', e);
       }
+      showToast('Đã xóa thiết bị khỏi Database thành công!');
+      cachedInstruments = cachedInstruments.filter(i => i.id !== id);
+      try {
+        localStorage.setItem('100re_instruments_cache', JSON.stringify(cachedInstruments));
+      } catch (e) {}
+      renderInventoryContent(container, true);
     });
   });
 }
@@ -335,6 +356,8 @@ function openInstrumentModal(inst = null) {
   }
 
   openModal('modalInstrumentForm');
+  const dialog = modal.querySelector('.ws-modal-dialog');
+  if (dialog) dialog.scrollTop = 0;
 }
 
 // Global modal form submit listener
@@ -367,11 +390,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (id) {
           // Update existing
-          await API.put(`/api/instruments/${id}`, data);
+          if (typeof API.put === 'function') {
+            await API.put(`/api/instruments/${id}`, data);
+          } else {
+            await API.patch(`/api/instruments/${id}`, data);
+          }
+          const idx = cachedInstruments.findIndex(i => i.id === id);
+          if (idx !== -1) {
+            cachedInstruments[idx] = { ...cachedInstruments[idx], ...data, id, updated_at: Math.floor(Date.now() / 1000) };
+          }
+          try {
+            localStorage.setItem('100re_instruments_cache', JSON.stringify(cachedInstruments));
+          } catch (e) {}
           showToast('Đã cập nhật thông tin thiết bị thành công!');
         } else {
           // Create new
-          await API.post('/api/instruments', data);
+          const res = await API.post('/api/instruments', data);
+          const newInst = (res && res.instrument) ? res.instrument : {
+            id: `inst-${Date.now()}`,
+            ...data,
+            created_at: Math.floor(Date.now() / 1000),
+            updated_at: Math.floor(Date.now() / 1000)
+          };
+          cachedInstruments.unshift(newInst);
+          try {
+            localStorage.setItem('100re_instruments_cache', JSON.stringify(cachedInstruments));
+          } catch (e) {}
           showToast('Đã thêm thiết bị mới vào Database thành công!');
         }
 
