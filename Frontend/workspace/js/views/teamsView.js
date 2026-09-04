@@ -505,11 +505,12 @@ async function renderTeamDetail(container, teamIdOrSlug) {
   } catch(e) {}
 
   container.innerHTML = `
-    <!-- Team Space Top Header -->
-    <div class="ws-page-header" style="background:var(--ws-bg-surface); border:1px solid var(--ws-border); border-radius:14px; padding:24px; margin-bottom:20px; box-shadow:0 4px 12px rgba(15,23,42,0.03);">
+    <!-- Team Space Top Header Card -->
+    <div class="ws-team-hero-card" style="background:var(--ws-bg-surface); border:1px solid var(--ws-border); border-radius:14px; padding:24px; margin-bottom:24px; box-shadow:0 4px 12px rgba(15,23,42,0.03); display:block;">
+      <!-- Top Section: Team Title & Action Buttons -->
       <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px;">
-        <div>
-          <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+        <div style="flex:1; min-width:280px;">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
             <a href="#teams" class="btn-ws-ghost btn-ws-sm" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px; font-weight:600;">
               <i class="fa-solid fa-arrow-left"></i> ${isVi ? 'Tất Cả Nhóm' : 'All Teams'}
             </a>
@@ -517,18 +518,18 @@ async function renderTeamDetail(container, teamIdOrSlug) {
             <span class="ws-badge ws-badge-done"><i class="fa-solid fa-shield-check"></i> ${isVi ? 'KHÔNG GIAN NHÓM' : 'ACTIVE TEAM SPACE'}</span>
           </div>
 
-          <div style="display:flex; align-items:center; gap:12px;">
-            <span style="font-size:1.8rem; display:inline-flex; align-items:center; justify-content:center;">${FA_ICONS[cleanSlug] || '<i class="fa-solid fa-layer-group"></i>'}</span>
-            <h1 style="font-size:1.6rem; font-weight:800; color:var(--ws-dark); margin:0;">${escapeHtml(team.name)}</h1>
+          <div style="display:flex; align-items:center; gap:14px;">
+            <span style="font-size:2rem; display:inline-flex; align-items:center; justify-content:center;">${FA_ICONS[cleanSlug] || '<i class="fa-solid fa-layer-group"></i>'}</span>
+            <h1 style="font-size:1.75rem; font-weight:800; color:var(--ws-dark); margin:0; line-height:1.2;">${escapeHtml(team.name)}</h1>
           </div>
 
-          <p style="color:var(--ws-text-muted); font-size:0.9rem; margin-top:8px; max-width:850px; line-height:1.5;">
+          <p style="color:var(--ws-text-muted); font-size:0.925rem; margin-top:8px; max-width:850px; line-height:1.5;">
             ${escapeHtml(team.description || teamMeta.description)}
           </p>
         </div>
 
         <!-- Action Buttons -->
-        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; align-self:flex-start;">
           <button class="btn-ws-primary btn-ws-sm" id="btnTeamNewTask">
             <i class="fa-solid fa-plus"></i> ${isVi ? 'Tạo Nhiệm Vụ' : 'New Task'}
           </button>
@@ -541,27 +542,27 @@ async function renderTeamDetail(container, teamIdOrSlug) {
         </div>
       </div>
 
-      <!-- Quick KPI Counters -->
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:12px; margin-top:20px; padding-top:18px; border-top:1px solid var(--ws-border);">
-        <div style="background:var(--ws-bg-subtle); padding:10px 14px; border-radius:8px; border:1px solid var(--ws-border);">
-          <div style="font-size:0.75rem; color:var(--ws-text-light); font-weight:600; text-transform:uppercase;">${isVi ? 'Thành Viên' : 'Members'}</div>
-          <div style="font-size:1.3rem; font-weight:800; color:var(--ws-dark); margin-top:2px;">${members.length}</div>
+      <!-- Quick KPI Counters (Arranged in a Clean Horizontal Row Underneath) -->
+      <div class="ws-team-kpi-row" style="display:grid; grid-template-columns:repeat(5, 1fr); gap:12px; margin-top:20px; padding-top:18px; border-top:1px solid var(--ws-border);">
+        <div style="background:var(--ws-bg-subtle); padding:12px 14px; border-radius:8px; border:1px solid var(--ws-border); text-align:center;">
+          <div style="font-size:0.75rem; color:var(--ws-text-light); font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">${isVi ? 'Thành Viên' : 'Members'}</div>
+          <div style="font-size:1.5rem; font-weight:800; color:var(--ws-dark); margin-top:4px;">${members.length}</div>
         </div>
-        <div style="background:var(--ws-bg-subtle); padding:10px 14px; border-radius:8px; border:1px solid var(--ws-border);">
-          <div style="font-size:0.75rem; color:var(--ws-text-light); font-weight:600; text-transform:uppercase;">${isVi ? 'Đề Tài' : 'Projects'}</div>
-          <div style="font-size:1.3rem; font-weight:800; color:#2563eb; margin-top:2px;">${projects.length}</div>
+        <div style="background:var(--ws-bg-subtle); padding:12px 14px; border-radius:8px; border:1px solid var(--ws-border); text-align:center;">
+          <div style="font-size:0.75rem; color:var(--ws-text-light); font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">${isVi ? 'Đề Tài' : 'Projects'}</div>
+          <div style="font-size:1.5rem; font-weight:800; color:#2563eb; margin-top:4px;">${projects.length}</div>
         </div>
-        <div style="background:var(--ws-bg-subtle); padding:10px 14px; border-radius:8px; border:1px solid var(--ws-border);">
-          <div style="font-size:0.75rem; color:var(--ws-text-light); font-weight:600; text-transform:uppercase;">${isVi ? 'Nhiệm Vụ' : 'Tasks'}</div>
-          <div style="font-size:1.3rem; font-weight:800; color:#16a34a; margin-top:2px;">${tasks.length}</div>
+        <div style="background:var(--ws-bg-subtle); padding:12px 14px; border-radius:8px; border:1px solid var(--ws-border); text-align:center;">
+          <div style="font-size:0.75rem; color:var(--ws-text-light); font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">${isVi ? 'Nhiệm Vụ' : 'Tasks'}</div>
+          <div style="font-size:1.5rem; font-weight:800; color:#16a34a; margin-top:4px;">${tasks.length}</div>
         </div>
-        <div style="background:var(--ws-bg-subtle); padding:10px 14px; border-radius:8px; border:1px solid var(--ws-border);">
-          <div style="font-size:0.75rem; color:var(--ws-text-light); font-weight:600; text-transform:uppercase;">${isVi ? 'Dataset' : 'Datasets'}</div>
-          <div style="font-size:1.3rem; font-weight:800; color:#ca8a04; margin-top:2px;">${datasets.length}</div>
+        <div style="background:var(--ws-bg-subtle); padding:12px 14px; border-radius:8px; border:1px solid var(--ws-border); text-align:center;">
+          <div style="font-size:0.75rem; color:var(--ws-text-light); font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">${isVi ? 'Dataset' : 'Datasets'}</div>
+          <div style="font-size:1.5rem; font-weight:800; color:#ca8a04; margin-top:4px;">${datasets.length}</div>
         </div>
-        <div style="background:var(--ws-bg-subtle); padding:10px 14px; border-radius:8px; border:1px solid var(--ws-border);">
-          <div style="font-size:0.75rem; color:var(--ws-text-light); font-weight:600; text-transform:uppercase;">${isVi ? 'Tài Liệu' : 'Documents'}</div>
-          <div style="font-size:1.3rem; font-weight:800; color:#7c3aed; margin-top:2px;">${documents.length}</div>
+        <div style="background:var(--ws-bg-subtle); padding:12px 14px; border-radius:8px; border:1px solid var(--ws-border); text-align:center;">
+          <div style="font-size:0.75rem; color:var(--ws-text-light); font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">${isVi ? 'Tài Liệu' : 'Documents'}</div>
+          <div style="font-size:1.5rem; font-weight:800; color:#7c3aed; margin-top:4px;">${documents.length}</div>
         </div>
       </div>
     </div>
