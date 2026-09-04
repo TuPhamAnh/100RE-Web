@@ -249,10 +249,6 @@ export async function renderAdmin(container) {
                     <span>Soạn Thảo Sổ Tay Thí Nghiệm (SciNote ELN Protocol)</span>
                   </label>
                   <label style="font-size:0.775rem; color:#1e293b; display:flex; align-items:center; gap:6px; cursor:pointer;">
-                    <input type="checkbox" name="perms" value="perm_ws_scinote_signoff" class="perm-cb">
-                    <span><strong>Ký Duyệt Nghiệm Thu Thí Nghiệm (Supervisor Sign-off)</strong></span>
-                  </label>
-                  <label style="font-size:0.775rem; color:#1e293b; display:flex; align-items:center; gap:6px; cursor:pointer;">
                     <input type="checkbox" name="perms" value="perm_ws_datasets" class="perm-cb" checked>
                     <span>Tải Lên / Tải Về 100RE Database (Datasets &amp; Storage)</span>
                   </label>

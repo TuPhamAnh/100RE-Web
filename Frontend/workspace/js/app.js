@@ -13,7 +13,6 @@ import { renderExperiments } from './views/experimentsView.js';
 import { renderWorkflows } from './views/workflowsView.js';
 import { renderProtocols } from './views/protocolsView.js';
 import { renderInventory } from './views/inventoryView.js';
-import { renderSignoffs } from './views/signoffView.js';
 import { renderTeams } from './views/teamsView.js';
 import { renderProjects } from './views/projectsView.js';
 import { renderTasks } from './views/tasksView.js';
@@ -100,7 +99,7 @@ function handleRouting() {
       renderInventory(container);
       break;
     case 'signoffs':
-      renderSignoffs(container);
+      window.location.hash = '#tasks';
       break;
     case 'teams':
       renderTeams(container, paramId);
@@ -145,8 +144,7 @@ function updateNav(route, paramId) {
       'workflows': isVi ? 'Quy Trình Trực Quan' : 'Visual Workflows',
       'protocols': isVi ? 'Quy Trình Chuẩn (SOPs)' : 'Protocols & SOPs',
       'inventory': isVi ? 'Thiết Bị Phòng Lab' : 'Lab Inventory & Instruments',
-      'signoffs': isVi ? 'Ký Duyệt & Phê Chuẩn' : 'Sign-offs & Approvals',
-      'teams': paramId ? (isVi ? `Nhóm: ${paramId.toUpperCase()}` : `Team: ${paramId.toUpperCase()}`) : (isVi ? '8 Nhóm Nghiên Cứu' : 'Research Teams'),
+            'teams': paramId ? (isVi ? `Nhóm: ${paramId.toUpperCase()}` : `Team: ${paramId.toUpperCase()}`) : (isVi ? '8 Nhóm Nghiên Cứu' : 'Research Teams'),
       'projects': paramId ? `Project: ${paramId}` : (isVi ? 'Đề Tài Nghiên Cứu' : 'Projects'),
       'tasks': isVi ? 'Nhiệm Vụ & Thí Nghiệm' : 'Tasks & Experiments',
       'datasets': isVi ? 'Bộ Dữ Liệu (100RE Database)' : '100RE Database Datasets',
@@ -578,51 +576,7 @@ window.openTaskDetail = async function(taskId) {
       }
     }
 
-    // Tab 4: Sign-off Section
-    const signoffSection = document.getElementById('taskSignoffSection');
-    if (signoffSection) {
-      const user = Auth.getUser();
-      const canSign = user && (user.isSupervisor || user.isLeader);
-      const isDone = task.status === 'done';
 
-      signoffSection.innerHTML = `
-        <div style="background:#ffffff; border:1px solid var(--ws-border); border-radius:8px; padding:20px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-            <h4 style="font-size:1.05rem; font-weight:700; color:var(--ws-dark);"><i class="fa-solid fa-stamp" style="color:var(--ws-primary);"></i> Supervisor Electronic Sign-Off</h4>
-            <span class="ws-badge ${isDone ? 'ws-badge-done' : 'ws-badge-alert'}">${isDone ? 'APPROVED & CERTIFIED' : 'PENDING REVIEW'}</span>
-          </div>
-          <p style="font-size:0.85rem; color:var(--ws-text-muted); line-height:1.5; margin-bottom:16px;">
-            Formal approval certifying that all experimental protocol steps, data measurements, and mathematical validations meet 100RE Laboratory scientific standards.
-          </p>
-
-          ${signOffs.length > 0 ? `
-            <div style="background:#f0fdf4; border:1px solid #86efac; border-radius:6px; padding:12px; margin-bottom:16px;">
-              <strong style="font-size:0.85rem; color:#166534;"><i class="fa-solid fa-certificate"></i> Signed off by Assoc. Prof. Nguyen Duc Tuyen</strong>
-              <p style="font-size:0.8rem; color:#166534; margin-top:4px;">"${escapeHtml(signOffs[0].comments || 'Verified and approved.')}"</p>
-            </div>
-          ` : ''}
-
-          ${!isDone && canSign ? `
-            <button class="btn-ws-primary" id="btnExecuteSignoff"><i class="fa-solid fa-signature"></i> Sign &amp; Approve Experiment Task</button>
-          ` : ''}
-        </div>
-      `;
-
-      const btnSign = signoffSection.querySelector('#btnExecuteSignoff');
-      if (btnSign) {
-        btnSign.onclick = async () => {
-          const comments = prompt('Nhận xét phê duyệt của Thầy / Trưởng nhóm:', 'Kết quả thực nghiệm đã được kiểm tra đạt chuẩn.');
-          if (comments === null) return;
-          try {
-            await API.post(`/api/tasks/${taskId}/sign-off`, { status: 'approved', comments });
-            showToast('Đã ký duyệt thành công!');
-            window.openTaskDetail(taskId);
-          } catch (e) {
-            showToast(e.message, true);
-          }
-        };
-      }
-    }
 
     // Tab 5: Comments thread
     const commentsListEl = document.getElementById('taskDetailCommentsList');
