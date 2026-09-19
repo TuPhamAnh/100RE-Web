@@ -564,6 +564,62 @@
     </div>
   </div>
 
+  <!-- ADD / EDIT MEMBER MODAL -->
+  <div class="modal-backdrop" id="memberFormModal">
+    <div class="modal-card" style="max-width: 580px;">
+      <button class="modal-close-btn" id="memberFormCloseBtn" aria-label="Close modal"><i class="fa-solid fa-xmark"></i></button>
+      <div class="modal-header-info" style="margin-bottom: 20px;">
+        <div class="modal-title-wrap">
+          <h3 id="memberFormTitle" style="font-size: 1.4rem; display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-user-plus" style="color: #16a34a;"></i> Thêm Thành Viên Mới
+          </h3>
+          <p style="color: #64748b; font-size: 0.85rem; font-weight: 500; margin-top: 4px;">Điền thông tin thành viên và tải ảnh đại diện lên hệ thống</p>
+        </div>
+      </div>
+      <div class="form-alert-error" id="memberFormErrorAlert"></div>
+      <form id="memberForm">
+        <input type="hidden" id="editMemberId" value="">
+        <div class="form-group">
+          <label class="form-label" for="formMemberName">Họ và Tên (Full Name) *</label>
+          <input type="text" id="formMemberName" class="form-input" placeholder="VD: Nguyễn Văn A" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="formMemberTeam">Nhóm Nghiên Cứu (Research Team) *</label>
+          <select id="formMemberTeam" class="form-select" required>
+            <option value="pv">PV Team</option>
+            <option value="ai">AI Team</option>
+            <option value="dr_uc">Demand Response &amp; Unit Commitment Team</option>
+            <option value="wind">Wind Team</option>
+            <option value="smartgrid">Smart Grid Team</option>
+            <option value="ev">Electric Vehicle Team</option>
+            <option value="hydrogen">Hydrogen Team</option>
+            <option value="bess">BESS Team</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="formMemberRole">Chức Vụ / Vị Trí (Role / Position)</label>
+          <input type="text" id="formMemberRole" class="form-input" placeholder="VD: PV Team Researcher hoặc Nghiên cứu viên">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="formMemberBio">Tiểu Sử / Hướng Nghiên Cứu (Bio / Research Focus)</label>
+          <textarea id="formMemberBio" class="form-textarea" rows="3" placeholder="Mô tả tóm tắt hướng nghiên cứu, đề tài tham gia..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Ảnh Đại Diện (Profile Photo)</label>
+          <input type="file" id="formPhotoFile" class="form-input" accept="image/*">
+          <input type="hidden" id="formPhotoUrl" value="">
+          <div class="image-preview-box" id="imagePreviewBox" style="border-radius: 8px;">
+            <span style="color: #94a3b8; font-size: 0.85rem;" id="imagePreviewPlaceholder">Chưa chọn ảnh (sẽ dùng ảnh mặc định)</span>
+            <img src="" alt="Preview" id="imagePreviewImg" class="image-preview-img" style="display: none; border-radius: 6px;">
+          </div>
+        </div>
+        <button type="submit" class="btn-form-submit" id="btnSaveMember" style="border-radius: 8px;">
+          <i class="fa-solid fa-floppy-disk"></i> Lưu Thông Tin Thành Viên
+        </button>
+      </form>
+    </div>
+  </div>
+
   <div class="toast-container" id="toastContainer"></div>
 
   <!-- FOOTER -->

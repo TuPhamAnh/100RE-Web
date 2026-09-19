@@ -687,14 +687,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnMainAddMember = document.getElementById('btnMainAddMember');
   if (btnMainAddMember) {
     btnMainAddMember.addEventListener('click', () => {
-      if (document.body.classList.contains('admin-mode')) {
-        openAddMemberModal();
-      } else {
-        showToast('Vui lòng đăng nhập tài khoản Quản trị để thêm thành viên.');
-        if (loginErrorAlert) loginErrorAlert.style.display = 'none';
-        if (loginForm) loginForm.reset();
-        openModal(loginModal);
-      }
+      openAddMemberModal();
     });
   }
 
@@ -702,15 +695,8 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.btn-team-add-member').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
-      const teamKey = btn.getAttribute('data-team');
-      if (document.body.classList.contains('admin-mode')) {
-        openAddMemberModal(teamKey);
-      } else {
-        showToast('Vui lòng đăng nhập tài khoản Quản trị để thêm thành viên.');
-        if (loginErrorAlert) loginErrorAlert.style.display = 'none';
-        if (loginForm) loginForm.reset();
-        openModal(loginModal);
-      }
+      const teamKey = btn.getAttribute('data-team') || 'pv';
+      openAddMemberModal(teamKey);
     });
   });
 
@@ -721,47 +707,79 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function openAddMemberModal(defaultTeam = 'pv') {
-    if (memberFormTitle) memberFormTitle.textContent = 'Thêm Thành Viên Mới';
-    if (memberFormErrorAlert) memberFormErrorAlert.style.display = 'none';
-    if (memberForm) memberForm.reset();
-    if (editMemberId) editMemberId.value = '';
-    if (formMemberTeam) formMemberTeam.value = defaultTeam;
-    if (formPhotoUrl) formPhotoUrl.value = '';
-    if (imagePreviewImg) {
-      imagePreviewImg.src = '';
-      imagePreviewImg.style.display = 'none';
+    const modal = document.getElementById('memberFormModal') || memberFormModal;
+    if (!modal) {
+      console.warn('memberFormModal element not found in DOM');
+      return;
     }
-    if (imagePreviewPlaceholder) imagePreviewPlaceholder.style.display = 'block';
-    openModal(memberFormModal);
+    const form = document.getElementById('memberForm') || memberForm;
+    const title = document.getElementById('memberFormTitle') || memberFormTitle;
+    const alertBox = document.getElementById('memberFormErrorAlert') || memberFormErrorAlert;
+    const idInput = document.getElementById('editMemberId') || editMemberId;
+    const teamSelect = document.getElementById('formMemberTeam') || formMemberTeam;
+    const photoUrlInput = document.getElementById('formPhotoUrl') || formPhotoUrl;
+    const previewImg = document.getElementById('imagePreviewImg') || imagePreviewImg;
+    const placeholder = document.getElementById('imagePreviewPlaceholder') || imagePreviewPlaceholder;
+
+    if (title) title.innerHTML = '<i class="fa-solid fa-user-plus" style="color: #16a34a;"></i> Thêm Thành Viên Mới';
+    if (alertBox) alertBox.style.display = 'none';
+    if (form) form.reset();
+    if (idInput) idInput.value = '';
+    if (teamSelect) teamSelect.value = defaultTeam;
+    if (photoUrlInput) photoUrlInput.value = '';
+    if (previewImg) {
+      previewImg.src = '';
+      previewImg.style.display = 'none';
+    }
+    if (placeholder) placeholder.style.display = 'block';
+    openModal(modal);
   }
 
   function openEditMemberModal(member) {
-    if (memberFormTitle) memberFormTitle.textContent = `Chỉnh Sửa: ${member.name}`;
-    if (memberFormErrorAlert) memberFormErrorAlert.style.display = 'none';
-    if (memberForm) memberForm.reset();
-    if (editMemberId) editMemberId.value = member.id;
-    if (formMemberName) formMemberName.value = member.name || '';
-    if (formMemberTeam) formMemberTeam.value = member.team || 'pv';
-    if (formMemberRole) formMemberRole.value = member.role || '';
-    if (formMemberBio) formMemberBio.value = member.bio || '';
-    if (formPhotoUrl) formPhotoUrl.value = member.image || '';
+    const modal = document.getElementById('memberFormModal') || memberFormModal;
+    if (!modal) return;
+    const form = document.getElementById('memberForm') || memberForm;
+    const title = document.getElementById('memberFormTitle') || memberFormTitle;
+    const alertBox = document.getElementById('memberFormErrorAlert') || memberFormErrorAlert;
+    const idInput = document.getElementById('editMemberId') || editMemberId;
+    const nameInput = document.getElementById('formMemberName') || formMemberName;
+    const teamSelect = document.getElementById('formMemberTeam') || formMemberTeam;
+    const roleInput = document.getElementById('formMemberRole') || formMemberRole;
+    const bioInput = document.getElementById('formMemberBio') || formMemberBio;
+    const photoUrlInput = document.getElementById('formPhotoUrl') || formPhotoUrl;
+    const previewImg = document.getElementById('imagePreviewImg') || imagePreviewImg;
+    const placeholder = document.getElementById('imagePreviewPlaceholder') || imagePreviewPlaceholder;
+
+    if (title) title.innerHTML = `<i class="fa-solid fa-pen-to-square" style="color: #16a34a;"></i> Chỉnh Sửa: ${escapeHtml(member.name)}`;
+    if (alertBox) alertBox.style.display = 'none';
+    if (form) form.reset();
+    if (idInput) idInput.value = member.id;
+    if (nameInput) nameInput.value = member.name || '';
+    if (teamSelect) teamSelect.value = member.team || 'pv';
+    if (roleInput) roleInput.value = member.role || '';
+    if (bioInput) bioInput.value = member.bio || '';
+    if (photoUrlInput) photoUrlInput.value = member.image || '';
 
     if (member.image) {
-      if (imagePreviewImg) {
-        imagePreviewImg.src = member.image;
-        imagePreviewImg.style.display = 'block';
+      if (previewImg) {
+        previewImg.src = member.image;
+        previewImg.style.display = 'block';
       }
-      if (imagePreviewPlaceholder) imagePreviewPlaceholder.style.display = 'none';
+      if (placeholder) placeholder.style.display = 'none';
     } else {
-      if (imagePreviewImg) imagePreviewImg.style.display = 'none';
-      if (imagePreviewPlaceholder) imagePreviewPlaceholder.style.display = 'block';
+      if (previewImg) previewImg.style.display = 'none';
+      if (placeholder) placeholder.style.display = 'block';
     }
 
-    openModal(memberFormModal);
+    openModal(modal);
   }
 
-  if (memberFormCloseBtn) {
-    memberFormCloseBtn.addEventListener('click', () => closeModal(memberFormModal));
+  const closeBtn = document.getElementById('memberFormCloseBtn') || memberFormCloseBtn;
+  if (closeBtn) {
+    closeBtn.addEventListener('click', () => {
+      const modal = document.getElementById('memberFormModal') || memberFormModal;
+      closeModal(modal);
+    });
   }
 
   // Live Image File Preview
@@ -862,18 +880,24 @@ document.addEventListener('DOMContentLoaded', () => {
         btnSave.disabled = true;
       }
 
-      const id = editMemberId ? editMemberId.value.trim() : '';
-      const name = formMemberName.value.trim();
-      const team = formMemberTeam.value;
-      const teamSelect = formMemberTeam.options[formMemberTeam.selectedIndex];
+      const id = (editMemberId || document.getElementById('editMemberId'))?.value.trim() || '';
+      const nameInput = formMemberName || document.getElementById('formMemberName');
+      const name = nameInput ? nameInput.value.trim() : '';
+      const teamInput = formMemberTeam || document.getElementById('formMemberTeam');
+      const team = teamInput ? teamInput.value : 'pv';
+      const teamSelect = teamInput && teamInput.options ? teamInput.options[teamInput.selectedIndex] : null;
       const teamName = teamSelect ? teamSelect.text : team;
-      const role = formMemberRole.value.trim() || `${teamName} Researcher`;
-      const bio = formMemberBio.value.trim();
-      let imagePath = formPhotoUrl.value.trim() || 'assets/images/logo.jpg';
+      const roleInput = formMemberRole || document.getElementById('formMemberRole');
+      const role = (roleInput ? roleInput.value.trim() : '') || `${teamName} Researcher`;
+      const bioInput = formMemberBio || document.getElementById('formMemberBio');
+      const bio = bioInput ? bioInput.value.trim() : '';
+      const photoUrlEl = formPhotoUrl || document.getElementById('formPhotoUrl');
+      let imagePath = (photoUrlEl ? photoUrlEl.value.trim() : '') || 'assets/images/logo.jpg';
 
       try {
         // If user uploaded a new photo file, compress it on client side immediately
-        const file = formPhotoFile && formPhotoFile.files ? formPhotoFile.files[0] : null;
+        const photoFileEl = formPhotoFile || document.getElementById('formPhotoFile');
+        const file = photoFileEl && photoFileEl.files ? photoFileEl.files[0] : null;
         if (file) {
           try {
             const compressedBase64 = await compressImage(file, 500, 650, 0.80);
@@ -925,7 +949,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         safeSaveLocalStorage('100re_local_members', JSON.stringify(allMembers));
         renderAllTeamGrids();
-        closeModal(memberFormModal);
+        closeModal(document.getElementById('memberFormModal') || memberFormModal);
         showToast(id ? 'Cập nhật thành viên thành công!' : 'Đã thêm thành viên mới thành công!');
 
         // 2. Synchronize to Cloudflare KV database in background
