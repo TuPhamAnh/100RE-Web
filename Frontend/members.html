@@ -13,6 +13,7 @@
   <!-- Custom Stylesheets -->
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="stylesheet" href="assets/css/pages.css">
+  <link rel="stylesheet" href="assets/css/cropper.min.css">
 
   <style>
     /* Premium Clean Solar Bokeh Glassmorphism Background */
@@ -608,15 +609,101 @@
           <label class="form-label">Ảnh Đại Diện (Profile Photo)</label>
           <input type="file" id="formPhotoFile" class="form-input" accept="image/*">
           <input type="hidden" id="formPhotoUrl" value="">
-          <div class="image-preview-box" id="imagePreviewBox" style="border-radius: 8px;">
+          <div class="image-preview-box" id="imagePreviewBox" style="border-radius: 8px; flex-direction: column; height: auto; min-height: 140px; padding: 12px; gap: 8px;">
             <span style="color: #94a3b8; font-size: 0.85rem;" id="imagePreviewPlaceholder">Chưa chọn ảnh (sẽ dùng ảnh mặc định)</span>
-            <img src="" alt="Preview" id="imagePreviewImg" class="image-preview-img" style="display: none; border-radius: 6px;">
+            <img src="" alt="Preview" id="imagePreviewImg" class="image-preview-img" style="display: none; border-radius: 6px; max-height: 180px; object-fit: cover; aspect-ratio: 3/4; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+            <button type="button" class="btn-recrop" id="btnReCrop" style="display: none;">
+              <i class="fa-solid fa-crop-simple"></i> Căn chỉnh / Cắt lại ảnh
+            </button>
           </div>
         </div>
         <button type="submit" class="btn-form-submit" id="btnSaveMember" style="border-radius: 8px;">
           <i class="fa-solid fa-floppy-disk"></i> Lưu Thông Tin Thành Viên
         </button>
       </form>
+    </div>
+  </div>
+
+  <!-- IMAGE CROPPER MODAL -->
+  <div class="modal-backdrop modal-crop-backdrop" id="imageCropModal" style="z-index: 2200;">
+    <div class="modal-card modal-crop-card" style="max-width: 720px; padding: 24px;">
+      <button class="modal-close-btn" id="cropModalCloseBtn" aria-label="Close crop modal" type="button">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <!-- Header -->
+      <div class="modal-header-info" style="margin-bottom: 16px;">
+        <div class="modal-title-wrap">
+          <h3 style="font-size: 1.35rem; display: flex; align-items: center; gap: 8px; margin: 0;">
+            <i class="fa-solid fa-crop-simple" style="color: #16a34a;"></i> Cắt &amp; Căn Chỉnh Ảnh Đại Diện
+          </h3>
+          <p style="color: #64748b; font-size: 0.825rem; font-weight: 500; margin: 4px 0 0 0;">
+            Kéo thả khung cắt, xoay hoặc phóng to thu nhỏ để có ảnh chân dung chuẩn tỷ lệ thẻ Lab
+          </p>
+        </div>
+      </div>
+
+      <!-- Cropper Canvas Container -->
+      <div class="crop-workspace-wrap">
+        <div class="crop-image-container">
+          <img id="cropTargetImage" src="" alt="To crop" style="max-width: 100%; display: block;">
+        </div>
+        
+        <!-- Live Mini Preview Box -->
+        <div class="crop-side-preview-wrap">
+          <div class="crop-preview-label">Xem trước (Card Lab)</div>
+          <div class="crop-preview-box portrait-preview"></div>
+          <div class="crop-preview-hint">Tỷ lệ 3:4 chuẩn thẻ thành viên</div>
+        </div>
+      </div>
+
+      <!-- Toolbar: Aspect Ratio & Transform Buttons -->
+      <div class="crop-toolbar">
+        <div class="crop-toolbar-group">
+          <span class="crop-toolbar-label">Tỷ lệ:</span>
+          <button type="button" class="btn-crop-tool active" data-aspect="0.75" id="btnAspect34">
+            <i class="fa-solid fa-id-badge"></i> 3:4 (Chuẩn)
+          </button>
+          <button type="button" class="btn-crop-tool" data-aspect="1" id="btnAspect11">
+            <i class="fa-regular fa-square"></i> 1:1 (Vuông)
+          </button>
+          <button type="button" class="btn-crop-tool" data-aspect="NaN" id="btnAspectFree">
+            <i class="fa-solid fa-vector-square"></i> Tự do
+          </button>
+        </div>
+
+        <div class="crop-toolbar-group">
+          <button type="button" class="btn-crop-icon-tool" id="btnCropRotateLeft" title="Xoay trái 90°">
+            <i class="fa-solid fa-rotate-left"></i>
+          </button>
+          <button type="button" class="btn-crop-icon-tool" id="btnCropRotateRight" title="Xoay phải 90°">
+            <i class="fa-solid fa-rotate-right"></i>
+          </button>
+          <button type="button" class="btn-crop-icon-tool" id="btnCropFlipH" title="Lật ngang">
+            <i class="fa-solid fa-arrows-left-right"></i>
+          </button>
+          <button type="button" class="btn-crop-icon-tool" id="btnCropZoomIn" title="Phóng to">
+            <i class="fa-solid fa-magnifying-glass-plus"></i>
+          </button>
+          <button type="button" class="btn-crop-icon-tool" id="btnCropZoomOut" title="Thu nhỏ">
+            <i class="fa-solid fa-magnifying-glass-minus"></i>
+          </button>
+          <button type="button" class="btn-crop-icon-tool" id="btnCropReset" title="Đặt lại">
+            <i class="fa-solid fa-arrow-rotate-left"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Footer Action Buttons -->
+      <div class="crop-modal-footer">
+        <button type="button" class="btn-crop-cancel" id="btnCancelCrop">
+          Hủy Bỏ
+        </button>
+        <button type="button" class="btn-crop-apply" id="btnApplyCrop">
+          <i class="fa-solid fa-check"></i> Cắt &amp; Sử Dụng Ảnh Này
+        </button>
+      </div>
+
     </div>
   </div>
 
@@ -666,6 +753,7 @@
   <button class="back-to-top" id="backToTop" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
 
   <script src="assets/js/data.js"></script>
+  <script src="assets/js/cropper.min.js"></script>
   <script src="assets/js/main.js"></script>
   <script src="assets/js/ai_chat.js?v=100re_ai_v2"></script>
 </body>

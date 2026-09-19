@@ -720,6 +720,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const photoUrlInput = document.getElementById('formPhotoUrl') || formPhotoUrl;
     const previewImg = document.getElementById('imagePreviewImg') || imagePreviewImg;
     const placeholder = document.getElementById('imagePreviewPlaceholder') || imagePreviewPlaceholder;
+    const btnReCrop = document.getElementById('btnReCrop');
 
     if (title) title.innerHTML = '<i class="fa-solid fa-user-plus" style="color: #16a34a;"></i> Thêm Thành Viên Mới';
     if (alertBox) alertBox.style.display = 'none';
@@ -732,6 +733,8 @@ document.addEventListener('DOMContentLoaded', () => {
       previewImg.style.display = 'none';
     }
     if (placeholder) placeholder.style.display = 'block';
+    if (btnReCrop) btnReCrop.style.display = 'none';
+    currentOriginalImageSrc = null;
     openModal(modal);
   }
 
@@ -749,6 +752,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const photoUrlInput = document.getElementById('formPhotoUrl') || formPhotoUrl;
     const previewImg = document.getElementById('imagePreviewImg') || imagePreviewImg;
     const placeholder = document.getElementById('imagePreviewPlaceholder') || imagePreviewPlaceholder;
+    const btnReCrop = document.getElementById('btnReCrop');
 
     if (title) title.innerHTML = `<i class="fa-solid fa-pen-to-square" style="color: #16a34a;"></i> Chỉnh Sửa: ${escapeHtml(member.name)}`;
     if (alertBox) alertBox.style.display = 'none';
@@ -766,9 +770,17 @@ document.addEventListener('DOMContentLoaded', () => {
         previewImg.style.display = 'block';
       }
       if (placeholder) placeholder.style.display = 'none';
+      currentOriginalImageSrc = member.image;
+      if (btnReCrop && !member.image.includes('logo.jpg')) {
+        btnReCrop.style.display = 'inline-flex';
+      } else if (btnReCrop) {
+        btnReCrop.style.display = 'none';
+      }
     } else {
       if (previewImg) previewImg.style.display = 'none';
       if (placeholder) placeholder.style.display = 'block';
+      currentOriginalImageSrc = null;
+      if (btnReCrop) btnReCrop.style.display = 'none';
     }
 
     openModal(modal);
@@ -782,21 +794,246 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Live Image File Preview
+  // ==========================================
+  // Image Cropper Controller (Cropper.js)
+  // ==========================================
+  let activeCropper = null;
+  let currentOriginalImageSrc = null;
+  let currentAspect = 3 / 4; // Default Lab Card Portrait ratio (3:4)
+  let flipH = 1;
+
+  const imageCropModal = document.getElementById('imageCropModal');
+  const cropModalCloseBtn = document.getElementById('cropModalCloseBtn');
+  const cropTargetImage = document.getElementById('cropTargetImage');
+  const btnCancelCrop = document.getElementById('btnCancelCrop');
+  const btnApplyCrop = document.getElementById('btnApplyCrop');
+  const btnReCrop = document.getElementById('btnReCrop');
+
+  const btnAspect34 = document.getElementById('btnAspect34');
+  const btnAspect11 = document.getElementById('btnAspect11');
+  const btnAspectFree = document.getElementById('btnAspectFree');
+
+  const btnCropRotateLeft = document.getElementById('btnCropRotateLeft');
+  const btnCropRotateRight = document.getElementById('btnCropRotateRight');
+  const btnCropFlipH = document.getElementById('btnCropFlipH');
+  const btnCropZoomIn = document.getElementById('btnCropZoomIn');
+  const btnCropZoomOut = document.getElementById('btnCropZoomOut');
+  const btnCropReset = document.getElementById('btnCropReset');
+
+  function openCropModal(imageSrc) {
+    if (!imageCropModal || !cropTargetImage) return;
+
+    if (typeof Cropper === 'undefined') {
+      console.warn('Cropper.js not loaded, skipping crop dialog');
+      if (imagePreviewImg) {
+        imagePreviewImg.src = imageSrc;
+        imagePreviewImg.style.display = 'block';
+      }
+      if (imagePreviewPlaceholder) imagePreviewPlaceholder.style.display = 'none';
+      if (formPhotoUrl) formPhotoUrl.value = imageSrc;
+      return;
+    }
+
+    if (activeCropper) {
+      activeCropper.destroy();
+      activeCropper = null;
+    }
+
+    cropTargetImage.src = imageSrc;
+    flipH = 1;
+    currentAspect = 3 / 4;
+
+    // Reset aspect buttons
+    if (btnAspect34) btnAspect34.classList.add('active');
+    if (btnAspect11) btnAspect11.classList.remove('active');
+    if (btnAspectFree) btnAspectFree.classList.remove('active');
+
+    openModal(imageCropModal);
+
+    // Allow modal DOM to render and compute dimensions
+    setTimeout(() => {
+      if (activeCropper) activeCropper.destroy();
+      activeCropper = new Cropper(cropTargetImage, {
+        aspectRatio: currentAspect,
+        viewMode: 1,
+        dragMode: 'move',
+        autoCropArea: 0.9,
+        restore: false,
+        guides: true,
+        center: true,
+        highlight: false,
+        cropBoxMovable: true,
+        cropBoxResizable: true,
+        toggleDragModeOnDblclick: false,
+        preview: '.portrait-preview'
+      });
+    }, 60);
+  }
+
+  function closeCropModal() {
+    if (imageCropModal) {
+      closeModal(imageCropModal);
+    }
+    if (activeCropper) {
+      activeCropper.destroy();
+      activeCropper = null;
+    }
+  }
+
+  // Trigger Crop Modal when user selects an image file
   if (formPhotoFile) {
     formPhotoFile.addEventListener('change', (e) => {
-      const file = e.target.files[0];
+      const file = e.target.files && e.target.files[0];
       if (file) {
         const reader = new FileReader();
         reader.onload = (event) => {
-          if (imagePreviewImg) {
-            imagePreviewImg.src = event.target.result;
-            imagePreviewImg.style.display = 'block';
-          }
-          if (imagePreviewPlaceholder) imagePreviewPlaceholder.style.display = 'none';
+          currentOriginalImageSrc = event.target.result;
+          openCropModal(currentOriginalImageSrc);
         };
         reader.readAsDataURL(file);
       }
+    });
+  }
+
+  // Re-crop button trigger
+  if (btnReCrop) {
+    btnReCrop.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (currentOriginalImageSrc) {
+        openCropModal(currentOriginalImageSrc);
+      } else if (formPhotoUrl && formPhotoUrl.value) {
+        currentOriginalImageSrc = formPhotoUrl.value;
+        openCropModal(currentOriginalImageSrc);
+      }
+    });
+  }
+
+  // Aspect ratio toolbar buttons
+  const aspectBtns = [
+    { btn: btnAspect34, ratio: 3 / 4 },
+    { btn: btnAspect11, ratio: 1 },
+    { btn: btnAspectFree, ratio: NaN }
+  ];
+  aspectBtns.forEach(item => {
+    if (item.btn) {
+      item.btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        aspectBtns.forEach(ab => ab.btn && ab.btn.classList.remove('active'));
+        item.btn.classList.add('active');
+        currentAspect = item.ratio;
+        if (activeCropper) {
+          activeCropper.setAspectRatio(item.ratio);
+        }
+      });
+    }
+  });
+
+  // Transform toolbar actions
+  if (btnCropRotateLeft) {
+    btnCropRotateLeft.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (activeCropper) activeCropper.rotate(-90);
+    });
+  }
+  if (btnCropRotateRight) {
+    btnCropRotateRight.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (activeCropper) activeCropper.rotate(90);
+    });
+  }
+  if (btnCropFlipH) {
+    btnCropFlipH.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (activeCropper) {
+        flipH = -flipH;
+        activeCropper.scaleX(flipH);
+      }
+    });
+  }
+  if (btnCropZoomIn) {
+    btnCropZoomIn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (activeCropper) activeCropper.zoom(0.1);
+    });
+  }
+  if (btnCropZoomOut) {
+    btnCropZoomOut.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (activeCropper) activeCropper.zoom(-0.1);
+    });
+  }
+  if (btnCropReset) {
+    btnCropReset.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (activeCropper) {
+        flipH = 1;
+        activeCropper.reset();
+      }
+    });
+  }
+
+  // Close & Cancel buttons
+  if (cropModalCloseBtn) {
+    cropModalCloseBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      closeCropModal();
+    });
+  }
+  if (btnCancelCrop) {
+    btnCancelCrop.addEventListener('click', (e) => {
+      e.preventDefault();
+      closeCropModal();
+      if (formPhotoFile && (!formPhotoUrl || !formPhotoUrl.value)) {
+        formPhotoFile.value = '';
+      }
+    });
+  }
+
+  // Apply Crop Action
+  if (btnApplyCrop) {
+    btnApplyCrop.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (!activeCropper) {
+        closeCropModal();
+        return;
+      }
+
+      let exportWidth = 600;
+      let exportHeight = 800;
+      if (currentAspect === 1) {
+        exportWidth = 600;
+        exportHeight = 600;
+      } else if (isNaN(currentAspect)) {
+        const cropData = activeCropper.getData();
+        const r = (cropData.width && cropData.height) ? (cropData.width / cropData.height) : (3 / 4);
+        exportWidth = 600;
+        exportHeight = Math.round(600 / r);
+      }
+
+      const canvas = activeCropper.getCroppedCanvas({
+        width: exportWidth,
+        height: exportHeight,
+        imageSmoothingEnabled: true,
+        imageSmoothingQuality: 'high'
+      });
+
+      if (canvas) {
+        const croppedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+        if (formPhotoUrl) formPhotoUrl.value = croppedDataUrl;
+        if (imagePreviewImg) {
+          imagePreviewImg.src = croppedDataUrl;
+          imagePreviewImg.style.display = 'block';
+        }
+        if (imagePreviewPlaceholder) {
+          imagePreviewPlaceholder.style.display = 'none';
+        }
+        if (btnReCrop) {
+          btnReCrop.style.display = 'inline-flex';
+        }
+        showToast('Đã cắt và tối ưu hóa ảnh thẻ thành công!');
+      }
+
+      closeCropModal();
     });
   }
 
@@ -895,41 +1132,43 @@ document.addEventListener('DOMContentLoaded', () => {
       let imagePath = (photoUrlEl ? photoUrlEl.value.trim() : '') || 'assets/images/logo.jpg';
 
       try {
-        // If user uploaded a new photo file, compress it on client side immediately
         const photoFileEl = formPhotoFile || document.getElementById('formPhotoFile');
         const file = photoFileEl && photoFileEl.files ? photoFileEl.files[0] : null;
-        if (file) {
+
+        // If user selected a file but didn't crop or imagePath is not already base64 data, run fallback compressor
+        if (!imagePath.startsWith('data:image/') && file) {
           try {
             const compressedBase64 = await compressImage(file, 500, 650, 0.80);
-            imagePath = compressedBase64; // lightweight 30KB - 60KB JPEG
-
-            // Try uploading to server if authenticated
-            if (currentAuthToken) {
-              try {
-                const uploadRes = await fetchTimeout(`${API_BASE}/api/upload-photo`, {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${currentAuthToken}`
-                  },
-                  body: JSON.stringify({
-                    filename: file.name,
-                    base64Data: compressedBase64
-                  })
-                }, 2500);
-
-                if (uploadRes.ok) {
-                  const uploadData = await uploadRes.json();
-                  if (uploadData.success && uploadData.imagePath) {
-                    imagePath = uploadData.imagePath;
-                  }
-                }
-              } catch (uErr) {
-                console.warn('Server photo upload skipped, using compressed base64:', uErr);
-              }
-            }
+            imagePath = compressedBase64;
           } catch (fileErr) {
             console.error('Error compressing photo file:', fileErr);
+          }
+        }
+
+        // Try uploading to server if authenticated and is base64
+        if (currentAuthToken && imagePath.startsWith('data:image/')) {
+          try {
+            const fileName = file ? file.name : `member_${Date.now()}.jpg`;
+            const uploadRes = await fetchTimeout(`${API_BASE}/api/upload-photo`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${currentAuthToken}`
+              },
+              body: JSON.stringify({
+                filename: fileName,
+                base64Data: imagePath
+              })
+            }, 2500);
+
+            if (uploadRes.ok) {
+              const uploadData = await uploadRes.json();
+              if (uploadData.success && uploadData.imagePath) {
+                imagePath = uploadData.imagePath;
+              }
+            }
+          } catch (uErr) {
+            console.warn('Server photo upload skipped, using base64:', uErr);
           }
         }
 
@@ -1102,17 +1341,27 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Global Backdrop and Escape click to close
-  [loginModal, memberFormModal, memberModal].forEach(modal => {
+  [loginModal, memberFormModal, memberModal, imageCropModal].forEach(modal => {
     if (modal) {
       modal.addEventListener('click', (e) => {
-        if (e.target === modal) closeModal(modal);
+        if (e.target === modal) {
+          if (modal === imageCropModal) {
+            closeCropModal();
+          } else {
+            closeModal(modal);
+          }
+        }
       });
     }
   });
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-      [loginModal, memberFormModal, memberModal].forEach(m => closeModal(m));
+      if (imageCropModal && imageCropModal.classList.contains('show')) {
+        closeCropModal();
+      } else {
+        [loginModal, memberFormModal, memberModal].forEach(m => closeModal(m));
+      }
     }
   });
 
