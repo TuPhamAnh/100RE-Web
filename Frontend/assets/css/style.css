@@ -1214,11 +1214,15 @@ img {
    ADMIN & AUTHENTICATION STYLES (SQUARE-EDGED)
    ========================================================= */
 
-/* Main Add Member Button in Control Bar */
+/* Main Add Member Button in Control Bar - Only visible in Admin Mode */
 .control-actions {
-  display: flex;
+  display: none;
   align-items: center;
   margin-top: 14px;
+}
+
+body.admin-mode .control-actions {
+  display: flex;
 }
 
 .btn-action-add-member {
@@ -1229,12 +1233,16 @@ img {
   font-size: 0.95rem;
   font-weight: 700;
   cursor: pointer;
-  display: inline-flex;
+  display: none;
   align-items: center;
   gap: 8px;
   transition: var(--transition);
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
   border-radius: var(--radius-md);
+}
+
+body.admin-mode .btn-action-add-member {
+  display: inline-flex;
 }
 
 .btn-action-add-member:hover {
@@ -1243,7 +1251,7 @@ img {
   box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35);
 }
 
-/* Team Banner Add Member Button */
+/* Team Banner Add Member Button - Only visible in Admin Mode */
 .team-banner-right {
   display: flex;
   align-items: center;
@@ -1259,11 +1267,15 @@ img {
   font-size: 0.8rem;
   font-weight: 700;
   cursor: pointer;
-  display: inline-flex;
+  display: none;
   align-items: center;
   gap: 6px;
   transition: var(--transition);
   border-radius: var(--radius-md);
+}
+
+body.admin-mode .btn-team-add-member {
+  display: inline-flex;
 }
 
 .btn-team-add-member:hover {

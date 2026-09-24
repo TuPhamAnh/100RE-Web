@@ -118,8 +118,16 @@ document.addEventListener('DOMContentLoaded', () => {
     function setAdminState(isAdmin, username = '100re') {
     const wsLink = document.getElementById('navWorkspaceLink');
     const dropdown = ensureUserDropdown();
+    const controlActions = document.querySelector('.control-actions');
+    const mainAddBtn = document.getElementById('btnMainAddMember');
+    const teamAddBtns = document.querySelectorAll('.btn-team-add-member');
+
     if (isAdmin) {
       document.body.classList.add('admin-mode');
+      if (controlActions) controlActions.style.display = 'flex';
+      if (mainAddBtn) mainAddBtn.style.display = 'inline-flex';
+      teamAddBtns.forEach(btn => btn.style.display = 'inline-flex');
+
       if (adminUsername) adminUsername.textContent = username;
       const dropName = document.getElementById('dropdownUserName');
       if (dropName) dropName.textContent = username;
@@ -146,6 +154,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if (wsLink) wsLink.style.display = 'block';
     } else {
       document.body.classList.remove('admin-mode');
+      if (controlActions) controlActions.style.display = 'none';
+      if (mainAddBtn) mainAddBtn.style.display = 'none';
+      teamAddBtns.forEach(btn => btn.style.display = 'none');
+
       if (navLoginBtn) {
         navLoginBtn.classList.remove('user-logged-in-chip');
         navLoginBtn.innerHTML = `<i class="fa-solid fa-arrow-right-to-bracket"></i> <span>Đăng Nhập</span>`;
@@ -160,12 +172,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // 3. Load & Render Members from API
   // ==========================================
   async function loadMembers() {
-    // 1. Immediately render default members so page is NEVER blank
+    // 1. Immediately render cached or default members so page is NEVER blank
     const saved = localStorage.getItem('100re_local_members');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        allMembers = Array.isArray(parsed) && parsed.length > 0 ? parsed : DEFAULT_MEMBERS;
+        allMembers = Array.isArray(parsed) ? parsed : DEFAULT_MEMBERS;
       } catch (err) {
         allMembers = DEFAULT_MEMBERS;
       }
@@ -182,22 +194,14 @@ document.addEventListener('DOMContentLoaded', () => {
       if (res.ok) {
         const data = await res.json();
         const list = Array.isArray(data) ? data : (data && Array.isArray(data.members) ? data.members : null);
-        if (list && list.length > 0) {
-          // Merge API list with DEFAULT_MEMBERS to ensure no missing profiles
-          const map = new Map(DEFAULT_MEMBERS.map(m => [String(m.id), { ...m }]));
-          list.forEach(m => {
-            if (m && m.id) {
-              const existing = map.get(String(m.id)) || {};
-              map.set(String(m.id), { ...existing, ...m });
-            }
-          });
-          allMembers = Array.from(map.values());
+        if (list && Array.isArray(list)) {
+          allMembers = list;
           safeSaveLocalStorage('100re_local_members', JSON.stringify(allMembers));
           renderAllTeamGrids();
         }
       }
     } catch (e) {
-      console.warn('API fetch failed, maintained default members:', e);
+      console.warn('API fetch failed, maintained cached members:', e);
     }
   }
 
@@ -215,20 +219,17 @@ document.addEventListener('DOMContentLoaded', () => {
         return matchesTeam && !m.is_alumni && m.team !== 'alumni';
       });
 
-      // Fallback: If no active members found in custom dataset, fetch from DEFAULT_MEMBERS
-      if (teamMembers.length === 0) {
-        teamMembers = DEFAULT_MEMBERS.filter(m => {
-          return (m.team === teamKey) || 
-            (teamKey === 'dr_uc' && (m.team === 'dr_uc' || m.team === 'ucdr'));
-        });
-      }
-      
       // Update count badge
       if (countBadge) {
         countBadge.textContent = `${teamMembers.length} ${teamMembers.length === 1 ? 'Member' : 'Members'}`;
       }
 
       grid.innerHTML = '';
+
+      if (teamMembers.length === 0) {
+        grid.innerHTML = '<p class="empty-team-placeholder" style="color: #94a3b8; font-size: 0.875rem; font-style: italic; padding: 15px 0;">Chưa có thành viên trong nhóm này.</p>';
+        return;
+      }
 
       teamMembers.forEach(member => {
         const card = document.createElement('div');

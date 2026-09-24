@@ -353,6 +353,22 @@ async function runTests() {
     if (!delData.success || delData.members.find(m => m.id === 'pv-new-test')) {
       throw new Error(`Expected member to be deleted from list, got ${JSON.stringify(delData)}`);
     }
+
+    // 4. Delete an INITIAL_SEED member (e.g. bess-1) and verify GET does NOT resurrect it
+    const delSeedReq = makeReq('/api/public/members/bess-1', 'DELETE');
+    const delSeedRes = await worker.fetch(delSeedReq, mockEnv);
+    const delSeedData = await delSeedRes.json();
+    if (!delSeedData.success || delSeedData.members.find(m => m.id === 'bess-1')) {
+      throw new Error(`Expected seed member bess-1 to be deleted, got ${JSON.stringify(delSeedData)}`);
+    }
+
+    // 5. Subsequent GET must NOT resurrect deleted seed member
+    const getAfterDelReq = makeReq('/api/public/members', 'GET');
+    const getAfterDelRes = await worker.fetch(getAfterDelReq, mockEnv);
+    const getAfterDelData = await getAfterDelRes.json();
+    if (getAfterDelData.find(m => m.id === 'bess-1')) {
+      throw new Error(`Regression: Deleted seed member bess-1 was resurrected by GET!`);
+    }
   });
 
   await test('AI Chat Assistant Gateway: POST /api/chat responds with 100RE Lab knowledge (Vietnamese & English)', async () => {

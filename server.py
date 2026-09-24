@@ -102,7 +102,7 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
             })
 
         # API: Get all members
-        if path == '/api/members':
+        if path == '/api/members' or path == '/api/public/members':
             members = load_members()
             return self.send_json(members)
 
@@ -180,7 +180,7 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
                 return self.send_json({'success': False, 'error': f'Upload error: {str(e)}'}, status=500)
 
         # API: Add Member
-        if path == '/api/members':
+        if path == '/api/members' or path == '/api/public/members':
             try:
                 payload = json.loads(post_data.decode('utf-8'))
                 name = payload.get('name', '').strip()
@@ -193,7 +193,7 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
                 if not name or not team:
                     return self.send_json({'success': False, 'error': 'Name and Team are required'}, status=400)
 
-                new_id = f"{team}_{uuid.uuid4().hex[:6]}"
+                new_id = payload.get('id') or f"{team}_{uuid.uuid4().hex[:6]}"
                 new_member = {
                     'id': new_id,
                     'name': name,
@@ -205,10 +205,14 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
                 }
 
                 members = load_members()
-                members.append(new_member)
+                idx = next((i for i, m in enumerate(members) if str(m.get('id')) == str(new_id)), None)
+                if idx is not None:
+                    members[idx] = new_member
+                else:
+                    members.append(new_member)
                 save_members(members)
 
-                print(f"[CRUD] Added new member: {name} (ID: {new_id}, Team: {team})")
+                print(f"[CRUD] Saved member: {name} (ID: {new_id}, Team: {team})")
                 return self.send_json({'success': True, 'member': new_member}, status=201)
             except Exception as e:
                 return self.send_json({'success': False, 'error': str(e)}, status=500)
@@ -223,9 +227,9 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
         if not Security.verify_token(token):
             return self.send_json({'success': False, 'error': 'Unauthorized! Vui lòng đăng nhập.'}, status=401)
 
-        # API: Edit Member -> /api/members/<id>
-        if path.startswith('/api/members/'):
-            member_id = path[len('/api/members/'):].strip()
+        # API: Edit Member -> /api/members/<id> or /api/public/members/<id>
+        if path.startswith('/api/members/') or path.startswith('/api/public/members/'):
+            member_id = path.split('/')[-1].strip()
             content_length = int(self.headers.get('Content-Length', 0))
             put_data = self.rfile.read(content_length) if content_length > 0 else b'{}'
 
@@ -235,7 +239,7 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
                 updated_member = None
 
                 for m in members:
-                    if m.get('id') == member_id:
+                    if str(m.get('id')) == str(member_id):
                         if 'name' in payload: m['name'] = payload['name'].strip()
                         if 'team' in payload: m['team'] = payload['team'].strip()
                         if 'teamName' in payload: m['teamName'] = payload['teamName'].strip()
@@ -264,12 +268,12 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
         if not Security.verify_token(token):
             return self.send_json({'success': False, 'error': 'Unauthorized! Vui lòng đăng nhập.'}, status=401)
 
-        # API: Delete Member -> /api/members/<id>
-        if path.startswith('/api/members/'):
-            member_id = path[len('/api/members/'):].strip()
+        # API: Delete Member -> /api/members/<id> or /api/public/members/<id>
+        if path.startswith('/api/members/') or path.startswith('/api/public/members/'):
+            member_id = path.split('/')[-1].strip()
             members = load_members()
             initial_count = len(members)
-            members = [m for m in members if m.get('id') != member_id]
+            members = [m for m in members if str(m.get('id')) != str(member_id)]
 
             if len(members) < initial_count:
                 save_members(members)

@@ -25,16 +25,23 @@ const INITIAL_SEED_MEMBERS = [
   { id: "bess-3", name: "Tran Thi Hong Vinh", team: "bess", teamName: "BESS Team", role: "BESS Team", image: "assets/images/tran_thi_hong_vinh.png", bio: "Researcher in the BESS Team at 100RE Laboratory. Specializing in battery degradation models, thermal management, and energy storage peak shaving strategies." }
 ];
 
-function getMergedMembers(customList) {
-  if (!Array.isArray(customList) || customList.length === 0) return INITIAL_SEED_MEMBERS;
-  const map = new Map(INITIAL_SEED_MEMBERS.map(m => [String(m.id), { ...m }]));
-  for (const cm of customList) {
-    if (cm && cm.id) {
-      const existing = map.get(String(cm.id)) || {};
-      map.set(String(cm.id), { ...existing, ...cm });
+async function getStoredMembers(env) {
+  if (env && env.MEMBERS_KV) {
+    const custom = (await env.MEMBERS_KV.get('members_list')) || (await env.MEMBERS_KV.get('members_data'));
+    if (custom !== null && custom !== undefined) {
+      try {
+        const parsed = JSON.parse(custom);
+        if (Array.isArray(parsed)) {
+          return parsed;
+        }
+      } catch (e) {}
     }
+    // KV not initialized yet -> seed it with initial members
+    try {
+      await env.MEMBERS_KV.put('members_list', JSON.stringify(INITIAL_SEED_MEMBERS));
+    } catch (e) {}
   }
-  return Array.from(map.values());
+  return [...INITIAL_SEED_MEMBERS];
 }
 
 export async function handlePublicMembers(request, env) {
@@ -46,13 +53,7 @@ export async function handlePublicMembers(request, env) {
   if (isMoveToAlumni && (method === 'POST' || method === 'PUT')) {
     try {
       const memberId = pathParts[pathParts.length - 2];
-      let current = INITIAL_SEED_MEMBERS;
-      if (env && env.MEMBERS_KV) {
-        const custom = (await env.MEMBERS_KV.get('members_list')) || (await env.MEMBERS_KV.get('members_data'));
-        if (custom) {
-          try { current = getMergedMembers(JSON.parse(custom)); } catch(e) {}
-        }
-      }
+      let current = await getStoredMembers(env);
 
       let movedMember = null;
       const targetIdx = current.findIndex(m => String(m.id) === String(memberId));
@@ -117,37 +118,14 @@ export async function handlePublicMembers(request, env) {
     }
   }
 
-
-  
-
   if (method === 'GET') {
-    let membersToReturn = INITIAL_SEED_MEMBERS;
-    if (env && env.MEMBERS_KV) {
-      const custom = (await env.MEMBERS_KV.get('members_list')) || (await env.MEMBERS_KV.get('members_data'));
-      if (custom) {
-        try {
-          const parsed = JSON.parse(custom);
-          membersToReturn = getMergedMembers(parsed);
-        } catch (e) {}
-      }
-      // Ensure KV is populated with the complete list
-      try {
-        await env.MEMBERS_KV.put('members_list', JSON.stringify(membersToReturn));
-      } catch (e) {}
-    }
-    return membersToReturn;
+    return await getStoredMembers(env);
   }
 
   if (method === 'POST' || method === 'PUT') {
     try {
       const body = await request.json();
-      let current = INITIAL_SEED_MEMBERS;
-      if (env && env.MEMBERS_KV) {
-        const custom = (await env.MEMBERS_KV.get('members_list')) || (await env.MEMBERS_KV.get('members_data'));
-        if (custom) {
-          try { current = getMergedMembers(JSON.parse(custom)); } catch (e) {}
-        }
-      }
+      let current = await getStoredMembers(env);
 
       let savedMember = null;
       if (Array.isArray(body)) {
@@ -186,13 +164,7 @@ export async function handlePublicMembers(request, env) {
     try {
       const url = new URL(request.url);
       const memberId = url.pathname.split('/').pop();
-      let current = INITIAL_SEED_MEMBERS;
-      if (env && env.MEMBERS_KV) {
-        const custom = (await env.MEMBERS_KV.get('members_list')) || (await env.MEMBERS_KV.get('members_data'));
-        if (custom) {
-          try { current = getMergedMembers(JSON.parse(custom)); } catch (e) {}
-        }
-      }
+      let current = await getStoredMembers(env);
       current = current.filter(m => String(m.id) !== String(memberId));
       if (env && env.MEMBERS_KV) {
         await env.MEMBERS_KV.put('members_list', JSON.stringify(current));
