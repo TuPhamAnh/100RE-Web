@@ -584,6 +584,20 @@
   border-color: #16a34a;
 }
 
+.pub-citation-badge {
+  font-size: 0.825rem;
+  font-weight: 700;
+  color: #1e40af;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  padding: 5px 12px;
+  border-radius: var(--radius-md, 6px);
+  user-select: none;
+}
+
 /* 6. Empty State Component */
 .empty-state {
   text-align: center;

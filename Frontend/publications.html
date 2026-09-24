@@ -167,8 +167,8 @@
         <p>&copy; 2026 100RE LABORATORY. All rights reserved. Toward 100% Renewable Energy.</p>
         <div class="footer-social-links">
           <a href="https://www.100relab.com" class="social-link" title="Website"><i class="fa-solid fa-globe"></i></a>
-          <a href="https://scholar.google.com/citations?user=_Jwdw_4AAAAJ&hl=en" class="social-link" title="Google Scholar"><i class="fa-brands fa-google-scholar"></i></a>
-          <a href="https://orcid.org/0000-0001-7107-3897" class="social-link" title="ORCID"><i class="fa-brands fa-orcid"></i></a>
+          <a href="https://scholar.google.com/citations?user=89Jk4L0AAAAJ&hl=en" class="social-link" title="Assoc. Prof. Nguyen Duc Tuyen on Google Scholar" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-google-scholar"></i></a>
+          <a href="https://orcid.org/0000-0001-7107-3897" class="social-link" title="ORCID" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-orcid"></i></a>
           <a href="mailto:tuyen.nguyenduc@hust.edu.vn" class="social-link" title="Email"><i class="fa-solid fa-envelope"></i></a>
         </div>
       </div>
@@ -177,9 +177,9 @@
 
   <button class="back-to-top" id="backToTop" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
 
-  <script src="assets/js/data.js"></script>
-  <script src="assets/js/main.js"></script>
-  <script src="assets/js/admin_crud.js"></script>
+  <script src="assets/js/data.js?v=20260925_05"></script>
+  <script src="assets/js/main.js?v=20260925_05"></script>
+  <script src="assets/js/admin_crud.js?v=20260925_05"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const container = document.getElementById('pubListContainer');
@@ -217,18 +217,22 @@
                           pub.category === 'domestic-journal' ? 'Domestic Journal' :
                           pub.category === 'conference' ? 'Conference' :
                           pub.category === 'book-chapter' ? 'Book Chapter' : 'Invited Talk';
+          const doiUrl = pub.doi ? (pub.doi.startsWith('http') ? pub.doi : 'https://doi.org/' + pub.doi) : '';
+          const hasSeparateUrl = pub.url && pub.url !== '#' && pub.url !== doiUrl && !pub.url.includes('doi.org/' + pub.doi);
           return `
             <article class="pub-item" data-id="${pub.id}">
               <div class="pub-meta-top">
                 <span class="pub-badge-category">${catName}</span>
                 ${pub.quartile ? `<span class="pub-badge-quartile">${pub.quartile}</span>` : ''}
                 <span class="pub-year"><i class="fa-regular fa-calendar"></i> ${pub.year || ''}</span>
+                ${pub.citations > 0 ? `<span class="pub-citation-badge" title="${pub.citations} Citations on Google Scholar"><i class="fa-solid fa-quote-right"></i> ${pub.citations} Citations</span>` : ''}
               </div>
               <h3 class="pub-title">${pub.title}</h3>
               <div class="pub-authors"><strong>Authors:</strong> ${pub.authors || ''}</div>
               <div class="pub-venue"><strong>Venue:</strong> ${pub.venue || pub.journal || ''}</div>
               <div class="pub-links">
-                ${pub.doi ? `<a href="${pub.url || (pub.doi.startsWith('http') ? pub.doi : 'https://doi.org/' + pub.doi)}" target="_blank" rel="noopener noreferrer" class="pub-link-btn"><i class="fa-solid fa-link"></i> DOI: ${pub.doi}</a>` : ''}
+                ${doiUrl ? `<a href="${doiUrl}" target="_blank" rel="noopener noreferrer" class="pub-link-btn"><i class="fa-solid fa-link"></i> DOI</a>` : ''}
+                ${hasSeparateUrl ? `<a href="${pub.url}" target="_blank" rel="noopener noreferrer" class="pub-link-btn" title="View on Google Scholar or Publisher"><i class="fa-solid fa-arrow-up-right-from-square"></i> Paper Link</a>` : ''}
                 <button class="pub-link-btn" type="button" onclick="navigator.clipboard.writeText('${(pub.authors || '').replace(/'/g, "\\\\'")} (${pub.year}). ${(pub.title || '').replace(/'/g, "\\\\'")}. ${(pub.venue || pub.journal || '').replace(/'/g, "\\\\'")}.'); if (typeof showToast === 'function') { showToast('Đã sao chép trích dẫn APA vào clipboard!'); } else { alert('Citation copied to clipboard!'); }">
                   <i class="fa-regular fa-copy"></i> Copy Citation
                 </button>
