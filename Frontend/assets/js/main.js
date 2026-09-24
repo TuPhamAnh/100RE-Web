@@ -205,6 +205,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  function isLeaderMember(member) {
+    if (!member) return false;
+    if (member.is_leader === true || member.isLeader === true) return true;
+    const role = (member.role || '').toLowerCase().trim();
+    return role.includes('leader') || role.includes('trưởng') || role.includes('lead');
+  }
+
   function renderAllTeamGrids() {
     const teams = ['pv', 'ai', 'dr_uc', 'wind', 'smartgrid', 'ev', 'hydrogen', 'bess'];
     
@@ -217,6 +224,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const matchesTeam = (m.team === teamKey) || 
           (teamKey === 'dr_uc' && (m.team === 'dr_uc' || m.team === 'ucdr' || m.team === 'unit-commitment' || m.team === 'demand-response'));
         return matchesTeam && !m.is_alumni && m.team !== 'alumni';
+      });
+
+      // Sort: Leader always first, then regular members
+      teamMembers.sort((a, b) => {
+        const aIsLeader = isLeaderMember(a) ? 1 : 0;
+        const bIsLeader = isLeaderMember(b) ? 1 : 0;
+        if (aIsLeader !== bIsLeader) {
+          return bIsLeader - aIsLeader; // Leader (1) before Member (0)
+        }
+        return 0;
       });
 
       // Update count badge
@@ -237,6 +254,11 @@ document.addEventListener('DOMContentLoaded', () => {
         card.setAttribute('data-id', member.id);
         card.setAttribute('data-team', member.team);
 
+        const isLeader = isLeaderMember(member);
+        if (isLeader) {
+          card.classList.add('is-leader-card');
+        }
+
         const imgSrc = member.image || 'assets/images/logo.jpg';
         const teamBadgeName = member.team === 'pv' ? 'PV' :
                               member.team === 'ai' ? 'AI' :
@@ -246,6 +268,9 @@ document.addEventListener('DOMContentLoaded', () => {
                               member.team === 'ev' ? 'EV' :
                               member.team === 'hydrogen' ? 'Hydrogen' : 'BESS';
 
+        const roleText = member.role || member.teamName || 'Researcher';
+        const roleTagClass = isLeader ? 'member-team-tag role-leader' : 'member-team-tag';
+
         card.innerHTML = `
           <div class="member-photo-wrap">
             <img src="${imgSrc}" alt="${escapeHtml(member.name)}" class="member-photo" loading="lazy" onerror="this.src='assets/images/logo.jpg'">
@@ -253,7 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
           <div class="member-content">
             <h4 class="member-name">${escapeHtml(member.name)}</h4>
-            <span class="member-team-tag">${escapeHtml(member.role || member.teamName || 'Researcher')}</span>
+            <span class="${roleTagClass}">${escapeHtml(roleText)}</span>
             <button class="member-btn-quickview" type="button">
               <i class="fa-solid fa-id-card"></i> View Profile
             </button>
@@ -1329,7 +1354,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!memberModal) return;
     if (modalAvatar) modalAvatar.src = avatarSrc || 'assets/images/logo.jpg';
     if (modalName) modalName.textContent = name;
-    if (modalRole) modalRole.textContent = role;
+    if (modalRole) {
+      modalRole.textContent = role;
+      if (isLeaderMember({ role })) {
+        modalRole.style.color = '#dc2626';
+        modalRole.style.fontWeight = '700';
+      } else {
+        modalRole.style.color = '';
+        modalRole.style.fontWeight = '';
+      }
+    }
     if (modalBio) {
       modalBio.innerHTML = bioText ? bioText.replace(/\n/g, '<br>') :
         `Member of 100RE Laboratory specializing in ${role}. Dedicated to researching and developing solutions toward 100% Renewable Energy.`;
