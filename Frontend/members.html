@@ -112,7 +112,6 @@
       box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
     }
   </style>
-  <link rel="stylesheet" href="assets/css/ai_chat.css">
 </head>
 <body>
 
@@ -598,8 +597,12 @@
           </select>
         </div>
         <div class="form-group">
-          <label class="form-label" for="formMemberRole">Chức Vụ / Vị Trí (Role / Position)</label>
-          <input type="text" id="formMemberRole" class="form-input" placeholder="VD: Leader hoặc Member (Leader sẽ có chữ đỏ &amp; đứng đầu nhóm)">
+          <label class="form-label" for="formMemberRole">Chức Vụ / Vị Trí (Role / Position) *</label>
+          <select id="formMemberRole" class="form-select" required>
+            <option value="Lab Leader">Lab Leader</option>
+            <option value="Team Leader">Team Leader</option>
+            <option value="Member" selected>Member</option>
+          </select>
         </div>
         <div class="form-group">
           <label class="form-label" for="formMemberBio">Tiểu Sử / Hướng Nghiên Cứu (Bio / Research Focus)</label>
@@ -755,6 +758,5 @@
   <script src="assets/js/data.js"></script>
   <script src="assets/js/cropper.min.js"></script>
   <script src="assets/js/main.js"></script>
-  <script src="assets/js/ai_chat.js?v=100re_ai_v2"></script>
 </body>
 </html>

@@ -205,11 +205,42 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  function getMemberRoleRank(member) {
+    if (!member) return 3;
+    const r = (member.role || '').toLowerCase().trim();
+    if (r === 'lab leader' || r.includes('lab lead') || r.includes('trưởng lab')) return 1;
+    if (r === 'team leader' || r.includes('team lead') || r === 'leader' || r.includes('trưởng') || r.includes('lead') || member.is_leader === true || member.isLeader === true) return 2;
+    return 3;
+  }
+
+  function getMemberRoleInfo(member) {
+    const rank = getMemberRoleRank(member);
+    if (rank === 1) {
+      return {
+        roleName: 'Lab Leader',
+        className: 'member-team-tag role-lab-leader',
+        color: '#dc2626',
+        isLeader: true
+      };
+    }
+    if (rank === 2) {
+      return {
+        roleName: 'Team Leader',
+        className: 'member-team-tag role-team-leader',
+        color: '#b45309',
+        isLeader: true
+      };
+    }
+    return {
+      roleName: 'Member',
+      className: 'member-team-tag role-member',
+      color: '#15803d',
+      isLeader: false
+    };
+  }
+
   function isLeaderMember(member) {
-    if (!member) return false;
-    if (member.is_leader === true || member.isLeader === true) return true;
-    const role = (member.role || '').toLowerCase().trim();
-    return role.includes('leader') || role.includes('trưởng') || role.includes('lead');
+    return getMemberRoleRank(member) <= 2;
   }
 
   function renderAllTeamGrids() {
@@ -226,14 +257,14 @@ document.addEventListener('DOMContentLoaded', () => {
         return matchesTeam && !m.is_alumni && m.team !== 'alumni';
       });
 
-      // Sort: Leader always first, then regular members
+      // Sort: Lab Leader (1) -> Team Leader (2) -> Member (3)
       teamMembers.sort((a, b) => {
-        const aIsLeader = isLeaderMember(a) ? 1 : 0;
-        const bIsLeader = isLeaderMember(b) ? 1 : 0;
-        if (aIsLeader !== bIsLeader) {
-          return bIsLeader - aIsLeader; // Leader (1) before Member (0)
+        const rankA = getMemberRoleRank(a);
+        const rankB = getMemberRoleRank(b);
+        if (rankA !== rankB) {
+          return rankA - rankB; // Lab Leader (1) -> Team Leader (2) -> Member (3)
         }
-        return 0;
+        return (a.name || '').localeCompare(b.name || '');
       });
 
       // Update count badge
@@ -268,8 +299,11 @@ document.addEventListener('DOMContentLoaded', () => {
                               member.team === 'ev' ? 'EV' :
                               member.team === 'hydrogen' ? 'Hydrogen' : 'BESS';
 
-        const roleText = member.role || member.teamName || 'Researcher';
-        const roleTagClass = isLeader ? 'member-team-tag role-leader' : 'member-team-tag';
+        const roleInfo = getMemberRoleInfo(member);
+        const roleText = (member.role && (member.role === 'Lab Leader' || member.role === 'Team Leader' || member.role === 'Member'))
+          ? member.role
+          : (member.role || roleInfo.roleName);
+        const roleTagClass = roleInfo.className;
 
         card.innerHTML = `
           <div class="member-photo-wrap">
@@ -751,6 +785,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (title) title.innerHTML = '<i class="fa-solid fa-user-plus" style="color: #16a34a;"></i> Thêm Thành Viên Mới';
     if (alertBox) alertBox.style.display = 'none';
     if (form) form.reset();
+    const roleInput = document.getElementById('formMemberRole') || formMemberRole;
+    if (roleInput) roleInput.value = 'Member';
     if (idInput) idInput.value = '';
     if (teamSelect) teamSelect.value = defaultTeam;
     if (photoUrlInput) photoUrlInput.value = '';
@@ -786,7 +822,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (idInput) idInput.value = member.id;
     if (nameInput) nameInput.value = member.name || '';
     if (teamSelect) teamSelect.value = member.team || 'pv';
-    if (roleInput) roleInput.value = member.role || '';
+    if (roleInput) {
+      const rank = getMemberRoleRank(member);
+      if (rank === 1) roleInput.value = 'Lab Leader';
+      else if (rank === 2) roleInput.value = 'Team Leader';
+      else roleInput.value = 'Member';
+    }
     if (bioInput) bioInput.value = member.bio || '';
     if (photoUrlInput) photoUrlInput.value = member.image || '';
 
@@ -1151,7 +1192,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const teamSelect = teamInput && teamInput.options ? teamInput.options[teamInput.selectedIndex] : null;
       const teamName = teamSelect ? teamSelect.text : team;
       const roleInput = formMemberRole || document.getElementById('formMemberRole');
-      const role = (roleInput ? roleInput.value.trim() : '') || `${teamName} Researcher`;
+      const role = (roleInput ? roleInput.value.trim() : '') || 'Member';
       const bioInput = formMemberBio || document.getElementById('formMemberBio');
       const bio = bioInput ? bioInput.value.trim() : '';
       const photoUrlEl = formPhotoUrl || document.getElementById('formPhotoUrl');
@@ -1355,14 +1396,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (modalAvatar) modalAvatar.src = avatarSrc || 'assets/images/logo.jpg';
     if (modalName) modalName.textContent = name;
     if (modalRole) {
-      modalRole.textContent = role;
-      if (isLeaderMember({ role })) {
-        modalRole.style.color = '#dc2626';
-        modalRole.style.fontWeight = '700';
-      } else {
-        modalRole.style.color = '';
-        modalRole.style.fontWeight = '';
-      }
+      const roleInfo = getMemberRoleInfo({ role });
+      modalRole.textContent = role || roleInfo.roleName;
+      modalRole.style.color = roleInfo.color;
+      modalRole.style.fontWeight = '700';
     }
     if (modalBio) {
       modalBio.innerHTML = bioText ? bioText.replace(/\n/g, '<br>') :

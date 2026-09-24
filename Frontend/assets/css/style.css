@@ -910,12 +910,28 @@ img {
   transition: var(--transition);
 }
 
+.member-team-tag.role-lab-leader,
 .member-team-tag.role-leader {
   color: #dc2626 !important;
   background: #fef2f2 !important;
   border: 1px solid #fca5a5 !important;
   font-weight: 800 !important;
   letter-spacing: 0.2px;
+}
+
+.member-team-tag.role-team-leader {
+  color: #b45309 !important;
+  background: #fffbeb !important;
+  border: 1px solid #fde68a !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.2px;
+}
+
+.member-team-tag.role-member {
+  color: #15803d !important;
+  background: #f0fdf4 !important;
+  border: 1px solid #bbf7d0 !important;
+  font-weight: 700 !important;
 }
 
 .member-btn-quickview {
