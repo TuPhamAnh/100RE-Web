@@ -114,6 +114,213 @@ img {
   padding: 0 24px;
 }
 
+/* Base Button System */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 26px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+  border-radius: var(--radius-md, 8px);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  line-height: 1.4;
+  border: 1px solid transparent;
+  box-sizing: border-box;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+/* ==========================================================================
+   CALL TO ACTION (CTA) BANNER SYSTEM
+   ========================================================================== */
+.lab-cta-card {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 55%, #14532d 100%);
+  color: #ffffff;
+  padding: 52px 36px;
+  text-align: center;
+  border-radius: 16px;
+  box-shadow: 0 16px 36px -10px rgba(22, 163, 74, 0.35), 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-top: 16px;
+  margin-bottom: 24px;
+}
+
+.lab-cta-card::before {
+  content: '';
+  position: absolute;
+  top: -80px;
+  right: -80px;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.lab-cta-card::after {
+  content: '';
+  position: absolute;
+  bottom: -80px;
+  left: -80px;
+  width: 280px;
+  height: 280px;
+  background: radial-gradient(circle, rgba(187, 247, 208, 0.2) 0%, rgba(255, 255, 255, 0) 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.lab-cta-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #dcfce7;
+  background: rgba(255, 255, 255, 0.16);
+  padding: 4px 14px;
+  border-radius: 9999px;
+  margin-bottom: 14px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  position: relative;
+  z-index: 1;
+}
+
+.lab-cta-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: #ffffff;
+  margin: 0 0 14px 0;
+  line-height: 1.25;
+  position: relative;
+  z-index: 1;
+}
+
+.lab-cta-desc {
+  font-size: 1.05rem;
+  line-height: 1.65;
+  max-width: 680px;
+  margin: 0 auto 30px;
+  color: #f0fdf4;
+  opacity: 0.95;
+  position: relative;
+  z-index: 1;
+}
+
+.lab-cta-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+
+.btn-cta-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 13px 30px;
+  background: #ffffff;
+  color: #15803d;
+  font-size: 0.98rem;
+  font-weight: 700;
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid #ffffff;
+  text-decoration: none;
+  min-width: 175px;
+  box-sizing: border-box;
+}
+
+.btn-cta-primary:hover {
+  background: #f0fdf4;
+  color: #166534;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.22);
+}
+
+.btn-cta-primary:active {
+  transform: translateY(0);
+}
+
+.btn-cta-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 13px 30px;
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  font-size: 0.98rem;
+  font-weight: 600;
+  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  min-width: 175px;
+  box-sizing: border-box;
+}
+
+.btn-cta-secondary:hover {
+  background: rgba(255, 255, 255, 0.26);
+  border-color: #ffffff;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.15);
+}
+
+.btn-cta-secondary:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 640px) {
+  .lab-cta-card {
+    padding: 38px 20px;
+    border-radius: 12px;
+  }
+  .lab-cta-title {
+    font-size: 1.7rem;
+  }
+  .lab-cta-desc {
+    font-size: 0.95rem;
+    margin-bottom: 24px;
+  }
+  .lab-cta-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
+  }
+  .btn-cta-primary,
+  .btn-cta-secondary {
+    width: 100%;
+    min-width: auto;
+  }
+}
+
 /* NAVBAR */
 .navbar {
   position: sticky;
