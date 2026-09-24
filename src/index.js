@@ -552,14 +552,26 @@ export default {
     // D. STATIC ASSETS & WORKSPACE SPA ROUTING
     // =========================================================================
     if (env && env.ASSETS) {
+      let assetRequest = request;
       if (path === '/workspace' || path === '/workspace/' || path.startsWith('/workspace/')) {
         const hasExtension = /\.[a-zA-Z0-9]+$/.test(path);
         if (!hasExtension) {
-          const spaRequest = new Request(`${url.origin}/workspace/index.html`, request);
-          return env.ASSETS.fetch(spaRequest);
+          assetRequest = new Request(`${url.origin}/workspace/index.html`, request);
         }
       }
-      return env.ASSETS.fetch(request);
+      const assetResponse = await env.ASSETS.fetch(assetRequest);
+      if (path.endsWith('.html') || path === '/' || path === '' || path === '/members' || !path.includes('.')) {
+        const newHeaders = new Headers(assetResponse.headers);
+        newHeaders.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+        newHeaders.set('Pragma', 'no-cache');
+        newHeaders.set('Expires', '0');
+        return new Response(assetResponse.body, {
+          status: assetResponse.status,
+          statusText: assetResponse.statusText,
+          headers: newHeaders
+        });
+      }
+      return assetResponse;
     }
 
     return new Response('100RE Laboratory Worker Gateway Running', { status: 200 });
