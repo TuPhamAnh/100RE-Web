@@ -97,7 +97,7 @@
         gridContainer.innerHTML = `
           <div class="empty-state" style="grid-column: 1 / -1; text-align: center; padding: 50px 20px; background: #ffffff; border: 1px dashed #cbd5e1;">
             <i class="fa-solid fa-newspaper" style="font-size: 3rem; color: #94a3b8; margin-bottom: 16px;"></i>
-            <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.4rem; color: #0f172a;">No News Articles Found</h3>
+            <h3 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.4rem; color: #0f172a;">No News Articles Found</h3>
             <p style="color: #64748b; font-size: 0.95rem; margin-bottom: 20px;">No articles match your search query <em>"${searchQuery || currentCategory}"</em>. Try a different keyword or reset filters.</p>
             <button class="btn-crud-edit" style="padding: 8px 18px;" onclick="window.NewsApp.resetFilters()">
               <i class="fa-solid fa-rotate-left"></i> Reset All Filters
