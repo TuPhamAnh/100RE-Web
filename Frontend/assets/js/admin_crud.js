@@ -227,7 +227,7 @@
               <span style="display: inline-block; background: #f0fdf4; color: #16a34a; font-size: 0.78rem; font-weight: 700; padding: 3px 10px; border: 1px solid #bbf7d0;">${item.period}</span>
               <span style="font-size: 0.85rem; font-weight: 600; color: #64748b;">${item.org || item.client || ''}</span>
             </div>
-            <h3 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.35rem; color: #0f172a; margin-bottom: 8px;">${item.title}</h3>
+            <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.35rem; color: #0f172a; margin-bottom: 8px;">${item.title}</h3>
             <p style="font-size: 0.9rem; color: #475569; line-height: 1.6; margin-bottom: 16px; flex-grow: 1;">${item.desc || ''}</p>
             ${tags.length ? `
               <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px;">
@@ -483,7 +483,7 @@
           justify-content: space-between;
         }
         .universal-modal-title {
-          font-family: 'Plus Jakarta Sans', sans-serif;
+          font-family: 'Oswald', sans-serif;
           font-size: 1.4rem;
           color: #0f172a;
           margin: 0;

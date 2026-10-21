@@ -231,13 +231,10 @@
               <div class="pub-authors"><strong>Authors:</strong> ${pub.authors || ''}</div>
               <div class="pub-venue"><strong>Venue:</strong> ${pub.venue || pub.journal || ''}</div>
               <div class="pub-links">
-                ${doiUrl ? `<a href="${doiUrl}" target="_blank" rel="noopener noreferrer" class="pub-link-btn"><i class="fa-solid fa-link"></i> [DOI]</a>` : ''}
-                ${hasSeparateUrl ? `<a href="${pub.url}" target="_blank" rel="noopener noreferrer" class="pub-link-btn" title="View Full Text or PDF"><i class="fa-solid fa-file-pdf"></i> [PDF]</a>` : ''}
-                <button class="pub-link-btn" type="button" onclick="showBibtexModal('${(pub.id || '').replace(/'/g, "\'")}', '${(pub.title || '').replace(/'/g, "\'")}', '${(pub.authors || '').replace(/'/g, "\'")}', '${(pub.venue || pub.journal || '').replace(/'/g, "\'")}', '${pub.year || ''}', '${(pub.doi || '').replace(/'/g, "\'")}')">
-                  <i class="fa-solid fa-quote-left"></i> [BibTeX]
-                </button>
-                <button class="pub-link-btn" type="button" onclick="navigator.clipboard.writeText('${(pub.authors || '').replace(/'/g, "\'")} (${pub.year}). ${(pub.title || '').replace(/'/g, "\'")}. ${(pub.venue || pub.journal || '').replace(/'/g, "\'")}.'); if (typeof showToast === 'function') { showToast('Đã sao chép trích dẫn APA vào clipboard!'); } else { alert('Citation copied to clipboard!'); }">
-                  <i class="fa-regular fa-copy"></i> Copy APA
+                ${doiUrl ? `<a href="${doiUrl}" target="_blank" rel="noopener noreferrer" class="pub-link-btn"><i class="fa-solid fa-link"></i> DOI</a>` : ''}
+                ${hasSeparateUrl ? `<a href="${pub.url}" target="_blank" rel="noopener noreferrer" class="pub-link-btn" title="View on Google Scholar or Publisher"><i class="fa-solid fa-arrow-up-right-from-square"></i> Paper Link</a>` : ''}
+                <button class="pub-link-btn" type="button" onclick="navigator.clipboard.writeText('${(pub.authors || '').replace(/'/g, "\\\\'")} (${pub.year}). ${(pub.title || '').replace(/'/g, "\\\\'")}. ${(pub.venue || pub.journal || '').replace(/'/g, "\\\\'")}.'); if (typeof showToast === 'function') { showToast('Đã sao chép trích dẫn APA vào clipboard!'); } else { alert('Citation copied to clipboard!'); }">
+                  <i class="fa-regular fa-copy"></i> Copy Citation
                 </button>
               </div>
               <div class="universal-admin-card-actions">
@@ -298,26 +295,6 @@
       renderPublications();
     });
   </script>
-
-  <!-- BIBTEX MODAL -->
-  <div class="modal-backdrop" id="bibtexModal">
-    <div class="bibtex-modal-box">
-      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 16px;">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <i class="fa-solid fa-quote-left" style="color: #34d399;"></i>
-          <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: 600; color: #FFFFFF;">BibTeX Citation</span>
-        </div>
-        <button type="button" onclick="closeBibtexModal()" style="background: none; border: none; color: #94A3B8; font-size: 1.2rem; cursor: pointer;">&times;</button>
-      </div>
-      <p style="font-size: 0.85rem; color: #94A3B8; margin-bottom: 8px;">Copy standard BibTeX entry for your LaTeX bibliography:</p>
-      <pre class="bibtex-pre" id="bibtexCodeBlock"></pre>
-      <div style="display: flex; justify-content: flex-end; gap: 10px;">
-        <button type="button" onclick="closeBibtexModal()" class="btn-primary" style="background: rgba(255,255,255,0.06); color: #E2E8F0; border: 1px solid rgba(255,255,255,0.15); padding: 8px 16px; font-size: 0.8rem;">Close</button>
-        <button type="button" onclick="copyBibtexToClipboard()" class="btn-primary" style="background: #059669; color: #FFFFFF; border: 1px solid #059669; padding: 8px 18px; font-size: 0.8rem; font-weight: 600;"><i class="fa-regular fa-copy"></i> Copy to Clipboard</button>
-      </div>
-    </div>
-  </div>
-
 </body>
 </html>
 

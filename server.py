@@ -58,10 +58,6 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=FRONTEND_DIR, **kwargs)
 
-    def address_string(self):
-        # Avoid slow reverse DNS lookup on Windows localhost
-        return self.client_address[0]
-
     def log_message(self, format, *args):
         try:
             sys.stderr.write(f"[{self.log_date_time_string()}] {args[0]} - {args[1]} {args[2]}\n")
@@ -319,11 +315,7 @@ def run_server():
         print(f"Could not automatically open browser: {e}")
 
     try:
-        class ThreadingServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
-            daemon_threads = True
-            allow_reuse_address = True
-
-        with ThreadingServer(("", port), AppHandler) as httpd:
+        with socketserver.TCPServer(("", port), AppHandler) as httpd:
             httpd.serve_forever()
     except KeyboardInterrupt:
         print("\nServer stopped. Goodbye!")
