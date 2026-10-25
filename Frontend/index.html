@@ -1,588 +1,590 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>100RE LABORATORY | Toward 100% Renewable Energy</title>
-  <meta name="description" content="Welcome to 100% Renewable Energy Laboratory (100RE Lab) at Hanoi University of Science and Technology (HUST). Conducting research toward 100% renewable power grids.">
-  <link rel="icon" type="image/jpeg" href="assets/images/logo.jpg">
-  
-  <!-- FontAwesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  
-  <!-- Custom Stylesheets -->
-  <link rel="stylesheet" href="assets/css/style.css?v=20261025_01">
-  <link rel="stylesheet" href="assets/css/pages.css?v=20261025_01">
-</head>
-<body>
-
-  <!-- ADMIN STATUS TOOLBAR -->
-  <div class="admin-topbar" id="adminTopbar">
-    <div class="container">
-      <div class="admin-badge-info">
-        <i class="fa-solid fa-circle-check"></i>
-        <span>Admin Mode (Logged in as <strong id="adminUsername">100re</strong>)</span>
-      </div>
-      <div class="admin-actions">
-        <button class="btn-admin btn-admin-add" id="btnAdminAddMember"><i class="fa-solid fa-plus"></i> Add Member</button>
-        <button class="btn-admin btn-admin-logout" id="btnAdminLogout"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- NAVIGATION BAR -->
-  <header class="navbar">
-    <div class="container nav-container">
-      <a href="index.html" class="logo-wrapper" title="100RE Laboratory - Toward 100% Renewable Energy">
-        <img src="assets/images/logo.jpg" alt="100RE Laboratory Logo" class="logo-img">
-      </a>
-      <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation"><i class="fa-solid fa-bars"></i></button>
-      <!-- Modern 4-Category Distilled Navigation -->
-      <nav>
-        <ul class="nav-menu" id="navMenu">
-          <!-- 1. About & People -->
-          <li class="nav-item has-dropdown">
-            <a href="about.html" class="nav-link ">
-              <i class="fa-solid fa-circle-info"></i> About &amp; People <i class="fa-solid fa-chevron-down dropdown-icon"></i>
-            </a>
-            <ul class="dropdown-menu">
-              <li class="dropdown-item"><a href="about.html" class=""><i class="fa-solid fa-building-columns"></i> About Lab</a></li>
-              <li class="dropdown-item"><a href="members.html" class=""><i class="fa-solid fa-users"></i> Researchers &amp; Members</a></li>
-              <li class="dropdown-item"><a href="alumni.html" class=""><i class="fa-solid fa-user-graduate"></i> Lab Alumni</a></li>
-              <li class="dropdown-item"><a href="journey.html" class=""><i class="fa-solid fa-route"></i> Lab Journey</a></li>
-              <li class="dropdown-item"><a href="photos.html" class=""><i class="fa-solid fa-images"></i> Gallery &amp; Activities</a></li>
-            </ul>
-          </li>
-
-          <!-- 2. Research & Publications -->
-          <li class="nav-item has-dropdown">
-            <a href="research-areas.html" class="nav-link ">
-              <i class="fa-solid fa-flask"></i> Research &amp; Publications <i class="fa-solid fa-chevron-down dropdown-icon"></i>
-            </a>
-            <ul class="dropdown-menu">
-              <li class="dropdown-item"><a href="research-areas.html" class=""><i class="fa-solid fa-microscope"></i> 8 Research Teams</a></li>
-              <li class="dropdown-item"><a href="publications.html" class=""><i class="fa-solid fa-book-open"></i> Publications &amp; Papers</a></li>
-              <li class="dropdown-item"><a href="projects.html" class=""><i class="fa-solid fa-diagram-project"></i> Research Projects</a></li>
-              <li class="dropdown-item"><a href="research-experiences.html" class=""><i class="fa-solid fa-timeline"></i> Academic Timeline</a></li>
-              <li class="dropdown-item"><a href="collaborations.html" class=""><i class="fa-solid fa-handshake"></i> International Collaborations</a></li>
-            </ul>
-          </li>
-
-          <!-- 3. News -->
-          <li class="nav-item">
-            <a href="news.html" class="nav-link ">
-              <i class="fa-solid fa-newspaper"></i> News
-            </a>
-          </li>
-
-          <!-- 4. Lab & Join -->
-          <li class="nav-item has-dropdown">
-            <a href="lab-equipment.html" class="nav-link ">
-              <i class="fa-solid fa-solar-panel"></i> Lab &amp; Join <i class="fa-solid fa-chevron-down dropdown-icon"></i>
-            </a>
-            <ul class="dropdown-menu">
-              <li class="dropdown-item"><a href="lab-equipment.html" class=""><i class="fa-solid fa-screwdriver-wrench"></i> Equipment &amp; Testbeds</a></li>
-              <li class="dropdown-item"><a href="mini-scada.html" class=""><i class="fa-solid fa-chart-line"></i> Mini SCADA Testbed</a></li>
-              <li class="dropdown-item"><a href="fund-raise.html" class=""><i class="fa-solid fa-hand-holding-dollar"></i> Fund Raising</a></li>
-              <li class="dropdown-item"><a href="join-us.html" class=""><i class="fa-solid fa-user-plus"></i> Join Our Team</a></li>
-              <li class="dropdown-item"><a href="useful-links.html" class=""><i class="fa-solid fa-link"></i> Useful Links</a></li>
-            </ul>
-          </li>
-
-          <!-- User / Login Action -->
-          <li class="nav-item" id="loginNavItem">
-            <button class="nav-link btn-nav-login" id="navLoginBtn"><i class="fa-solid fa-lock"></i> Login</button>
-          </li>
-        </ul>
-      </nav>
-    </div>
-  </header>
-
-  <!-- MASTER HERO -->
-  <section class="page-hero home-master-hero">
-    <div class="container" style="text-align: center; max-width: 1400px; padding: 0 24px;">
-      <h1 class="page-hero-title home-hero-title">
-        WELCOME TO <span>100% RENEWABLE ENERGY LAB</span>
-      </h1>
-      <p class="page-hero-desc" style="margin: 0 auto 32px; font-size: 1.15rem; color: #cbd5e1; max-width: 920px;">
-        Established in July 2018 at Hanoi University of Science and Technology (HUST), conducting world-class research on smart grids, renewable integration, energy storage, green hydrogen, and electricity markets.
-      </p>
-      <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
-        <a href="join-us.html" class="btn-primary" style="padding: 14px 28px; font-size: 1rem; font-weight: 700;">
-          <i class="fa-solid fa-user-plus"></i> JOIN US
-        </a>
-        <a href="research-areas.html" class="btn-primary" style="background: rgba(255,255,255,0.15); border: 1px solid #ffffff; color: #ffffff; padding: 14px 28px; font-size: 1rem;">
-          <i class="fa-solid fa-atom"></i> EXPLORE RESEARCH
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- STATS SECTION -->
-  <section class="stats-section">
-    <div class="container">
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-number">200+</div>
-          <div class="stat-label">Publications</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">40+</div>
-          <div class="stat-label">Researchers &amp; Members</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">9</div>
-          <div class="stat-label">Research Areas</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">10:1</div>
-          <div class="stat-label">Student Supervisor Ratio</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- MAIN HOMEPAGE CONTENT -->
-  <main class="container section">
-
-    <!-- 1. What are our Goals? -->
-    <div style="background: #ffffff; border: 1px solid #e2e8f0; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05); padding: 36px; margin-bottom: 50px;">
-      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
-        <div class="section-icon"><i class="fa-solid fa-bullseye"></i></div>
-        <h2 style="font-family: 'Oswald', sans-serif; font-size: 2rem; color: #0f172a; text-transform: uppercase;">What are our Goals?</h2>
-      </div>
-
-      <div style="font-size: 1.02rem; color: #334155; line-height: 1.8; display: flex; flex-direction: column; gap: 16px;">
-        <p>
-          The power grid is undergoing a profound structural transformation fueled by the rapid growth of renewable energy sources such as solar photovoltaics, wind power, and battery storage. The traditional centralized, one-directional grid architecture is evolving into a deregulated, multi-dimensional ecosystem characterized by multi-layered data streams, intelligent edge controllers, and flexible demand response mechanisms.
-        </p>
-        <p>
-          While smart cities, microgrids, and electric transportation present tremendous opportunities for decarbonization, they introduce critical challenges regarding frequency stability, voltage regulation, power quality, and cybersecurity. Many countries and international organizations are ambitiously advancing toward 100% renewable energy penetration.
-        </p>
-        <p>
-          <strong>100RE Laboratory</strong> was founded to directly address these complex technical and economic questions through rigorous mathematical modeling, real-time hardware-in-the-loop (HIL) simulations, artificial intelligence forecasting, and field experimental validations in Vietnam and internationally.
-        </p>
-
-        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px dashed #cbd5e1; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; color: #64748b; font-size: 0.9rem;">
-          <div><i class="fa-solid fa-quote-left" style="color: #16a34a; margin-right: 8px;"></i> <strong>Assoc. Prof. Nguyen Duc Tuyen</strong>, Head of 100RE Laboratory</div>
-          <div><i class="fa-regular fa-calendar" style="margin-right: 6px;"></i> July 05, 2018</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 2. Research Platform & Laboratories Showcase (KIT RPE Style - 8 Teams as in Member Tab) -->
-    <section class="rpe-section" id="research-platform">
-      <div class="rpe-header-block">
-        <h2 class="rpe-main-title">Welcome to the 100RE Research Platform</h2>
-        <div class="rpe-accent-bar"></div>
-        <div class="rpe-lead-paragraph">
-          The <strong>100% Renewable Energy Research Platform (100RE Lab)</strong> is part of the Department of Power Systems, School of Electrical and Electronic Engineering at Hanoi University of Science and Technology (HUST). 100RE Lab conducts advanced scientific research, technology development, and industrial consultancy toward 100% clean, sustainable energy systems. The laboratory operates dedicated experimental testbeds, rooftop solar microgrids, and high-performance computing clusters linking generation, storage, electric transport, and intelligent automation.
-        </div>
-
-        <div class="rpe-intro-subgroup">
-          <h3 class="rpe-subheading">100RE Energy Lab Infrastructure</h3>
-          <p class="rpe-intro-text">
-            The 100RE Laboratory serves as a unified academic research infrastructure in which the dynamic interactions of clean power generation, energy storage, power electronics, and artificial intelligence are validated under realistic operating conditions. A synchronized network of installations links rooftop solar arrays, wind turbine simulators, battery storage banks, water electrolyzers, and electric vehicle charging infrastructure via high-speed industrial SCADA and telemetry protocols.
-          </p>
-        </div>
-
-        <div class="rpe-intro-subgroup">
-          <h3 class="rpe-subheading">8 Research Teams &amp; Core Laboratories</h3>
-          <p class="rpe-intro-text">
-            Our platform organizes research activities across 8 specialized teams corresponding to the Member divisions:
-          </p>
-          <ul class="rpe-directory-list">
-            <li><a href="#rpe-team-pv">1. PV Team (Solar Photovoltaic Systems Laboratory)</a></li>
-            <li><a href="#rpe-team-ai">2. AI Team (Artificial Intelligence &amp; Deep Learning Energy Analytics)</a></li>
-            <li><a href="#rpe-team-dr_uc">3. Demand Response and Unit Commitment Team (UCDR Optimization)</a></li>
-            <li><a href="#rpe-team-wind">4. Wind Team (Wind Energy Dynamics &amp; Grid Integration)</a></li>
-            <li><a href="#rpe-team-smartgrid">5. Smart Grid Team (Control, Monitoring &amp; Mini-SCADA Automation)</a></li>
-            <li><a href="#rpe-team-ev">6. Electric Vehicle Team (EV Smart Charging &amp; V2G Systems)</a></li>
-            <li><a href="#rpe-team-hydrogen">7. Hydrogen Team (Green Hydrogen &amp; Fuel Cell Technology)</a></li>
-            <li><a href="#rpe-team-bess">8. BESS Team (Battery Energy Storage Systems &amp; Frequency Regulation)</a></li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- Alternating 2-Column Showcase of the 8 Teams (KIT Style) -->
-      <div class="rpe-labs-container">
-
-        <!-- 1. PV Team -->
-        <article class="rpe-lab-unit" id="rpe-team-pv">
-          <h3 class="rpe-unit-title">1. PV Team</h3>
-          <div class="rpe-accent-bar"></div>
-          <div class="rpe-unit-grid">
-            <div class="rpe-media-col">
-              <div class="rpe-image-frame">
-                <img src="assets/images/banner_pv.jpg" alt="PV Team - Solar Photovoltaic Systems" class="rpe-unit-img" loading="lazy">
-              </div>
-              <div class="rpe-caption-box">
-                Rooftop Solar PV SCADA Experimental Array at HUST D9 Building (Photo: 100RE Laboratory, HUST)
-              </div>
-            </div>
-            <div class="rpe-text-col">
-              <p>
-                The <strong>PV Team (Photovoltaic Systems)</strong> conducts research on photovoltaic cell and array mathematical modeling, high-precision solar irradiance forecasting, and dynamic Maximum Power Point Tracking (MPPT) under complex climatic variations. The team operates a rooftop experimental solar PV station on the D9 building at HUST equipped with precision pyranometers and multi-channel data acquisition.
-              </p>
-              <p>
-                A core specialty is the dynamic array reconfiguration using solid-state switching matrices to mitigate partial shading losses, as well as solar hosting capacity evaluation and harmonic distortion analysis for urban commercial and industrial distribution feeders across Vietnam.
-              </p>
-              <div class="rpe-meta-row">
-                <a href="members.html#grid-pv" class="rpe-explore-link">View Team Members &amp; Projects <i class="fa-solid fa-arrow-right"></i></a>
-              </div>
-            </div>
-          </div>
-        </article>
-
-        <!-- 2. AI Team (Row Reverse) -->
-        <article class="rpe-lab-unit" id="rpe-team-ai">
-          <h3 class="rpe-unit-title">2. AI Team</h3>
-          <div class="rpe-accent-bar"></div>
-          <div class="rpe-unit-grid rpe-row-reverse">
-            <div class="rpe-media-col">
-              <div class="rpe-image-frame">
-                <img src="assets/images/banner_ai.jpg" alt="AI Team - Artificial Intelligence and Deep Learning" class="rpe-unit-img" loading="lazy">
-              </div>
-              <div class="rpe-caption-box">
-                High-Performance GPU Computing Cluster for Renewable AI Forecasting (Photo: 100RE Laboratory)
-              </div>
-            </div>
-            <div class="rpe-text-col">
-              <p>
-                The <strong>AI Team (Artificial Intelligence)</strong> specializes in Deep Learning, neural network architectures, and advanced data-driven analytics for clean energy systems. Key breakthroughs include hybrid Spatial Attention Mechanism - Long Short-Term Memory (SAM-LSTM) models and Evolutionary Deep Self-Attention networks for ultra-short-term solar irradiance and wind power generation forecasting.
-              </p>
-              <p>
-                The team also develops computer-vision-based automated thermal fault detection on solar modules, physics-informed neural networks (PINN) for dynamic line rating, and decentralized blockchain smart contracts for secure peer-to-peer (P2P) renewable energy trading in urban microgrids.
-              </p>
-              <div class="rpe-meta-row">
-                <a href="members.html#grid-ai" class="rpe-explore-link">View Team Members &amp; Projects <i class="fa-solid fa-arrow-right"></i></a>
-              </div>
-            </div>
-          </div>
-        </article>
-
-        <!-- 3. Demand Response and Unit Commitment Team -->
-        <article class="rpe-lab-unit" id="rpe-team-dr_uc">
-          <h3 class="rpe-unit-title">3. Demand Response and Unit Commitment Team</h3>
-          <div class="rpe-accent-bar"></div>
-          <div class="rpe-unit-grid">
-            <div class="rpe-media-col">
-              <div class="rpe-image-frame">
-                <img src="assets/images/banner_dr_uc.jpg" alt="Demand Response and Unit Commitment Team" class="rpe-unit-img" loading="lazy">
-              </div>
-              <div class="rpe-caption-box">
-                Stochastic Unit Commitment &amp; Demand Response Optimization Cluster (Source: 100RE Laboratory)
-              </div>
-            </div>
-            <div class="rpe-text-col">
-              <p>
-                The <strong>Demand Response and Unit Commitment Team</strong> advances mathematical optimization algorithms to achieve optimal, security-constrained generator scheduling in power grids with high renewable variability. Using Mixed-Integer Linear Programming (MILP), Genetic Algorithms (GA), and rolling-horizon dispatching, the team minimizes production costs while maintaining spinning reserve requirements.
-              </p>
-              <p>
-                On the demand side, the team designs dynamic retail pricing tariffs, critical-peak rebate incentives, and automated load-shifting mechanisms. By quantifying consumer elasticity and comfort indices, demand flexibility is transformed into an active grid-balancing resource.
-              </p>
-              <div class="rpe-meta-row">
-                <a href="members.html#grid-dr_uc" class="rpe-explore-link">View Team Members &amp; Projects <i class="fa-solid fa-arrow-right"></i></a>
-              </div>
-            </div>
-          </div>
-        </article>
-
-        <!-- 4. Wind Team (Row Reverse) -->
-        <article class="rpe-lab-unit" id="rpe-team-wind">
-          <h3 class="rpe-unit-title">4. Wind Team</h3>
-          <div class="rpe-accent-bar"></div>
-          <div class="rpe-unit-grid rpe-row-reverse">
-            <div class="rpe-media-col">
-              <div class="rpe-image-frame">
-                <img src="assets/images/banner_wind.jpg" alt="Wind Team - Wind Energy Dynamics" class="rpe-unit-img" loading="lazy">
-              </div>
-              <div class="rpe-caption-box">
-                Wind Power Generation Simulation &amp; Dynamic Grid Stability Platform (Source: 100RE Laboratory)
-              </div>
-            </div>
-            <div class="rpe-text-col">
-              <p>
-                The <strong>Wind Team (Wind Energy)</strong> focuses on wind turbine aerodynamics, power conversion systems (PCS), and multi-turbine wake interactions for both onshore and offshore wind farms. Research investigates Low Voltage Ride Through (LVRT) enhancement during severe grid faults, enabling wind generators to remain online and inject reactive support.
-              </p>
-              <p>
-                The team also develops synthetic inertia emulation methods for doubly-fed induction generators (DFIG) and permanent magnet synchronous generators (PMSG), as well as hybrid wind-BESS coordinated control schemes to eliminate steep ramp-rate power fluctuations.
-              </p>
-              <div class="rpe-meta-row">
-                <a href="members.html#grid-wind" class="rpe-explore-link">View Team Members &amp; Projects <i class="fa-solid fa-arrow-right"></i></a>
-              </div>
-            </div>
-          </div>
-        </article>
-
-        <!-- 5. Smart Grid Team -->
-        <article class="rpe-lab-unit" id="rpe-team-smartgrid">
-          <h3 class="rpe-unit-title">5. Smart Grid Team</h3>
-          <div class="rpe-accent-bar"></div>
-          <div class="rpe-unit-grid">
-            <div class="rpe-media-col">
-              <div class="rpe-image-frame">
-                <img src="assets/images/banner_smartgrid.jpg" alt="Smart Grid Team - Microgrid Automation and SCADA" class="rpe-unit-img" loading="lazy">
-              </div>
-              <div class="rpe-caption-box">
-                Research Control Room &amp; Mini-SCADA Testbed in 100RE Lab (Photo: 100RE Laboratory, HUST)
-              </div>
-            </div>
-            <div class="rpe-text-col">
-              <p>
-                The <strong>Smart Grid Team</strong> develops intelligent monitoring, protective relay coordination, and microgrid energy management systems (EMS). The team manages the laboratory's real-time Mini-SCADA testbed, combining programmable industrial controllers, bidirectional communication gateways, and digital telemetry.
-              </p>
-              <p>
-                Key research priorities include automated fault location, isolation, and service restoration (FLISR), Virtual Power Plants (VPP) aggregating distributed energy resources, cybersecurity in inverter-based power systems, and active distribution network voltage stability.
-              </p>
-              <div class="rpe-meta-row">
-                <a href="members.html#grid-smartgrid" class="rpe-explore-link">View Team Members &amp; Projects <i class="fa-solid fa-arrow-right"></i></a>
-              </div>
-            </div>
-          </div>
-        </article>
-
-        <!-- 6. Electric Vehicle Team (Row Reverse) -->
-        <article class="rpe-lab-unit" id="rpe-team-ev">
-          <h3 class="rpe-unit-title">6. Electric Vehicle Team</h3>
-          <div class="rpe-accent-bar"></div>
-          <div class="rpe-unit-grid rpe-row-reverse">
-            <div class="rpe-media-col">
-              <div class="rpe-image-frame">
-                <img src="assets/images/banner_ev.jpg" alt="Electric Vehicle Team - EV Charging and V2G" class="rpe-unit-img" loading="lazy">
-              </div>
-              <div class="rpe-caption-box">
-                Bidirectional EV Charging Station &amp; V2G Power Electronics Testbed (Photo: 100RE Laboratory)
-              </div>
-            </div>
-            <div class="rpe-text-col">
-              <p>
-                The <strong>Electric Vehicle Team (Electric Vehicle)</strong> investigates the interactions between electrified transportation fleets and the power distribution grid. The team models the spatial-temporal charging demand of passenger EVs, commercial logistics, and urban electric bus networks to assess transformer loading and power quality impacts.
-              </p>
-              <p>
-                Research emphasizes smart coordinated charging scheduling to prevent local distribution bottlenecks, bidirectional Vehicle-to-Grid (V2G) power electronic topologies, and electrochemical battery degradation modeling to safeguard EV battery health during grid-support services.
-              </p>
-              <div class="rpe-meta-row">
-                <a href="members.html#grid-ev" class="rpe-explore-link">View Team Members &amp; Projects <i class="fa-solid fa-arrow-right"></i></a>
-              </div>
-            </div>
-          </div>
-        </article>
-
-        <!-- 7. Hydrogen Team -->
-        <article class="rpe-lab-unit" id="rpe-team-hydrogen">
-          <h3 class="rpe-unit-title">7. Hydrogen Team</h3>
-          <div class="rpe-accent-bar"></div>
-          <div class="rpe-unit-grid">
-            <div class="rpe-media-col">
-              <div class="rpe-image-frame">
-                <img src="assets/images/banner_hydrogen.jpg" alt="Hydrogen Team - Green Hydrogen and Fuel Cells" class="rpe-unit-img" loading="lazy">
-              </div>
-              <div class="rpe-caption-box">
-                Solar-Coupled Water Electrolyzer &amp; PEM Fuel Cell Test Platform (Photo: 100RE Lab &amp; AIST Japan)
-              </div>
-            </div>
-            <div class="rpe-text-col">
-              <p>
-                The <strong>Hydrogen Team (Green Hydrogen)</strong> explores clean hydrogen production, storage, and fuel cell energy conversion for deep decarbonization of hard-to-abate sectors. Research centers on alkaline and proton exchange membrane (PEM) water electrolyzer dynamics under fluctuating renewable supply.
-              </p>
-              <p>
-                In collaboration with international partners (AIST Japan, Shibaura Institute of Technology), the team evaluates Power-to-Gas seasonal energy storage, fuel cell micro-CHP efficiency, green hydrogen techno-economics, and ammonia supply chain logistics for Vietnam's Net-Zero 2050 pathway.
-              </p>
-              <div class="rpe-meta-row">
-                <a href="members.html#grid-hydrogen" class="rpe-explore-link">View Team Members &amp; Projects <i class="fa-solid fa-arrow-right"></i></a>
-              </div>
-            </div>
-          </div>
-        </article>
-
-        <!-- 8. BESS Team (Row Reverse) -->
-        <article class="rpe-lab-unit" id="rpe-team-bess">
-          <h3 class="rpe-unit-title">8. BESS Team (Battery Energy Storage Systems)</h3>
-          <div class="rpe-accent-bar"></div>
-          <div class="rpe-unit-grid rpe-row-reverse">
-            <div class="rpe-media-col">
-              <div class="rpe-image-frame">
-                <img src="assets/images/banner_bess.jpg" alt="BESS Team - Battery Energy Storage Systems" class="rpe-unit-img" loading="lazy">
-              </div>
-              <div class="rpe-caption-box">
-                Grid-Connected Battery Energy Storage (BESS) Regulation Bench (Photo: 100RE Laboratory, HUST)
-              </div>
-            </div>
-            <div class="rpe-text-col">
-              <p>
-                The <strong>BESS Team (Battery Energy Storage Systems)</strong> develops control, sizing, and degradation modeling for grid-scale and distributed electrochemical storage systems. The team formulates real-time control algorithms for primary and secondary frequency regulation (PJM RegD standard), synthetic inertia, and peak load shaving.
-              </p>
-              <p>
-                Research rigorously analyzes lithium-ion battery state-of-charge (SoC), state-of-health (SoH), and electro-thermal degradation, designing optimal multi-use dispatch strategies. The team actively consults for organizations such as VIETSE and GIZ on Vietnam's national BESS deployment roadmap.
-              </p>
-              <div class="rpe-meta-row">
-                <a href="members.html#grid-bess" class="rpe-explore-link">View Team Members &amp; Projects <i class="fa-solid fa-arrow-right"></i></a>
-              </div>
-            </div>
-          </div>
-        </article>
-
-      </div>
-
-      <!-- Bottom Explore CTA -->
-      <div class="rpe-footer-cta">
-        <a href="members.html" class="rpe-cta-btn">
-          <i class="fa-solid fa-users"></i> Meet All 100RE Researchers &amp; Lab Supervisors <i class="fa-solid fa-arrow-right"></i>
-        </a>
-      </div>
-    </section>
-
-    <!-- 3. Photo Gallery Preview -->
-    <div style="margin-bottom: 50px;">
-      <div class="section-header">
-        <div class="section-title-group">
-          <div class="section-icon"><i class="fa-solid fa-camera"></i></div>
-          <h2 class="section-title">Life &amp; Research at 100RE Lab</h2>
-        </div>
-        <a href="photos.html" style="font-size: 0.9rem; font-weight: 700; color: #16a34a; text-decoration: none;">
-          View Full Gallery <i class="fa-solid fa-arrow-right"></i>
-        </a>
-      </div>
-
-      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px;">
-        <div class="gallery-item">
-          <img src="assets/images/banner_pv.jpg" alt="PV Research" class="gallery-img">
-          <div class="gallery-caption-overlay">Rooftop Solar PV SCADA</div>
-        </div>
-        <div class="gallery-item">
-          <img src="assets/images/banner_ai.jpg" alt="AI Neural Networks" class="gallery-img">
-          <div class="gallery-caption-overlay">AI &amp; Deep Learning Forecasting</div>
-        </div>
-        <div class="gallery-item">
-          <img src="assets/images/banner_smartgrid.jpg" alt="Smart Grid" class="gallery-img">
-          <div class="gallery-caption-overlay">Smart Grid Automation Testbed</div>
-        </div>
-        <div class="gallery-item">
-          <img src="assets/images/banner_hydrogen.jpg" alt="Green Hydrogen" class="gallery-img">
-          <div class="gallery-caption-overlay">Green Hydrogen Electrolyzer System</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 4. Location & Map Section -->
-    <div style="background: #ffffff; border: 1px solid #e2e8f0; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05); padding: 30px;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <div class="section-icon"><i class="fa-solid fa-location-dot"></i></div>
-          <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.6rem; color: #0f172a;">100RE Lab Location</h3>
-        </div>
-        <a href="https://maps.google.com/?q=Hanoi+University+of+Science+and+Technology" target="_blank" rel="noopener noreferrer" class="btn-primary" style="font-size: 0.85rem; padding: 8px 16px;">
-          <i class="fa-solid fa-map-location-dot"></i> Open in Google Maps
-        </a>
-      </div>
-      <p style="font-size: 0.95rem; color: #475569; line-height: 1.6;">
-        <strong>Hanoi University of Science and Technology (HUST)</strong><br>
-        Offices: <strong>D9-300 &amp; C7-503</strong><br>
-        Address: No. 1 Dai Co Viet Road, Hai Ba Trung District, Hanoi 100000, Vietnam
-      </p>
-    </div>
-
-  </main>
-
-    <!-- MEMBER PORTAL LOGIN MODAL -->
-  <div class="modal-backdrop" id="loginModal">
-    <div class="modal-card member-login-card">
-      <button class="modal-close-btn" id="loginModalCloseBtn" aria-label="Close modal"><i class="fa-solid fa-xmark"></i></button>
-      
-      <!-- Brand Header -->
-      <div class="member-login-header">
-        <div class="member-login-badge">
-          <i class="fa-solid fa-bolt-lightning"></i> 100RE LAB PORTAL
-        </div>
-        <h3 class="member-login-title">Đăng Nhập Thành Viên</h3>
-        <p class="member-login-desc">Cổng thông tin &amp; không gian làm việc nghiên cứu phòng Lab</p>
-      </div>
-
-      <div class="form-alert-error" id="loginErrorAlert"></div>
-
-      <form id="loginForm" class="member-login-form">
-        <div class="member-form-group">
-          <label class="member-form-label" for="loginUsername">
-            <i class="fa-regular fa-user"></i> Tên đăng nhập hoặc Email
-          </label>
-          <div class="member-input-wrap">
-            <input type="text" id="loginUsername" class="member-form-input" placeholder="Nhập tên đăng nhập hoặc email" required autocomplete="username" autofocus>
-          </div>
-        </div>
-
-        <div class="member-form-group">
-          <label class="member-form-label" for="loginPassword">
-            <i class="fa-solid fa-lock"></i> Mật khẩu
-          </label>
-          <div class="member-input-wrap" style="position: relative;">
-            <input type="password" id="loginPassword" class="member-form-input" placeholder="Nhập mật khẩu của bạn" required autocomplete="current-password">
-            <button type="button" class="btn-toggle-pwd" id="btnToggleLoginPwd" aria-label="Hiện/ẩn mật khẩu">
-              <i class="fa-regular fa-eye" id="pwdToggleIcon"></i>
-            </button>
-          </div>
-        </div>
-
-        <button type="submit" class="btn-member-login-submit">
-          <span>Đăng Nhập Không Gian Lab</span>
-          <i class="fa-solid fa-arrow-right-to-bracket"></i>
-        </button>
-
-        <div class="member-login-footer-hint">
-          <i class="fa-solid fa-shield-halved" style="color: #16a34a; margin-right: 4px;"></i>
-          <span>Dành cho Ban Cố vấn, Nghiên cứu viên và Sinh viên 100RE Lab</span>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <div class="toast-container" id="toastContainer"></div>
-
-  <!-- FOOTER -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-grid">
-        <div class="footer-col">
-          <h4 class="footer-col-title">Supervisor</h4>
-          <ul class="footer-info-list">
-            <li class="footer-info-item"><i class="fa-solid fa-user-tie"></i><div><strong>Nguyen Duc Tuyen</strong>, Assoc. Prof</div></li>
-            <li class="footer-info-item"><i class="fa-solid fa-phone"></i><div>Tel: <a href="tel:+84986509059">+84 986 509 059</a></div></li>
-            <li class="footer-info-item"><i class="fa-solid fa-envelope"></i><div>Mail 1: <a href="mailto:tuyen.nguyenduc@hust.edu.vn">tuyen.nguyenduc@hust.edu.vn</a></div></li>
-            <li class="footer-info-item"><i class="fa-solid fa-envelope-open-text"></i><div>Mail 2: <a href="mailto:i029999@shibaura-it.ac.jp">i029999@shibaura-it.ac.jp</a></div></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <h4 class="footer-col-title">Contact for Information</h4>
-          <ul class="footer-info-list">
-            <li class="footer-info-item"><i class="fa-solid fa-user-graduate"></i><div><strong>Nguyen Tuan Anh</strong>, B.Eng</div></li>
-            <li class="footer-info-item"><i class="fa-solid fa-phone"></i><div>Tel: <a href="tel:+84974812546">+84 974 812 546</a></div></li>
-            <li class="footer-info-item"><i class="fa-solid fa-envelope"></i><div>Mail: <a href="mailto:anh.nt196322@sis.hust.edu.vn">anh.nt196322@sis.hust.edu.vn</a></div></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <h4 class="footer-col-title">Laboratory Offices</h4>
-          <ul class="footer-info-list">
-            <li class="footer-info-item"><i class="fa-solid fa-location-dot"></i><div><strong>D9-300 &amp; C7-503</strong><br>Hanoi University of Science and Technology (HUST)<br>No. 1 Dai Co Viet, Hai Ba Trung, Hanoi, Vietnam</div></li>
-            <li class="footer-info-item"><i class="fa-solid fa-globe"></i><div>Website: <a href="https://www.100relab.com" target="_blank" rel="noopener noreferrer">www.100relab.com</a></div></li>
-          </ul>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p>&copy; 2026 100RE LABORATORY. All rights reserved. Toward 100% Renewable Energy.</p>
-        <div class="footer-social-links">
-          <a href="https://www.100relab.com" class="social-link" title="Website"><i class="fa-solid fa-globe"></i></a>
-          <a href="https://scholar.google.com/citations?user=89Jk4L0AAAAJ&hl=en" class="social-link" title="Google Scholar"><i class="fa-brands fa-google-scholar"></i></a>
-          <a href="https://orcid.org/0000-0001-7107-3897" class="social-link" title="ORCID"><i class="fa-brands fa-orcid"></i></a>
-          <a href="mailto:tuyen.nguyenduc@hust.edu.vn" class="social-link" title="Email"><i class="fa-solid fa-envelope"></i></a>
-        </div>
-      </div>
-    </div>
-  </footer>
-
-  <button class="back-to-top" id="backToTop" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
-
-  <script src="assets/js/data.js"></script>
-  <script src="assets/js/main.js"></script>
-  <script src="assets/js/admin_crud.js"></script>
-</body>
-</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>100RE LABORATORY | Toward 100% Renewable Energy</title>
+  <meta name="description" content="Welcome to 100% Renewable Energy Laboratory (100RE Lab) at Hanoi University of Science and Technology (HUST). Conducting research toward 100% renewable power grids.">
+  <link rel="icon" type="image/jpeg" href="assets/images/logo.jpg">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Custom Stylesheets -->
+  <link rel="stylesheet" href="assets/css/style.css?v=20261025_01">
+  <link rel="stylesheet" href="assets/css/pages.css?v=20261025_01">
+</head>
+<body>
+
+  <!-- ADMIN STATUS TOOLBAR -->
+  <div class="admin-topbar" id="adminTopbar">
+    <div class="container">
+      <div class="admin-badge-info">
+        <i class="fa-solid fa-circle-check"></i>
+        <span>Admin Mode (Logged in as <strong id="adminUsername">100re</strong>)</span>
+      </div>
+      <div class="admin-actions">
+        <button class="btn-admin" id="btnAdminResetHp" onclick="window.HomepageEditor && window.HomepageEditor.resetAll()" title="Khôi phục toàn bộ nội dung gốc của trang chủ"><i class="fa-solid fa-rotate-left"></i> Khôi phục mặc định</button>
+        <button class="btn-admin btn-admin-add" id="btnAdminAddMember"><i class="fa-solid fa-plus"></i> Add Member</button>
+        <button class="btn-admin btn-admin-logout" id="btnAdminLogout"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVIGATION BAR -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="logo-wrapper" title="100RE Laboratory - Toward 100% Renewable Energy">
+        <img src="assets/images/logo.jpg" alt="100RE Laboratory Logo" class="logo-img">
+      </a>
+      <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation"><i class="fa-solid fa-bars"></i></button>
+      <!-- Modern 4-Category Distilled Navigation -->
+      <nav>
+        <ul class="nav-menu" id="navMenu">
+          <!-- 1. About & People -->
+          <li class="nav-item has-dropdown">
+            <a href="about.html" class="nav-link ">
+              <i class="fa-solid fa-circle-info"></i> About &amp; People <i class="fa-solid fa-chevron-down dropdown-icon"></i>
+            </a>
+            <ul class="dropdown-menu">
+              <li class="dropdown-item"><a href="about.html" class=""><i class="fa-solid fa-building-columns"></i> About Lab</a></li>
+              <li class="dropdown-item"><a href="members.html" class=""><i class="fa-solid fa-users"></i> Researchers &amp; Members</a></li>
+              <li class="dropdown-item"><a href="alumni.html" class=""><i class="fa-solid fa-user-graduate"></i> Lab Alumni</a></li>
+              <li class="dropdown-item"><a href="journey.html" class=""><i class="fa-solid fa-route"></i> Lab Journey</a></li>
+              <li class="dropdown-item"><a href="photos.html" class=""><i class="fa-solid fa-images"></i> Gallery &amp; Activities</a></li>
+            </ul>
+          </li>
+
+          <!-- 2. Research & Publications -->
+          <li class="nav-item has-dropdown">
+            <a href="research-areas.html" class="nav-link ">
+              <i class="fa-solid fa-flask"></i> Research &amp; Publications <i class="fa-solid fa-chevron-down dropdown-icon"></i>
+            </a>
+            <ul class="dropdown-menu">
+              <li class="dropdown-item"><a href="research-areas.html" class=""><i class="fa-solid fa-microscope"></i> 8 Research Teams</a></li>
+              <li class="dropdown-item"><a href="publications.html" class=""><i class="fa-solid fa-book-open"></i> Publications &amp; Papers</a></li>
+              <li class="dropdown-item"><a href="projects.html" class=""><i class="fa-solid fa-diagram-project"></i> Research Projects</a></li>
+              <li class="dropdown-item"><a href="research-experiences.html" class=""><i class="fa-solid fa-timeline"></i> Academic Timeline</a></li>
+              <li class="dropdown-item"><a href="collaborations.html" class=""><i class="fa-solid fa-handshake"></i> International Collaborations</a></li>
+            </ul>
+          </li>
+
+          <!-- 3. News -->
+          <li class="nav-item">
+            <a href="news.html" class="nav-link ">
+              <i class="fa-solid fa-newspaper"></i> News
+            </a>
+          </li>
+
+          <!-- 4. Lab & Join -->
+          <li class="nav-item has-dropdown">
+            <a href="lab-equipment.html" class="nav-link ">
+              <i class="fa-solid fa-solar-panel"></i> Lab &amp; Join <i class="fa-solid fa-chevron-down dropdown-icon"></i>
+            </a>
+            <ul class="dropdown-menu">
+              <li class="dropdown-item"><a href="lab-equipment.html" class=""><i class="fa-solid fa-screwdriver-wrench"></i> Equipment &amp; Testbeds</a></li>
+              <li class="dropdown-item"><a href="mini-scada.html" class=""><i class="fa-solid fa-chart-line"></i> Mini SCADA Testbed</a></li>
+              <li class="dropdown-item"><a href="fund-raise.html" class=""><i class="fa-solid fa-hand-holding-dollar"></i> Fund Raising</a></li>
+              <li class="dropdown-item"><a href="join-us.html" class=""><i class="fa-solid fa-user-plus"></i> Join Our Team</a></li>
+              <li class="dropdown-item"><a href="useful-links.html" class=""><i class="fa-solid fa-link"></i> Useful Links</a></li>
+            </ul>
+          </li>
+
+          <!-- User / Login Action -->
+          <li class="nav-item" id="loginNavItem">
+            <button class="nav-link btn-nav-login" id="navLoginBtn"><i class="fa-solid fa-lock"></i> Login</button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- MASTER HERO -->
+  <section class="page-hero home-master-hero">
+    <div class="container" style="text-align: center; max-width: 1400px; padding: 0 24px;">
+      <h1 class="page-hero-title home-hero-title">
+        WELCOME TO <span>100% RENEWABLE ENERGY LAB</span>
+      </h1>
+      <p class="page-hero-desc" style="margin: 0 auto 32px; font-size: 1.15rem; color: #cbd5e1; max-width: 920px;">
+        Established in July 2018 at Hanoi University of Science and Technology (HUST), conducting world-class research on smart grids, renewable integration, energy storage, green hydrogen, and electricity markets.
+      </p>
+      <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+        <a href="join-us.html" class="btn-primary" style="padding: 14px 28px; font-size: 1rem; font-weight: 700;">
+          <i class="fa-solid fa-user-plus"></i> JOIN US
+        </a>
+        <a href="research-areas.html" class="btn-primary" style="background: rgba(255,255,255,0.15); border: 1px solid #ffffff; color: #ffffff; padding: 14px 28px; font-size: 1rem;">
+          <i class="fa-solid fa-atom"></i> EXPLORE RESEARCH
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS SECTION -->
+  <section class="stats-section">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-number">200+</div>
+          <div class="stat-label">Publications</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">40+</div>
+          <div class="stat-label">Researchers &amp; Members</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">9</div>
+          <div class="stat-label">Research Areas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">10:1</div>
+          <div class="stat-label">Student Supervisor Ratio</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN HOMEPAGE CONTENT -->
+  <main class="container section">
+
+    <!-- 1. What are our Goals? -->
+    <div id="section-goals" class="hp-goals-card" style="background: #ffffff; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05); padding: 36px; margin-bottom: 50px;">
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+        <div class="section-icon"><i class="fa-solid fa-bullseye"></i></div>
+        <h2 style="font-family: 'Oswald', sans-serif; font-size: 2rem; color: #0f172a; text-transform: uppercase;">What are our Goals?</h2>
+      </div>
+
+      <div class="hp-goals-content" style="font-size: 1.02rem; color: #334155; line-height: 1.8; display: flex; flex-direction: column; gap: 16px;">
+        <p>
+          The power grid is undergoing a profound structural transformation fueled by the rapid growth of renewable energy sources such as solar photovoltaics, wind power, and battery storage. The traditional centralized, one-directional grid architecture is evolving into a deregulated, multi-dimensional ecosystem characterized by multi-layered data streams, intelligent edge controllers, and flexible demand response mechanisms.
+        </p>
+        <p>
+          While smart cities, microgrids, and electric transportation present tremendous opportunities for decarbonization, they introduce critical challenges regarding frequency stability, voltage regulation, power quality, and cybersecurity. Many countries and international organizations are ambitiously advancing toward 100% renewable energy penetration.
+        </p>
+        <p>
+          <strong>100RE Laboratory</strong> was founded to directly address these complex technical and economic questions through rigorous mathematical modeling, real-time hardware-in-the-loop (HIL) simulations, artificial intelligence forecasting, and field experimental validations in Vietnam and internationally.
+        </p>
+
+        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px dashed #cbd5e1; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; color: #64748b; font-size: 0.9rem;">
+          <div class="hp-goals-author"><i class="fa-solid fa-quote-left" style="color: #16a34a; margin-right: 8px;"></i> <strong>Assoc. Prof. Nguyen Duc Tuyen</strong>, Head of 100RE Laboratory</div>
+          <div class="hp-goals-date"><i class="fa-regular fa-calendar" style="margin-right: 6px;"></i> July 05, 2018</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Research Platform & Laboratories Showcase (KIT RPE Style - 8 Teams as in Member Tab) -->
+    <section class="rpe-section" id="research-platform">
+      <div class="rpe-header-block">
+        <h2 class="rpe-main-title">Welcome to the 100RE Research Platform</h2>
+        <div class="rpe-accent-bar"></div>
+        <div class="rpe-lead-paragraph">
+          The <strong>100% Renewable Energy Research Platform (100RE Lab)</strong> is part of the Department of Power Systems, School of Electrical and Electronic Engineering at Hanoi University of Science and Technology (HUST). 100RE Lab conducts advanced scientific research, technology development, and industrial consultancy toward 100% clean, sustainable energy systems. The laboratory operates dedicated experimental testbeds, rooftop solar microgrids, and high-performance computing clusters linking generation, storage, electric transport, and intelligent automation.
+        </div>
+
+        <div class="rpe-intro-subgroup">
+          <h3 class="rpe-subheading">100RE Energy Lab Infrastructure</h3>
+          <p class="rpe-intro-text">
+            The 100RE Laboratory serves as a unified academic research infrastructure in which the dynamic interactions of clean power generation, energy storage, power electronics, and artificial intelligence are validated under realistic operating conditions. A synchronized network of installations links rooftop solar arrays, wind turbine simulators, battery storage banks, water electrolyzers, and electric vehicle charging infrastructure via high-speed industrial SCADA and telemetry protocols.
+          </p>
+        </div>
+
+        <div class="rpe-intro-subgroup">
+          <h3 class="rpe-subheading">8 Research Teams &amp; Core Laboratories</h3>
+          <p class="rpe-intro-text">
+            Our platform organizes research activities across 8 specialized teams corresponding to the Member divisions:
+          </p>
+          <ul class="rpe-directory-list">
+            <li><a href="#rpe-team-pv">1. PV Team (Solar Photovoltaic Systems Laboratory)</a></li>
+            <li><a href="#rpe-team-ai">2. AI Team (Artificial Intelligence &amp; Deep Learning Energy Analytics)</a></li>
+            <li><a href="#rpe-team-dr_uc">3. Demand Response and Unit Commitment Team (UCDR Optimization)</a></li>
+            <li><a href="#rpe-team-wind">4. Wind Team (Wind Energy Dynamics &amp; Grid Integration)</a></li>
+            <li><a href="#rpe-team-smartgrid">5. Smart Grid Team (Control, Monitoring &amp; Mini-SCADA Automation)</a></li>
+            <li><a href="#rpe-team-ev">6. Electric Vehicle Team (EV Smart Charging &amp; V2G Systems)</a></li>
+            <li><a href="#rpe-team-hydrogen">7. Hydrogen Team (Green Hydrogen &amp; Fuel Cell Technology)</a></li>
+            <li><a href="#rpe-team-bess">8. BESS Team (Battery Energy Storage Systems &amp; Frequency Regulation)</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Alternating 2-Column Showcase of the 8 Teams (KIT Style) -->
+      <div class="rpe-labs-container">
+
+        <!-- 1. PV Team -->
+        <article class="rpe-lab-unit" id="rpe-team-pv">
+          <h3 class="rpe-unit-title">1. PV Team</h3>
+          <div class="rpe-accent-bar"></div>
+          <div class="rpe-unit-grid">
+            <div class="rpe-media-col">
+              <div class="rpe-image-frame">
+                <img src="assets/images/banner_pv.jpg" alt="PV Team - Solar Photovoltaic Systems" class="rpe-unit-img" loading="lazy">
+              </div>
+              <div class="rpe-caption-box">
+                Rooftop Solar PV SCADA Experimental Array at HUST D9 Building (Photo: 100RE Laboratory, HUST)
+              </div>
+            </div>
+            <div class="rpe-text-col">
+              <p>
+                The <strong>PV Team (Photovoltaic Systems)</strong> conducts research on photovoltaic cell and array mathematical modeling, high-precision solar irradiance forecasting, and dynamic Maximum Power Point Tracking (MPPT) under complex climatic variations. The team operates a rooftop experimental solar PV station on the D9 building at HUST equipped with precision pyranometers and multi-channel data acquisition.
+              </p>
+              <p>
+                A core specialty is the dynamic array reconfiguration using solid-state switching matrices to mitigate partial shading losses, as well as solar hosting capacity evaluation and harmonic distortion analysis for urban commercial and industrial distribution feeders across Vietnam.
+              </p>
+              <div class="rpe-meta-row">
+                <a href="members.html#grid-pv" class="rpe-explore-link">View Team Members &amp; Projects <i class="fa-solid fa-arrow-right"></i></a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 2. AI Team (Row Reverse) -->
+        <article class="rpe-lab-unit" id="rpe-team-ai">
+          <h3 class="rpe-unit-title">2. AI Team</h3>
+          <div class="rpe-accent-bar"></div>
+          <div class="rpe-unit-grid rpe-row-reverse">
+            <div class="rpe-media-col">
+              <div class="rpe-image-frame">
+                <img src="assets/images/banner_ai.jpg" alt="AI Team - Artificial Intelligence and Deep Learning" class="rpe-unit-img" loading="lazy">
+              </div>
+              <div class="rpe-caption-box">
+                High-Performance GPU Computing Cluster for Renewable AI Forecasting (Photo: 100RE Laboratory)
+              </div>
+            </div>
+            <div class="rpe-text-col">
+              <p>
+                The <strong>AI Team (Artificial Intelligence)</strong> specializes in Deep Learning, neural network architectures, and advanced data-driven analytics for clean energy systems. Key breakthroughs include hybrid Spatial Attention Mechanism - Long Short-Term Memory (SAM-LSTM) models and Evolutionary Deep Self-Attention networks for ultra-short-term solar irradiance and wind power generation forecasting.
+              </p>
+              <p>
+                The team also develops computer-vision-based automated thermal fault detection on solar modules, physics-informed neural networks (PINN) for dynamic line rating, and decentralized blockchain smart contracts for secure peer-to-peer (P2P) renewable energy trading in urban microgrids.
+              </p>
+              <div class="rpe-meta-row">
+                <a href="members.html#grid-ai" class="rpe-explore-link">View Team Members &amp; Projects <i class="fa-solid fa-arrow-right"></i></a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 3. Demand Response and Unit Commitment Team -->
+        <article class="rpe-lab-unit" id="rpe-team-dr_uc">
+          <h3 class="rpe-unit-title">3. Demand Response and Unit Commitment Team</h3>
+          <div class="rpe-accent-bar"></div>
+          <div class="rpe-unit-grid">
+            <div class="rpe-media-col">
+              <div class="rpe-image-frame">
+                <img src="assets/images/banner_dr_uc.jpg" alt="Demand Response and Unit Commitment Team" class="rpe-unit-img" loading="lazy">
+              </div>
+              <div class="rpe-caption-box">
+                Stochastic Unit Commitment &amp; Demand Response Optimization Cluster (Source: 100RE Laboratory)
+              </div>
+            </div>
+            <div class="rpe-text-col">
+              <p>
+                The <strong>Demand Response and Unit Commitment Team</strong> advances mathematical optimization algorithms to achieve optimal, security-constrained generator scheduling in power grids with high renewable variability. Using Mixed-Integer Linear Programming (MILP), Genetic Algorithms (GA), and rolling-horizon dispatching, the team minimizes production costs while maintaining spinning reserve requirements.
+              </p>
+              <p>
+                On the demand side, the team designs dynamic retail pricing tariffs, critical-peak rebate incentives, and automated load-shifting mechanisms. By quantifying consumer elasticity and comfort indices, demand flexibility is transformed into an active grid-balancing resource.
+              </p>
+              <div class="rpe-meta-row">
+                <a href="members.html#grid-dr_uc" class="rpe-explore-link">View Team Members &amp; Projects <i class="fa-solid fa-arrow-right"></i></a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 4. Wind Team (Row Reverse) -->
+        <article class="rpe-lab-unit" id="rpe-team-wind">
+          <h3 class="rpe-unit-title">4. Wind Team</h3>
+          <div class="rpe-accent-bar"></div>
+          <div class="rpe-unit-grid rpe-row-reverse">
+            <div class="rpe-media-col">
+              <div class="rpe-image-frame">
+                <img src="assets/images/banner_wind.jpg" alt="Wind Team - Wind Energy Dynamics" class="rpe-unit-img" loading="lazy">
+              </div>
+              <div class="rpe-caption-box">
+                Wind Power Generation Simulation &amp; Dynamic Grid Stability Platform (Source: 100RE Laboratory)
+              </div>
+            </div>
+            <div class="rpe-text-col">
+              <p>
+                The <strong>Wind Team (Wind Energy)</strong> focuses on wind turbine aerodynamics, power conversion systems (PCS), and multi-turbine wake interactions for both onshore and offshore wind farms. Research investigates Low Voltage Ride Through (LVRT) enhancement during severe grid faults, enabling wind generators to remain online and inject reactive support.
+              </p>
+              <p>
+                The team also develops synthetic inertia emulation methods for doubly-fed induction generators (DFIG) and permanent magnet synchronous generators (PMSG), as well as hybrid wind-BESS coordinated control schemes to eliminate steep ramp-rate power fluctuations.
+              </p>
+              <div class="rpe-meta-row">
+                <a href="members.html#grid-wind" class="rpe-explore-link">View Team Members &amp; Projects <i class="fa-solid fa-arrow-right"></i></a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 5. Smart Grid Team -->
+        <article class="rpe-lab-unit" id="rpe-team-smartgrid">
+          <h3 class="rpe-unit-title">5. Smart Grid Team</h3>
+          <div class="rpe-accent-bar"></div>
+          <div class="rpe-unit-grid">
+            <div class="rpe-media-col">
+              <div class="rpe-image-frame">
+                <img src="assets/images/banner_smartgrid.jpg" alt="Smart Grid Team - Microgrid Automation and SCADA" class="rpe-unit-img" loading="lazy">
+              </div>
+              <div class="rpe-caption-box">
+                Research Control Room &amp; Mini-SCADA Testbed in 100RE Lab (Photo: 100RE Laboratory, HUST)
+              </div>
+            </div>
+            <div class="rpe-text-col">
+              <p>
+                The <strong>Smart Grid Team</strong> develops intelligent monitoring, protective relay coordination, and microgrid energy management systems (EMS). The team manages the laboratory's real-time Mini-SCADA testbed, combining programmable industrial controllers, bidirectional communication gateways, and digital telemetry.
+              </p>
+              <p>
+                Key research priorities include automated fault location, isolation, and service restoration (FLISR), Virtual Power Plants (VPP) aggregating distributed energy resources, cybersecurity in inverter-based power systems, and active distribution network voltage stability.
+              </p>
+              <div class="rpe-meta-row">
+                <a href="members.html#grid-smartgrid" class="rpe-explore-link">View Team Members &amp; Projects <i class="fa-solid fa-arrow-right"></i></a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 6. Electric Vehicle Team (Row Reverse) -->
+        <article class="rpe-lab-unit" id="rpe-team-ev">
+          <h3 class="rpe-unit-title">6. Electric Vehicle Team</h3>
+          <div class="rpe-accent-bar"></div>
+          <div class="rpe-unit-grid rpe-row-reverse">
+            <div class="rpe-media-col">
+              <div class="rpe-image-frame">
+                <img src="assets/images/banner_ev.jpg" alt="Electric Vehicle Team - EV Charging and V2G" class="rpe-unit-img" loading="lazy">
+              </div>
+              <div class="rpe-caption-box">
+                Bidirectional EV Charging Station &amp; V2G Power Electronics Testbed (Photo: 100RE Laboratory)
+              </div>
+            </div>
+            <div class="rpe-text-col">
+              <p>
+                The <strong>Electric Vehicle Team (Electric Vehicle)</strong> investigates the interactions between electrified transportation fleets and the power distribution grid. The team models the spatial-temporal charging demand of passenger EVs, commercial logistics, and urban electric bus networks to assess transformer loading and power quality impacts.
+              </p>
+              <p>
+                Research emphasizes smart coordinated charging scheduling to prevent local distribution bottlenecks, bidirectional Vehicle-to-Grid (V2G) power electronic topologies, and electrochemical battery degradation modeling to safeguard EV battery health during grid-support services.
+              </p>
+              <div class="rpe-meta-row">
+                <a href="members.html#grid-ev" class="rpe-explore-link">View Team Members &amp; Projects <i class="fa-solid fa-arrow-right"></i></a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 7. Hydrogen Team -->
+        <article class="rpe-lab-unit" id="rpe-team-hydrogen">
+          <h3 class="rpe-unit-title">7. Hydrogen Team</h3>
+          <div class="rpe-accent-bar"></div>
+          <div class="rpe-unit-grid">
+            <div class="rpe-media-col">
+              <div class="rpe-image-frame">
+                <img src="assets/images/banner_hydrogen.jpg" alt="Hydrogen Team - Green Hydrogen and Fuel Cells" class="rpe-unit-img" loading="lazy">
+              </div>
+              <div class="rpe-caption-box">
+                Solar-Coupled Water Electrolyzer &amp; PEM Fuel Cell Test Platform (Photo: 100RE Lab &amp; AIST Japan)
+              </div>
+            </div>
+            <div class="rpe-text-col">
+              <p>
+                The <strong>Hydrogen Team (Green Hydrogen)</strong> explores clean hydrogen production, storage, and fuel cell energy conversion for deep decarbonization of hard-to-abate sectors. Research centers on alkaline and proton exchange membrane (PEM) water electrolyzer dynamics under fluctuating renewable supply.
+              </p>
+              <p>
+                In collaboration with international partners (AIST Japan, Shibaura Institute of Technology), the team evaluates Power-to-Gas seasonal energy storage, fuel cell micro-CHP efficiency, green hydrogen techno-economics, and ammonia supply chain logistics for Vietnam's Net-Zero 2050 pathway.
+              </p>
+              <div class="rpe-meta-row">
+                <a href="members.html#grid-hydrogen" class="rpe-explore-link">View Team Members &amp; Projects <i class="fa-solid fa-arrow-right"></i></a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 8. BESS Team (Row Reverse) -->
+        <article class="rpe-lab-unit" id="rpe-team-bess">
+          <h3 class="rpe-unit-title">8. BESS Team (Battery Energy Storage Systems)</h3>
+          <div class="rpe-accent-bar"></div>
+          <div class="rpe-unit-grid rpe-row-reverse">
+            <div class="rpe-media-col">
+              <div class="rpe-image-frame">
+                <img src="assets/images/banner_bess.jpg" alt="BESS Team - Battery Energy Storage Systems" class="rpe-unit-img" loading="lazy">
+              </div>
+              <div class="rpe-caption-box">
+                Grid-Connected Battery Energy Storage (BESS) Regulation Bench (Photo: 100RE Laboratory, HUST)
+              </div>
+            </div>
+            <div class="rpe-text-col">
+              <p>
+                The <strong>BESS Team (Battery Energy Storage Systems)</strong> develops control, sizing, and degradation modeling for grid-scale and distributed electrochemical storage systems. The team formulates real-time control algorithms for primary and secondary frequency regulation (PJM RegD standard), synthetic inertia, and peak load shaving.
+              </p>
+              <p>
+                Research rigorously analyzes lithium-ion battery state-of-charge (SoC), state-of-health (SoH), and electro-thermal degradation, designing optimal multi-use dispatch strategies. The team actively consults for organizations such as VIETSE and GIZ on Vietnam's national BESS deployment roadmap.
+              </p>
+              <div class="rpe-meta-row">
+                <a href="members.html#grid-bess" class="rpe-explore-link">View Team Members &amp; Projects <i class="fa-solid fa-arrow-right"></i></a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+      </div>
+
+      <!-- Bottom Explore CTA -->
+      <div class="rpe-footer-cta">
+        <a href="members.html" class="rpe-cta-btn">
+          <i class="fa-solid fa-users"></i> Meet All 100RE Researchers &amp; Lab Supervisors <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+    </section>
+
+    <!-- 3. Photo Gallery Preview -->
+    <div id="section-gallery-preview" style="margin-bottom: 50px;">
+      <div class="section-header">
+        <div class="section-title-group">
+          <div class="section-icon"><i class="fa-solid fa-camera"></i></div>
+          <h2 class="section-title">Life &amp; Research at 100RE Lab</h2>
+        </div>
+        <a href="photos.html" class="hp-gallery-link" style="font-size: 0.9rem; font-weight: 700; color: #16a34a; text-decoration: none;">
+          View Full Gallery <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px;">
+        <div class="gallery-item">
+          <img src="assets/images/banner_pv.jpg" alt="PV Research" class="gallery-img">
+          <div class="gallery-caption-overlay">Rooftop Solar PV SCADA</div>
+        </div>
+        <div class="gallery-item">
+          <img src="assets/images/banner_ai.jpg" alt="AI Neural Networks" class="gallery-img">
+          <div class="gallery-caption-overlay">AI &amp; Deep Learning Forecasting</div>
+        </div>
+        <div class="gallery-item">
+          <img src="assets/images/banner_smartgrid.jpg" alt="Smart Grid" class="gallery-img">
+          <div class="gallery-caption-overlay">Smart Grid Automation Testbed</div>
+        </div>
+        <div class="gallery-item">
+          <img src="assets/images/banner_hydrogen.jpg" alt="Green Hydrogen" class="gallery-img">
+          <div class="gallery-caption-overlay">Green Hydrogen Electrolyzer System</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Location & Map Section -->
+    <div id="section-location" style="background: #ffffff; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05); padding: 30px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div class="section-icon"><i class="fa-solid fa-location-dot"></i></div>
+          <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.6rem; color: #0f172a;">100RE Lab Location</h3>
+        </div>
+        <a href="https://maps.google.com/?q=Hanoi+University+of+Science+and+Technology" target="_blank" rel="noopener noreferrer" class="btn-primary hp-location-map-btn" style="font-size: 0.85rem; padding: 8px 16px;">
+          <i class="fa-solid fa-map-location-dot"></i> Open in Google Maps
+        </a>
+      </div>
+      <p class="hp-location-desc" style="font-size: 0.95rem; color: #475569; line-height: 1.6;">
+        <strong>Hanoi University of Science and Technology (HUST)</strong><br>
+        Offices: <strong>D9-300 &amp; C7-503</strong><br>
+        Address: No. 1 Dai Co Viet Road, Hai Ba Trung District, Hanoi 100000, Vietnam
+      </p>
+    </div>
+
+  </main>
+
+    <!-- MEMBER PORTAL LOGIN MODAL -->
+  <div class="modal-backdrop" id="loginModal">
+    <div class="modal-card member-login-card">
+      <button class="modal-close-btn" id="loginModalCloseBtn" aria-label="Close modal"><i class="fa-solid fa-xmark"></i></button>
+      
+      <!-- Brand Header -->
+      <div class="member-login-header">
+        <div class="member-login-badge">
+          <i class="fa-solid fa-bolt-lightning"></i> 100RE LAB PORTAL
+        </div>
+        <h3 class="member-login-title">Đăng Nhập Thành Viên</h3>
+        <p class="member-login-desc">Cổng thông tin &amp; không gian làm việc nghiên cứu phòng Lab</p>
+      </div>
+
+      <div class="form-alert-error" id="loginErrorAlert"></div>
+
+      <form id="loginForm" class="member-login-form">
+        <div class="member-form-group">
+          <label class="member-form-label" for="loginUsername">
+            <i class="fa-regular fa-user"></i> Tên đăng nhập hoặc Email
+          </label>
+          <div class="member-input-wrap">
+            <input type="text" id="loginUsername" class="member-form-input" placeholder="Nhập tên đăng nhập hoặc email" required autocomplete="username" autofocus>
+          </div>
+        </div>
+
+        <div class="member-form-group">
+          <label class="member-form-label" for="loginPassword">
+            <i class="fa-solid fa-lock"></i> Mật khẩu
+          </label>
+          <div class="member-input-wrap" style="position: relative;">
+            <input type="password" id="loginPassword" class="member-form-input" placeholder="Nhập mật khẩu của bạn" required autocomplete="current-password">
+            <button type="button" class="btn-toggle-pwd" id="btnToggleLoginPwd" aria-label="Hiện/ẩn mật khẩu">
+              <i class="fa-regular fa-eye" id="pwdToggleIcon"></i>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-member-login-submit">
+          <span>Đăng Nhập Không Gian Lab</span>
+          <i class="fa-solid fa-arrow-right-to-bracket"></i>
+        </button>
+
+        <div class="member-login-footer-hint">
+          <i class="fa-solid fa-shield-halved" style="color: #16a34a; margin-right: 4px;"></i>
+          <span>Dành cho Ban Cố vấn, Nghiên cứu viên và Sinh viên 100RE Lab</span>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4 class="footer-col-title">Supervisor</h4>
+          <ul class="footer-info-list">
+            <li class="footer-info-item"><i class="fa-solid fa-user-tie"></i><div><strong class="footer-sup-name">Nguyen Duc Tuyen, Assoc. Prof</strong></div></li>
+            <li class="footer-info-item"><i class="fa-solid fa-phone"></i><div>Tel: <a href="tel:+84986509059" class="footer-sup-phone">+84 986 509 059</a></div></li>
+            <li class="footer-info-item"><i class="fa-solid fa-envelope"></i><div>Mail 1: <a href="mailto:tuyen.nguyenduc@hust.edu.vn" class="footer-sup-mail1">tuyen.nguyenduc@hust.edu.vn</a></div></li>
+            <li class="footer-info-item"><i class="fa-solid fa-envelope-open-text"></i><div>Mail 2: <a href="mailto:i029999@shibaura-it.ac.jp" class="footer-sup-mail2">i029999@shibaura-it.ac.jp</a></div></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-col-title">Contact for Information</h4>
+          <ul class="footer-info-list">
+            <li class="footer-info-item"><i class="fa-solid fa-user-graduate"></i><div><strong class="footer-cnt-name">Nguyen Tuan Anh, B.Eng</strong></div></li>
+            <li class="footer-info-item"><i class="fa-solid fa-phone"></i><div>Tel: <a href="tel:+84974812546" class="footer-cnt-phone">+84 974 812 546</a></div></li>
+            <li class="footer-info-item"><i class="fa-solid fa-envelope"></i><div>Mail: <a href="mailto:anh.nt196322@sis.hust.edu.vn" class="footer-cnt-mail">anh.nt196322@sis.hust.edu.vn</a></div></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-col-title">Laboratory Offices</h4>
+          <ul class="footer-info-list">
+            <li class="footer-info-item"><i class="fa-solid fa-location-dot"></i><div><strong>D9-300 &amp; C7-503</strong><br>Hanoi University of Science and Technology (HUST)<br>No. 1 Dai Co Viet, Hai Ba Trung, Hanoi, Vietnam</div></li>
+            <li class="footer-info-item"><i class="fa-solid fa-globe"></i><div>Website: <a href="https://www.100relab.com" target="_blank" rel="noopener noreferrer">www.100relab.com</a></div></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-copyright">&copy; 2026 100RE LABORATORY. All rights reserved. Toward 100% Renewable Energy.</p>
+        <div class="footer-social-links">
+          <a href="https://www.100relab.com" class="social-link" title="Website"><i class="fa-solid fa-globe"></i></a>
+          <a href="https://scholar.google.com/citations?user=89Jk4L0AAAAJ&hl=en" class="social-link" title="Google Scholar"><i class="fa-brands fa-google-scholar"></i></a>
+          <a href="https://orcid.org/0000-0001-7107-3897" class="social-link" title="ORCID"><i class="fa-brands fa-orcid"></i></a>
+          <a href="mailto:tuyen.nguyenduc@hust.edu.vn" class="social-link" title="Email"><i class="fa-solid fa-envelope"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <button class="back-to-top" id="backToTop" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/admin_crud.js"></script>
+  <script src="assets/js/homepage_editor.js"></script>
+</body>
+</html>
