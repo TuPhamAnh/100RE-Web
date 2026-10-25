@@ -251,7 +251,9 @@
         { key: "year", label: "Publication Year (e.g. 2024)", type: "text", required: true },
         { key: "category", label: "Category", type: "select", options: ["international-journal", "domestic-journal", "conference", "book-chapter", "invited-talk"], required: true },
         { key: "quartile", label: "Quartile (optional, e.g. Q1 / Q2)", type: "text" },
-        { key: "doi", label: "DOI / Paper Link (e.g. 10.1016/j.renene.2023.123456)", type: "text" }
+        { key: "doi", label: "DOI / Paper Link (e.g. 10.1016/j.renene.2023.123456)", type: "text" },
+        { key: "url", label: "Google Scholar / Publisher URL", type: "text" },
+        { key: "citations", label: "Citations Count", type: "text" }
       ],
       renderItem(item) {
         const catName = item.category === 'international-journal' ? 'International Journal' :
@@ -580,8 +582,12 @@
         const container = document.getElementById(schema.containerId);
         if (container) {
           this.activeCollection = key;
-          const items = DataManager.get(key);
-          container.innerHTML = items.map(item => schema.renderItem(item)).join('');
+          if (key === 'publications' && typeof window.renderPublications === 'function') {
+            window.renderPublications();
+          } else {
+            const items = DataManager.get(key);
+            container.innerHTML = items.map(item => schema.renderItem(item)).join('');
+          }
           this.injectPageAdminBar(key, schema, container);
         }
       }
